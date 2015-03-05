@@ -1,7 +1,33 @@
 subprojects {
     apply plugin: 'java'
+
+    ext {
+        antlrVersion = '4.5'
+    }
     
     repositories {
         mavenCentral()
     }
+
+    sourceCompatibility = 1.7
+    version = '0.1.0-SNAPSHOT'
+}
+
+project(':compiler') {
+    
+    dependencies {
+        compile "org.antlr:antlr4:$antlrVersion"
+    }
+
+    task generateGrammarSource << {
+        println 'TODO Arno'
+    }
+
+    task generateTestGrammarSource << {
+        println 'TODO Arno'
+    }
+
+    compileJava.dependsOn 'generateGrammarSource'
+    compileTestJava.dependsOn 'generateTestGrammarSource'
+
 }

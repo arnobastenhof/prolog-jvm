@@ -1,0 +1,3 @@
+grammar PrologJvmParser;
+
+program : ;
