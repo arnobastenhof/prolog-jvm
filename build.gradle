@@ -15,6 +15,11 @@ subprojects {
 
 project(':compiler') {
 
+    ext {
+        antlrTargetDir = 'build/antlr'
+        antlrPckgDir = 'com/prolog/jvm/parser'
+    }
+
     configurations {
         antlr
     }
@@ -28,14 +33,14 @@ project(':compiler') {
         ext {
             srcDir = 'src/main/antlr'
             grammar = 'PrologJvmGrammar.g4'
-            targetDir = 'build/generated-src/main/antlr'
-            // pckgDir = 'com/jvm/prolog/parser'
         }
+
+        def pckg = antlrPckgDir.replace('/','.')
 
         javaexec {
             main = 'org.antlr.v4.Tool'
             classpath configurations.antlr
-            args '-o', targetDir, file("${srcDir}/${grammar}")
+            args '-o', "${antlrTargetDir}/${antlrPckgDir}", '-package', pckg, file("${srcDir}/${grammar}")
         }
 
     }
@@ -44,7 +49,10 @@ project(':compiler') {
         println 'TODO Arno'
     }
 
-    compileJava.dependsOn 'generateGrammarSource'
+    compileJava {
+        dependsOn 'generateGrammarSource'
+        source    antlrTargetDir
+    }
     compileTestJava.dependsOn 'generateTestGrammarSource'
 
 }
