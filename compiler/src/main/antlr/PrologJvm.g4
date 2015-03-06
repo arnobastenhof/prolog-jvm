@@ -1,0 +1,3 @@
+grammar PrologJvm;
+
+program : 'test' ;

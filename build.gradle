@@ -17,8 +17,8 @@ subprojects {
 project(':compiler') {
 
     ext {
-        antlrTargetDir = 'build/antlr'
-        antlrPckgDir = 'com/prolog/jvm/parser'
+        antlrTargetDir = 'src/main/java'
+        antlrPckgDir = 'com/prolog/jvm/compiler/parser'
     }
 
     configurations {
@@ -33,7 +33,7 @@ project(':compiler') {
     task generateGrammarSource << {
         ext {
             srcDir = 'src/main/antlr'
-            grammar = 'PrologJvmGrammar.g4'
+            grammar = 'PrologJvm.g4'
         }
 
         def pckg = antlrPckgDir.replace('/','.')
@@ -43,7 +43,10 @@ project(':compiler') {
             classpath configurations.antlr
             args '-o', "${antlrTargetDir}/${antlrPckgDir}", '-package', pckg, file("${srcDir}/${grammar}")
         }
+    }
 
+    task antlrClean << {
+        delete(file("${antlrTargetDir}/${antlrPckgDir}"))
     }
 
     task generateTestGrammarSource << {
@@ -55,6 +58,7 @@ project(':compiler') {
         source    antlrTargetDir
     }
     compileTestJava.dependsOn 'generateTestGrammarSource'
+    clean.dependsOn 'antlrClean'
 
 }
 
