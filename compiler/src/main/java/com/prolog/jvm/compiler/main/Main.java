@@ -18,7 +18,7 @@ import com.prolog.jvm.compiler.parser.PrologJvmParser;
 public class Main {
 
 	public static void main(String[] args) throws IOException {
-		ANTLRInputStream input = new ANTLRInputStream(System.in); // TODO Arno input file
+		ANTLRInputStream input = new ANTLRInputStream("test"); // TODO Arno input file
 		PrologJvmLexer lexer = new PrologJvmLexer(input);
 		CommonTokenStream tokens = new CommonTokenStream(lexer);
 		PrologJvmParser parser = new PrologJvmParser(tokens);

@@ -16,6 +16,10 @@ subprojects {
 
 project(':compiler') {
 
+    apply plugin: 'application'
+
+    mainClassName = 'com.prolog.jvm.compiler.main.Main'
+
     ext {
         antlrTargetDir = 'src/main/java'
         antlrPckgDir = 'com/prolog/jvm/compiler/parser'
