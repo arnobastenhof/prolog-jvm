@@ -1,2 +1,2 @@
 /bin/
-parser/
+src/main/java/**/parser/

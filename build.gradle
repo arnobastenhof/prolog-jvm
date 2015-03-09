@@ -4,21 +4,22 @@ subprojects {
 
     ext {
         antlrVersion = '4.5'
+        junitVersion = '4.12'
     }
     
     repositories {
         mavenCentral()
     }
 
-    sourceCompatibility = 1.7
+    dependencies {
+        testCompile "junit:junit:$junitVersion"
+    }
+
+    sourceCompatibility = 1.8
     version = '0.1.0-SNAPSHOT'
 }
 
 project(':compiler') {
-
-    apply plugin: 'application'
-
-    mainClassName = 'com.prolog.jvm.compiler.main.Main'
 
     ext {
         antlrTargetDir = 'src/main/java'
@@ -53,15 +54,10 @@ project(':compiler') {
         delete(file("${antlrTargetDir}/${antlrPckgDir}"))
     }
 
-    task generateTestGrammarSource << {
-        println 'TODO Arno'
-    }
-
     compileJava {
         dependsOn 'generateGrammarSource'
         source    antlrTargetDir
     }
-    compileTestJava.dependsOn 'generateTestGrammarSource'
     clean.dependsOn 'antlrClean'
 
 }
