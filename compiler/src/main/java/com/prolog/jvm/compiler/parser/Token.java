@@ -3,15 +3,8 @@ package com.prolog.jvm.compiler.parser;
 import java.util.Objects;
 
 /**
- * This class defines the tokens produced from a source program by the lexer.
- * A token's state consists of a token type, together with the matched input
- * text.
- *
- * <p>In addition, this class contains constants for token types, represented
- * by integers, as well as for common tokens that are always matched by the
- * same input String from the source program (e.g., commas, brackets, ...) and
- * which do not appear in the intermediate representation produced by the
- * parser, making them easy targets for sharing.
+ * This class defines the tokens produced from a source program by the {@link Lexer}.
+ * A token's state consists of a token type, together with the matched input text.
  *
  * @author Arno Bastenhof
  *

@@ -16,17 +16,16 @@ public final class TokenType {
 	/**
 	 * The token type for variables. A variable starts with an underscore
 	 * or capital letter, which can be followed by any number of letters
-	 * (in either case), digits and underscores.
+	 * (whether lower case or capital), digits and underscores.
 	 */
 	public static final int VAR = 1;
 
 	/**
 	 * The token type for an atom, otherwise referred to by a constant. An
 	 * atom starts with a small letter, which can be followed by any number
-	 * of letters (in either case), digits and underscores. Alternatively,
-	 * limited support is offered for 'graphic tokens', which in the current
-	 * implementation may consist of any positive number of occurrences of
-	 * *, +, -, <, = and >.
+	 * of letters (whether lower case or capital), digits and underscores.
+	 * Alternatively, limited support is offered for 'graphic tokens'. See
+	 * the Javadoc for the {@link Lexer} for more details.
 	 */
 	public static final int ATOM = 2;
 

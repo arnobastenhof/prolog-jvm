@@ -35,7 +35,8 @@ public final class Lexer {
 	// Strings used to compose error messages.
 	private static final String UNEXPECTED_CHAR = "Unexpected character ";
 	private static final String AT_LINE = " at line ";
-	private static final String LBRACK_WS = " No whitespace allowed in front of '('.";
+	private static final String EXPECTED = ". Expected ";
+
 	private static final String EXPECTED_IMPLIES = " Expected \"-\"";
 	private static final String EXPECTED_COMMENT = " Expected \"*/\".";
 	private static final String EXPECTED_NIL = " Expected \"]\".";
@@ -174,7 +175,7 @@ public final class Lexer {
 			case 'z'  :
 				return id(TokenType.ATOM); // Atom/constant
 			default:
-				throw new RuntimeException(errorMsg(""));
+				throw new RuntimeException(errorMsg());
 			}
 		}
 		return Token.EOF;
@@ -209,11 +210,11 @@ public final class Lexer {
 			consumeNonLinefeed();
 		}
 		else {
-			throw new RuntimeException(errorMsg(""));
+			throw new RuntimeException(errorMsg());
 		}
 		while (true) {
 			if (this.c == -1) { // EOF
-				throw new RuntimeException(errorMsg(EXPECTED_COMMENT));
+				throw new RuntimeException(errorMsg('*'));
 			}
 			if (this.c == '*') {
 				do {
@@ -236,7 +237,7 @@ public final class Lexer {
 			return Token.IMPLIES;
 		}
 		else {
-			throw new RuntimeException(errorMsg(EXPECTED_IMPLIES));
+			throw new RuntimeException(errorMsg('-'));
 		}
 	}
 
@@ -277,7 +278,7 @@ public final class Lexer {
 			consumeNonLinefeed();
 		}
 		else {
-			throw new RuntimeException(errorMsg(EXPECTED_NIL));
+			throw new RuntimeException(errorMsg(']'));
 		}
 		return Token.NIL;
 	}
@@ -333,11 +334,22 @@ public final class Lexer {
 
 	// === Error generation ===
 
-	private String errorMsg(String msg) {
+	private String errorMsg() {
 		StringBuilder buffer = new StringBuilder(UNEXPECTED_CHAR);
 		buffer.append(errorChar());
 		buffer.append(AT_LINE);
-		buffer.append(msg);
+		buffer.append(this.line);
+		buffer.append(".");
+		return buffer.toString();
+	}
+
+	private String errorMsg(char expected) {
+		StringBuilder buffer = new StringBuilder(UNEXPECTED_CHAR);
+		buffer.append(errorChar());
+		buffer.append(AT_LINE);
+		buffer.append(this.line);
+		buffer.append(EXPECTED);
+		buffer.append(expected);
 		return buffer.toString();
 	}
 
