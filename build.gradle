@@ -3,7 +3,6 @@ subprojects {
     apply plugin: 'eclipse'
 
     ext {
-        antlrVersion = '4.5'
         junitVersion = '4.12'
     }
     
@@ -15,51 +14,8 @@ subprojects {
         testCompile "junit:junit:$junitVersion"
     }
 
-    sourceCompatibility = 1.8
+    sourceCompatibility = 1.7
     version = '0.1.0-SNAPSHOT'
-}
-
-project(':compiler') {
-
-    ext {
-        antlrTargetDir = 'src/main/java'
-        antlrPckgDir = 'com/prolog/jvm/compiler/parser'
-    }
-
-    configurations {
-        antlr
-    }
-    
-    dependencies {
-        compile "org.antlr:antlr4-runtime:$antlrVersion"
-        antlr   "org.antlr:antlr4:$antlrVersion"
-    }
-
-    task generateGrammarSource << {
-        ext {
-            srcDir = 'src/main/antlr'
-            grammar = 'PrologJvm.g4'
-        }
-
-        def pckg = antlrPckgDir.replace('/','.')
-
-        javaexec {
-            main = 'org.antlr.v4.Tool'
-            classpath configurations.antlr
-            args '-o', "${antlrTargetDir}/${antlrPckgDir}", '-package', pckg, file("${srcDir}/${grammar}")
-        }
-    }
-
-    task antlrClean << {
-        delete(file("${antlrTargetDir}/${antlrPckgDir}"))
-    }
-
-    compileJava {
-        dependsOn 'generateGrammarSource'
-        source    antlrTargetDir
-    }
-    clean.dependsOn 'antlrClean'
-
 }
 
 project(':examples') {
