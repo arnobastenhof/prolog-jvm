@@ -11,7 +11,7 @@ import java.util.Objects;
  */
 public final class Token {
 
-	// === Token constants for types that have constant text value. ===
+	// === Constants and static factory methods for obtaining Tokens ===
 
 	/**
 	 * The <code>Token</code> indicating the end of the source file.
@@ -57,23 +57,35 @@ public final class Token {
 	 */
 	public static final Token RBRACK = new Token(TokenType.RBRACK, ")");
 
+	/**
+	 * Static factory method for obtaining a <code>Token</code> of type
+	 * <code>ATOM</code>.
+	 *
+	 * @param text The matched input text.
+	 */
+	public static final Token getAtom(String text) {
+		return new Token(TokenType.ATOM, text);
+	}
+
+	/**
+	 * Static factory method for obtaining a <code>Token</code> of type
+	 * <code>VAR</code>.
+	 *
+	 * @param text The matched input text.
+	 */
+	public static final Token getVar(String text) {
+		return new Token(TokenType.VAR, text);
+	}
+
 	// === Private state ===
 
-	private final int type;
+	private final TokenType type;
 	private final String text;
 
 	// === Constructors and public methods ===
 
-	/**
-	 * Constructor. Note that for token types EOF, COMMA, DOT, LBRACK and
-	 * RBRACK, it is recommended to use the corresponding Token constants
-	 * defined by this class.
-	 *
-	 * @param type The token type.
-	 * @param text The text from the source program that was matched for
-	 * the given token type.
-	 */
-	public Token(int type, String text) {
+	// Private constructor to force instantiation through static factory methods.
+	private Token(TokenType type, String text) {
 		this.type = type;
 		this.text = text;
 	}
@@ -81,7 +93,7 @@ public final class Token {
 	/**
 	 * Returns this token's type.
 	 */
-	public final int getType() {
+	public final TokenType getType() {
 		return this.type;
 	}
 
@@ -100,7 +112,7 @@ public final class Token {
 	 */
 	@Override
 	public final String toString() {
-		return "<" + this.text + ";" + TokenType.tokenNames[this.type] + ">";
+		return "<" + this.text + ";" + this.type + ">";
 	}
 
 	/**

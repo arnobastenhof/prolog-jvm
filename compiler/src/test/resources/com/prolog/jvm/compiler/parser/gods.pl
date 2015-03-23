@@ -17,6 +17,3 @@ ancestor(X,Y) :- parent(X,Y).
 % Rules with more than one goal.
 grandparent(X,Y) :- parent(X,Z), parent(Z,Y).
 ancestor(X,Y) :- ancestor(X,Z), ancestor(Z,Y).
-
-% Query.
-?- ancestor(zeus, X).

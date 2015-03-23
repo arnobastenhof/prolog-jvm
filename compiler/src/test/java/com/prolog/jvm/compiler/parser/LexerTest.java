@@ -6,10 +6,6 @@ import java.io.IOException;
 
 import org.junit.Test;
 
-import com.prolog.jvm.compiler.parser.Lexer;
-import com.prolog.jvm.compiler.parser.Token;
-import com.prolog.jvm.compiler.parser.TokenType;
-
 /**
  * Test class for the lexer.
  *
@@ -27,10 +23,10 @@ public final class LexerTest {
 		String graphic = "#$&*+-./:<=>?@^~\\";
 
 		// Expected tokens
-		Token varUnderscoreToken = new Token(TokenType.VAR, varUnderscore);
-		Token varCapitalToken = new Token(TokenType.VAR, varCapital);
-		Token constantToken = new Token(TokenType.ATOM, constant);
-		Token graphicToken = new Token(TokenType.ATOM, graphic);
+		Token varUnderscoreToken = Token.getVar(varUnderscore);
+		Token varCapitalToken = Token.getVar(varCapital);
+		Token constantToken = Token.getAtom(constant);
+		Token graphicToken = Token.getAtom(graphic);
 
 		// Assertions
 		assertEquals(new Lexer("!").nextToken(), Token.CUT);
