@@ -12,7 +12,7 @@ public final class LexerUtils {
 	/**
 	 * The end-of-file character.
 	 */
-	public static char EOF = (char)-1;
+	public static final char EOF = (char)-1;
 
 	// Private constructor to prevent instantiation.
 	private LexerUtils() {}
