@@ -13,9 +13,9 @@ public abstract class AbstractToken<T> implements Token<T> {
 	private final String text;
 
 	/**
-	 * TODO
-	 * @param type
-	 * @param text
+	 * Protected constructor.
+	 * @param type The token type.
+	 * @param text The matched input text.
 	 */
 	protected AbstractToken(T type, String text) {
 		this.type = type;

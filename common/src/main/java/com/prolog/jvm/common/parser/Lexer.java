@@ -15,5 +15,11 @@ public interface Lexer<T> {
 	 *
 	 * @return The next token read from the input.
 	 */
-	public Token<T> nextToken();
+	Token<T> nextToken();
+
+	/**
+	 * Returns the line number currently being processed.
+	 */
+	int getLine();
+
 }
