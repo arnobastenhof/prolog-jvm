@@ -27,7 +27,7 @@ public final class Parser {
 	private static final String OR = ", or ";
 	private static final String EXPECTED = " Expected type ";
 
-	private final Lexer input;
+	private final PrologLexer input;
 	Token<PlTokenType> lookahead; // package-private for testing purposes
 
 	/**
@@ -51,7 +51,7 @@ public final class Parser {
 	}
 
 	private static final Parser newInstance(Reader input) throws IOException {
-		Lexer lexer = new Lexer(input);
+		PrologLexer lexer = new PrologLexer(input);
 		Parser parser = new Parser(lexer);
 		return parser;
 	}
@@ -60,7 +60,7 @@ public final class Parser {
 	 *
 	 * @param input
 	 */
-	public Parser(Lexer input) {
+	public Parser(PrologLexer input) {
 		this.input = input;
 	}
 

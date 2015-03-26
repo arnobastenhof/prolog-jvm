@@ -31,17 +31,17 @@ public final class LexerTest {
 		Token<PlTokenType> graphicToken = PrologTokens.getAtom(graphic);
 
 		// Assertions
-		assertEquals(new Lexer("!").nextToken(), PrologTokens.CUT);
-		assertEquals(new Lexer("(").nextToken(), PrologTokens.LBRACK);
-		assertEquals(new Lexer(")").nextToken(), PrologTokens.RBRACK);
-		assertEquals(new Lexer(",").nextToken(), PrologTokens.COMMA);
-		assertEquals(new Lexer(".").nextToken(), PrologTokens.PERIOD);
-		assertEquals(new Lexer(":-").nextToken(), PrologTokens.IMPLIES);
-		assertEquals(new Lexer("[]").nextToken(), PrologTokens.NIL);
-		assertEquals(new Lexer(varUnderscore).nextToken(), varUnderscoreToken);
-		assertEquals(new Lexer(varCapital).nextToken(), varCapitalToken);
-		assertEquals(new Lexer(constant).nextToken(), constantToken);
-		assertEquals(new Lexer(graphic).nextToken(), graphicToken);
+		assertEquals(new PrologLexer("!").nextToken(), PrologTokens.CUT);
+		assertEquals(new PrologLexer("(").nextToken(), PrologTokens.LBRACK);
+		assertEquals(new PrologLexer(")").nextToken(), PrologTokens.RBRACK);
+		assertEquals(new PrologLexer(",").nextToken(), PrologTokens.COMMA);
+		assertEquals(new PrologLexer(".").nextToken(), PrologTokens.PERIOD);
+		assertEquals(new PrologLexer(":-").nextToken(), PrologTokens.IMPLIES);
+		assertEquals(new PrologLexer("[]").nextToken(), PrologTokens.NIL);
+		assertEquals(new PrologLexer(varUnderscore).nextToken(), varUnderscoreToken);
+		assertEquals(new PrologLexer(varCapital).nextToken(), varCapitalToken);
+		assertEquals(new PrologLexer(constant).nextToken(), constantToken);
+		assertEquals(new PrologLexer(graphic).nextToken(), graphicToken);
 	}
 
 	@Test
@@ -50,29 +50,29 @@ public final class LexerTest {
 		String inline = "%\r\n";
 		String multiline = " \t\r\n";
 
-		assertEquals(new Lexer(whitespace + ".").nextToken(), PrologTokens.PERIOD);
-		assertEquals(new Lexer(inline + ".").nextToken(), PrologTokens.PERIOD);
-		assertEquals(new Lexer(multiline + ".").nextToken(), PrologTokens.PERIOD);
+		assertEquals(new PrologLexer(whitespace + ".").nextToken(), PrologTokens.PERIOD);
+		assertEquals(new PrologLexer(inline + ".").nextToken(), PrologTokens.PERIOD);
+		assertEquals(new PrologLexer(multiline + ".").nextToken(), PrologTokens.PERIOD);
 	}
 
 	@Test(expected=RuntimeException.class)
 	public final void wrongSlash() throws IOException {
-		new Lexer("/").nextToken();
+		new PrologLexer("/").nextToken();
 	}
 
 	@Test(expected=RuntimeException.class)
 	public final void wrongColon() throws IOException {
-		new Lexer(":").nextToken();
+		new PrologLexer(":").nextToken();
 	}
 
 	@Test(expected=RuntimeException.class)
 	public final void wrongNil() throws IOException {
-		new Lexer("[").nextToken();
+		new PrologLexer("[").nextToken();
 	}
 
 	@Test(expected=RuntimeException.class)
 	public final void unknownChar() throws IOException {
-		new Lexer("|").nextToken();
+		new PrologLexer("|").nextToken();
 	}
 
 }
