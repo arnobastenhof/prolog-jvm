@@ -6,6 +6,8 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringReader;
 
+import com.prolog.jvm.common.parser.Token;
+
 /**
  * A tokenizer for a subset of Prolog, based on Covington (1993), ISO Prolog:
  * A Summary of the Draft Proposed Standard. The implementation of this class
@@ -75,7 +77,7 @@ public final class Lexer {
 	 * @return The next token read from the input.
 	 * @throws IOException
 	 */
-	public Token nextToken() throws IOException {
+	public Token<PlTokenType> nextToken() throws IOException {
 		while (this.lookahead != (char)-1) { // EOF
 			if (isWhitespace()) {
 				ws();
@@ -87,7 +89,7 @@ public final class Lexer {
 			switch (this.lookahead) {
 			case '!'  :
 				consumeNonLinefeed();
-				return Token.CUT;
+				return PrologTokens.CUT;
 			case '%'  :
 				single(); // single-line comment
 				continue;
@@ -108,16 +110,16 @@ public final class Lexer {
 				return graphic();
 			case '('  :
 				consumeNonLinefeed();
-				return Token.LBRACK;
+				return PrologTokens.LBRACK;
 			case ')'  :
 				consumeNonLinefeed();
-				return Token.RBRACK;
+				return PrologTokens.RBRACK;
 			case ','  :
 				consumeNonLinefeed();
-				return Token.COMMA;
+				return PrologTokens.COMMA;
 			case '.'  :
 				consumeNonLinefeed();
-				return Token.PERIOD;
+				return PrologTokens.PERIOD;
 			case '/'  :
 				multi();
 				continue;
@@ -129,7 +131,7 @@ public final class Lexer {
 				throw new RuntimeException(getErrorMsg());
 			}
 		}
-		return Token.EOF;
+		return PrologTokens.EOF;
 	}
 
 	// === Lexer rules (Package private for testing purposes) ===
@@ -176,10 +178,10 @@ public final class Lexer {
 		}
 	}
 
-	Token implies() throws IOException {
+	Token<PlTokenType> implies() throws IOException {
 		consumeNonLinefeed(); // Consume ':'
 		match('-');
-		return Token.IMPLIES;
+		return PrologTokens.IMPLIES;
 	}
 
 	/*
@@ -189,7 +191,7 @@ public final class Lexer {
 	 * while a VAR if the first character is a capital letter or underscore.
 	 * In particular, identifiers are not allowed to begin with a digit.
 	 */
-	Token id() throws IOException {
+	Token<PlTokenType> id() throws IOException {
 		boolean smallLetter = isSmallLetter();
 		StringBuilder buffer = new StringBuilder();
 		do {
@@ -200,25 +202,25 @@ public final class Lexer {
 				|| isSmallLetter()
 				|| this.lookahead == '_'
 				);
-		return smallLetter ? Token.getAtom(buffer.toString())
-				: Token.getVar(buffer.toString());
+		return smallLetter ? PrologTokens.getAtom(buffer.toString())
+				: PrologTokens.getVar(buffer.toString());
 	}
 
 	// Graphic tokens
-	Token graphic() throws IOException {
+	Token<PlTokenType> graphic() throws IOException {
 		StringBuilder buffer = new StringBuilder();
 		do {
 			buffer.append(this.lookahead);
 			consumeNonLinefeed();
 		} while (isGraphic());
-		return Token.getAtom(buffer.toString());
+		return PrologTokens.getAtom(buffer.toString());
 	}
 
 	// nil = "[]" ;
-	Token nil() throws IOException {
+	Token<PlTokenType> nil() throws IOException {
 		consumeNonLinefeed(); // Consumes '['
 		match(']');
-		return Token.NIL;
+		return PrologTokens.NIL;
 	}
 
 	// digit = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" ;

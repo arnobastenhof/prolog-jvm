@@ -6,6 +6,8 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringReader;
 
+import com.prolog.jvm.common.parser.Token;
+
 /**
  * A parser for a subset of Prolog, based on Covington (1993), ISO Prolog:
  * A Summary of the Draft Proposed Standard. The implementation of this class is
@@ -26,7 +28,7 @@ public final class Parser {
 	private static final String EXPECTED = " Expected type ";
 
 	private final Lexer input;
-	Token lookahead; // package-private for testing purposes
+	Token<PlTokenType> lookahead; // package-private for testing purposes
 
 	/**
 	 * Static factory method for obtaining a new <code>Parser</code> instance
@@ -75,8 +77,8 @@ public final class Parser {
 		do {
 			clause();
 		}
-		while (this.lookahead.getType() == TokenType.ATOM);
-		match(TokenType.EOF);
+		while (this.lookahead.getType() == PlTokenType.ATOM);
+		match(PlTokenType.EOF);
 	}
 
 	/**
@@ -90,26 +92,26 @@ public final class Parser {
 	public void query() throws IOException {
 		consume(); // Read the first token.
 		structure();
-		while (this.lookahead.getType() == TokenType.COMMA) {
+		while (this.lookahead.getType() == PlTokenType.COMMA) {
 			consume();
 			structure();
 		}
-		match(TokenType.PERIOD);
-		match(TokenType.EOF);
+		match(PlTokenType.PERIOD);
+		match(PlTokenType.EOF);
 	}
 
 	// clause = structure, [":-", structure, {",", structure} ], "."
 	private void clause() throws IOException {
 		structure();
-		if (this.lookahead.getType() == TokenType.IMPLIES) {
+		if (this.lookahead.getType() == PlTokenType.IMPLIES) {
 			consume();
 			structure();
-			while (this.lookahead.getType() == TokenType.COMMA) {
+			while (this.lookahead.getType() == PlTokenType.COMMA) {
 				consume();
 				structure();
 			}
 		}
-		match(TokenType.PERIOD);
+		match(PlTokenType.PERIOD);
 	}
 
 	// term = "[]" | variable | structure ;
@@ -126,27 +128,27 @@ public final class Parser {
 			break;
 		default:
 			throw new RuntimeException(getErrorMsg(
-					TokenType.VAR, TokenType.ATOM, TokenType.NIL));
+					PlTokenType.VAR, PlTokenType.ATOM, PlTokenType.NIL));
 		}
 	}
 
 	// structure = atom, ["(", term, {",", term}, ")"] ;
 	private void structure() throws IOException {
-		match(TokenType.ATOM);
-		if (this.lookahead.getType() == TokenType.LBRACK) {
+		match(PlTokenType.ATOM);
+		if (this.lookahead.getType() == PlTokenType.LBRACK) {
 			consume();
 			term();
-			while (this.lookahead.getType() == TokenType.COMMA) {
+			while (this.lookahead.getType() == PlTokenType.COMMA) {
 				consume();
 				term();
 			}
-			match(TokenType.RBRACK);
+			match(PlTokenType.RBRACK);
 		}
 	}
 
 	// === Token consumption ===
 
-	private void match(TokenType type) throws IOException {
+	private void match(PlTokenType type) throws IOException {
 		if (this.lookahead.getType() == type) {
 			consume();
 		}
@@ -161,7 +163,7 @@ public final class Parser {
 
 	// === Error messages ===
 
-	private String getErrorMsg(TokenType fstAlternative, TokenType... alternatives) {
+	private String getErrorMsg(PlTokenType fstAlternative, PlTokenType... alternatives) {
 		StringBuilder buffer = new StringBuilder(UNEXPECTED_TOKEN);
 		buffer.append(this.lookahead);
 		buffer.append(AT_LINE);

@@ -18,9 +18,21 @@ subprojects {
     version = '0.1.0-SNAPSHOT'
 }
 
+project(':compiler') {
+    dependencies {
+        compile project(':common')
+    }
+}
+
+project(':vam') {
+    dependencies {
+        compile project(':common')
+    }
+}
+
 project(':examples') {
     dependencies {
         compile project(':compiler')
-        compile project(':wam')
+        compile project(':vam')
     }
 }

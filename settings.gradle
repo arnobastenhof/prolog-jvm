@@ -1,1 +1,1 @@
-include 'compiler', 'wam', 'examples'
+include 'common', 'compiler', 'vam', 'examples'

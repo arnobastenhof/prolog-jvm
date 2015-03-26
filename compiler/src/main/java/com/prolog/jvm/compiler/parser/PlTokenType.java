@@ -1,12 +1,12 @@
 package com.prolog.jvm.compiler.parser;
 
 /**
- * An enumeration of the token types.
+ * An enumeration of the token types used for parsing Prolog.
  *
  * @author Arno Bastenhof
  *
  */
-public enum TokenType {
+public enum PlTokenType {
 
 	/**
 	 * The token type for the end of file character.

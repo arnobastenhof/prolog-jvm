@@ -27,7 +27,7 @@ public final class ParserTest {
 		try (InputStream is = this.getClass().getResourceAsStream(program)) {
 			Parser parser = Parser.newInstance(is);
 			parser.program();
-			assertEquals(parser.lookahead, Token.EOF);
+			assertEquals(parser.lookahead, PrologTokens.EOF);
 		}
 	}
 
@@ -35,7 +35,7 @@ public final class ParserTest {
 	public final void query() throws IOException {
 		Parser parser = Parser.newInstance("ancestor(zeus, X).");
 		parser.query();
-		assertEquals(parser.lookahead, Token.EOF);
+		assertEquals(parser.lookahead, PrologTokens.EOF);
 	}
 
 	// TODO Add more tests

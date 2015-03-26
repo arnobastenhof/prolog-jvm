@@ -6,6 +6,8 @@ import java.io.IOException;
 
 import org.junit.Test;
 
+import com.prolog.jvm.common.parser.Token;
+
 /**
  * Test class for the lexer.
  *
@@ -23,19 +25,19 @@ public final class LexerTest {
 		String graphic = "#$&*+-./:<=>?@^~\\";
 
 		// Expected tokens
-		Token varUnderscoreToken = Token.getVar(varUnderscore);
-		Token varCapitalToken = Token.getVar(varCapital);
-		Token constantToken = Token.getAtom(constant);
-		Token graphicToken = Token.getAtom(graphic);
+		Token<PlTokenType> varUnderscoreToken = PrologTokens.getVar(varUnderscore);
+		Token<PlTokenType> varCapitalToken = PrologTokens.getVar(varCapital);
+		Token<PlTokenType> constantToken = PrologTokens.getAtom(constant);
+		Token<PlTokenType> graphicToken = PrologTokens.getAtom(graphic);
 
 		// Assertions
-		assertEquals(new Lexer("!").nextToken(), Token.CUT);
-		assertEquals(new Lexer("(").nextToken(), Token.LBRACK);
-		assertEquals(new Lexer(")").nextToken(), Token.RBRACK);
-		assertEquals(new Lexer(",").nextToken(), Token.COMMA);
-		assertEquals(new Lexer(".").nextToken(), Token.PERIOD);
-		assertEquals(new Lexer(":-").nextToken(), Token.IMPLIES);
-		assertEquals(new Lexer("[]").nextToken(), Token.NIL);
+		assertEquals(new Lexer("!").nextToken(), PrologTokens.CUT);
+		assertEquals(new Lexer("(").nextToken(), PrologTokens.LBRACK);
+		assertEquals(new Lexer(")").nextToken(), PrologTokens.RBRACK);
+		assertEquals(new Lexer(",").nextToken(), PrologTokens.COMMA);
+		assertEquals(new Lexer(".").nextToken(), PrologTokens.PERIOD);
+		assertEquals(new Lexer(":-").nextToken(), PrologTokens.IMPLIES);
+		assertEquals(new Lexer("[]").nextToken(), PrologTokens.NIL);
 		assertEquals(new Lexer(varUnderscore).nextToken(), varUnderscoreToken);
 		assertEquals(new Lexer(varCapital).nextToken(), varCapitalToken);
 		assertEquals(new Lexer(constant).nextToken(), constantToken);
@@ -48,9 +50,9 @@ public final class LexerTest {
 		String inline = "%\r\n";
 		String multiline = " \t\r\n";
 
-		assertEquals(new Lexer(whitespace + ".").nextToken(), Token.PERIOD);
-		assertEquals(new Lexer(inline + ".").nextToken(), Token.PERIOD);
-		assertEquals(new Lexer(multiline + ".").nextToken(), Token.PERIOD);
+		assertEquals(new Lexer(whitespace + ".").nextToken(), PrologTokens.PERIOD);
+		assertEquals(new Lexer(inline + ".").nextToken(), PrologTokens.PERIOD);
+		assertEquals(new Lexer(multiline + ".").nextToken(), PrologTokens.PERIOD);
 	}
 
 	@Test(expected=RuntimeException.class)
