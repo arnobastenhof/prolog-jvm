@@ -12,9 +12,7 @@ import com.prolog.jvm.common.parser.Token;
 
 /**
  * A tokenizer for a subset of Prolog, based on Covington (1993), ISO Prolog:
- * A Summary of the Draft Proposed Standard. The implementation of this class
- * follows Pattern 2, LL(1) Recursive-Descent Lexer from Parr (2010), Language
- * Implementation Patterns.
+ * A Summary of the Draft Proposed Standard.
  *
  * The following simplifications were made compared to the proposed ISO standard:
  * <ul>

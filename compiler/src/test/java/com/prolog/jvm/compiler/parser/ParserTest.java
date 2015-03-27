@@ -25,17 +25,17 @@ public final class ParserTest {
 	@Test
 	public final void program() throws IOException {
 		try (InputStream is = this.getClass().getResourceAsStream(program)) {
-			Parser parser = Parser.newInstance(is);
+			PrologParser parser = PrologParser.newInstance(is);
 			parser.program();
-			assertEquals(parser.lookahead, PrologTokens.EOF);
+			assertEquals(parser.isDone(), true);
 		}
 	}
 
 	@Test
 	public final void query() throws IOException {
-		Parser parser = Parser.newInstance("ancestor(zeus, X).");
+		PrologParser parser = PrologParser.newInstance("ancestor(zeus, X).");
 		parser.query();
-		assertEquals(parser.lookahead, PrologTokens.EOF);
+		assertEquals(parser.isDone(), true);
 	}
 
 	// TODO Add more tests

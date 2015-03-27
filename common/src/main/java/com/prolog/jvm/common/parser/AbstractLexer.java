@@ -4,7 +4,8 @@ import java.io.IOException;
 import java.io.Reader;
 
 /**
- * Skeletal implementation for a lexical analyzer.
+ * Skeletal implementation for a lexical analyzer based on Pattern 2, LL(1)
+ * Recursive-Descent Lexer from Parr (2010), Language Implementation Patterns.
  *
  * @author Arno Bastenhof
  *
@@ -52,7 +53,7 @@ public abstract class AbstractLexer<T> implements Lexer<T> {
 	 * @throws IOException
 	 */
 	protected void consume() throws IOException {
-		if (this.lookahead == 10) { // '\n'
+		if (this.lookahead == '\n') {
 			this.line++;
 		}
 		this.lookahead = (char)this.input.read();
