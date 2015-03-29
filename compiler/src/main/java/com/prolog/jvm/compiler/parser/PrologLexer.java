@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringReader;
 
+import com.prolog.jvm.common.exceptions.RecognitionException;
 import com.prolog.jvm.common.parser.AbstractLexer;
 import com.prolog.jvm.common.parser.LexerUtils;
 import com.prolog.jvm.common.parser.Token;
@@ -115,7 +116,9 @@ public final class PrologLexer extends AbstractLexer<PlTokenType> {
 			case '['  :
 				return nil(); // Empty list
 			default:
-				throw new RuntimeException(getErrorMsg());
+				throw RecognitionException.newInstance(
+						getLookahead(),
+						getLine());
 			}
 		}
 		return PrologTokens.EOF;
@@ -149,7 +152,10 @@ public final class PrologLexer extends AbstractLexer<PlTokenType> {
 		match('*');
 		while (true) {
 			if (getLookahead() == LexerUtils.EOF) {
-				throw new RuntimeException(getErrorMsg('*'));
+				throw RecognitionException.newInstance(
+						getLookahead(),
+						getLine(),
+						new String[]{"*"});
 			}
 			if (getLookahead() == '*') {
 				do {

@@ -1,8 +1,8 @@
 package com.prolog.jvm.common.parser;
 
 import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
+
+import com.prolog.jvm.common.exceptions.RecognitionException;
 
 /**
  * Skeletal implementation for a parser based on Pattern 3 of Parr (2010), Language
@@ -13,12 +13,6 @@ import java.util.List;
  * @param <T> The token type.
  */
 public abstract class AbstractParser<T> {
-
-	// Strings used to compose error messages.
-	private static final String UNEXPECTED_TOKEN = "Unexpected token ";
-	private static final String AT_LINE = " at line ";
-	private static final String OR = ", or ";
-	private static final String EXPECTED = " Expected type ";
 
 	private final Lexer<T> input;
 	private Token<T> lookahead;
@@ -52,7 +46,10 @@ public abstract class AbstractParser<T> {
 			consume();
 		}
 		else {
-			throw new RuntimeException(getErrorMsg(Collections.singletonList(type)));
+			throw RecognitionException.newInstance(
+					this.lookahead,
+					this.input.getLine(),
+					new String[]{type.toString()});
 		}
 	}
 
@@ -68,27 +65,18 @@ public abstract class AbstractParser<T> {
 	// === Error messages ===
 
 	/**
-	 * Returns an error message to the extent that the current lookahead token was
-	 * unexpected at the line currently being processed, optionally listing the
-	 * expected token types.
-	 *
-	 * @param alternatives The list of expected token types. Can be empty or null.
+	 * Returns the current lookahead token.
 	 */
-	protected String getErrorMsg(List<T> alternatives) {
-		StringBuilder buffer = new StringBuilder(UNEXPECTED_TOKEN);
-		buffer.append(this.lookahead);
-		buffer.append(AT_LINE);
-		buffer.append(this.input.getLine());
-		buffer.append(".");
-		if (alternatives == null || !alternatives.isEmpty()) {
-			buffer.append(EXPECTED);
-			buffer.append(alternatives.get(0));
-			for (int i = 1; i < alternatives.size(); i++) {
-				buffer.append(OR);
-				buffer.append(alternatives.get(i));
-			}
-			buffer.append(".");
-		}
-		return buffer.toString();
+	protected Token<T> getLookahead() {
+		return this.lookahead;
 	}
+
+	/**
+	 * Returns the line number currently being proccessed.
+	 */
+	protected int getLine() {
+		return this.input.getLine();
+	}
+
+
 }

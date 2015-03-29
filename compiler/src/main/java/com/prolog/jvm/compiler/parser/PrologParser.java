@@ -5,8 +5,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringReader;
-import java.util.Arrays;
 
+import com.prolog.jvm.common.exceptions.RecognitionException;
 import com.prolog.jvm.common.parser.AbstractParser;
 
 /**
@@ -121,10 +121,12 @@ public final class PrologParser extends AbstractParser<PlTokenType> {
 			consume();
 			break;
 		default:
-			throw new RuntimeException(getErrorMsg(Arrays.asList(
-					PlTokenType.VAR,
-					PlTokenType.ATOM,
-					PlTokenType.NIL)));
+			throw RecognitionException.newInstance(
+					getLookahead(),
+					getLine(),
+					new String[]{PlTokenType.VAR.toString(),
+						PlTokenType.ATOM.toString(),
+						PlTokenType.NIL.toString()});
 		}
 	}
 
