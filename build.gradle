@@ -1,38 +1,21 @@
-subprojects {
-    apply plugin: 'java'
-    apply plugin: 'eclipse'
+apply plugin: 'java'
+apply plugin: 'eclipse'
 
-    ext {
-        junitVersion = '4.12'
-    }
+ext {
+    junitVersion = '4.12'
+    guavaVersion = '18.0'
+}
     
-    repositories {
-        mavenCentral()
-    }
-
-    dependencies {
-        testCompile "junit:junit:$junitVersion"
-    }
-
-    sourceCompatibility = 1.7
-    version = '0.1.0-SNAPSHOT'
+repositories {
+    mavenCentral()
 }
 
-project(':compiler') {
-    dependencies {
-        compile project(':common')
-    }
+dependencies {
+    compile "com.google.guava:guava:$guavaVersion"
+    testCompile "junit:junit:$junitVersion"
 }
 
-project(':vam') {
-    dependencies {
-        compile project(':common')
-    }
-}
+sourceCompatibility = 1.7
+version = '0.1.0-SNAPSHOT'
 
-project(':examples') {
-    dependencies {
-        compile project(':compiler')
-        compile project(':vam')
-    }
-}
+

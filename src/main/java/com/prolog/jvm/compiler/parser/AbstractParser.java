@@ -1,0 +1,89 @@
+package com.prolog.jvm.compiler.parser;
+
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.io.IOException;
+
+import com.prolog.jvm.exceptions.RecognitionException;
+
+/**
+ * Skeletal implementation for a parser based on Pattern 3 of Parr (2010),
+ * Language Implementation Patterns: LL(1) Recursive-Descent Parser.
+ *
+ * @author Arno Bastenhof
+ */
+public abstract class AbstractParser {
+
+	private final Lexer input;
+	private Token lookahead;
+
+	/**
+	 *
+	 * @param input a lexer instance for the Prolog source program or query;
+	 * not allowed to be null
+	 * @throws NullPointerException if {@code input == null}
+	 */
+	protected AbstractParser(Lexer input) {
+		this.input = checkNotNull(input);
+	}
+
+	// === Token consumption ===
+
+	/**
+	 * Returns the type of the current lookahead token.
+	 */
+	protected TokenType getLookaheadType() {
+		return this.lookahead.getType();
+	}
+
+	/**
+	 * Matches the current lookahead token against the supplied type, throwing an
+	 * exception in case of a mismatch.
+	 *
+	 * @param expected the expected token type; not allowed to be null
+	 * @throws NullPointerException if {@code expected == null}
+	 * @throws RecognitionException if the encountered token type does not
+	 * coincide with {@code expected}
+	 * @throws IOException
+	 */
+	protected void match(TokenType expected) throws IOException, RecognitionException {
+		checkNotNull(expected);
+		if (this.lookahead.getType() == expected) {
+			consume();
+		}
+		else {
+			throw RecognitionException.newInstance(
+					this.lookahead,
+					this.input.getLine(),
+					new String[]{expected.toString()});
+		}
+	}
+
+	/**
+	 * Consumes the current lookahead token.
+	 *
+	 * @throws IOException
+	 * @throws RecognitionException
+	 */
+	protected void consume() throws IOException, RecognitionException {
+		this.lookahead = this.input.nextToken();
+	}
+
+	// === Error messages ===
+
+	/**
+	 * Returns the current lookahead token.
+	 */
+	protected Token getLookahead() {
+		return this.lookahead;
+	}
+
+	/**
+	 * Returns the line number currently being proccessed.
+	 */
+	protected int getLine() {
+		return this.input.getLine();
+	}
+
+
+}
