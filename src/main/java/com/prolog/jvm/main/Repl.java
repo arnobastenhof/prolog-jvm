@@ -8,7 +8,7 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.io.Writer;
 
-import com.prolog.jvm.compiler.Compiler;
+import com.prolog.jvm.compiler.AbstractCompiler;
 import com.prolog.jvm.exceptions.InternalCompilerException;
 import com.prolog.jvm.exceptions.RecognitionException;
 import com.prolog.jvm.zip.PrologBytecodeImpl.MementoImpl;
@@ -48,7 +48,7 @@ public enum Repl {
 		// bytecode state prior to the compilation of any queries
 		final MementoImpl m = Factory.getBytecode().createMemento();
 
-		final Compiler compiler = Factory.newQueryCompiler();
+		final AbstractCompiler compiler = Factory.newQueryCompiler();
 
 		try (BufferedReader reader = new BufferedReader(in)) {
 			String userInput = reader.readLine();

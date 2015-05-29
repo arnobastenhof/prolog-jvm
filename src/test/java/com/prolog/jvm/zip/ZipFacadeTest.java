@@ -1,7 +1,7 @@
 package com.prolog.jvm.zip;
 
 import static com.prolog.jvm.zip.util.PlWords.CONS;
-import static com.prolog.jvm.zip.util.PlWords.FUNCTOR;
+import static com.prolog.jvm.zip.util.PlWords.FUNC;
 import static com.prolog.jvm.zip.util.PlWords.LIS;
 import static com.prolog.jvm.zip.util.PlWords.REF;
 import static com.prolog.jvm.zip.util.PlWords.STR;
@@ -49,7 +49,7 @@ public final class ZipFacadeTest {
 
 		// Assert
 		assertEquals(facade.pushFunctor(symbol), getWord(STR, 0));
-		assertEquals(wordStore[0], getWord(FUNCTOR, 0));
+		assertEquals(wordStore[0], getWord(FUNC, 0));
 		assertEquals(wordStore[1], getWord(REF, 1));
 		assertEquals(wordStore[2], getWord(REF, 2));
 	}
@@ -87,7 +87,7 @@ public final class ZipFacadeTest {
 				getWord(REF, 3),
 				getWord(REF, 0),
 				getWord(STR, 4),
-				getWord(FUNCTOR, 1),
+				getWord(FUNC, 1),
 				getWord(REF, 5)
 		};
 
@@ -98,7 +98,7 @@ public final class ZipFacadeTest {
 
 		// Asserts
 		assertEquals(facade.getWordAt(3), getWord(STR, 4));
-		assertEquals(facade.getWordAt(4), getWord(FUNCTOR, 1));
+		assertEquals(facade.getWordAt(4), getWord(FUNC, 1));
 		assertEquals(facade.getWordAt(5), getWord(REF, 5));
 		assertEquals(facade.getWordAt(2), getWord(REF, 5));
 		assertEquals(facade.getWordAt(1), getWord(STR, 4));
@@ -112,7 +112,7 @@ public final class ZipFacadeTest {
 				getWord(REF, 1),
 				getWord(REF, 3),
 				getWord(STR, 4),
-				getWord(FUNCTOR, 1),
+				getWord(FUNC, 1),
 				getWord(REF, 5),
 				getWord(REF, 6),
 				getWord(REF, 7)
@@ -164,16 +164,16 @@ public final class ZipFacadeTest {
 				getWord(LIS, 1),    // First term
 				getWord(CONS, 1),
 				getWord(STR, 3),
-				getWord(FUNCTOR, 0),
+				getWord(FUNC, 0),
 				getWord(REF, 6),
 				getWord(REF, 5),
 				getWord(STR, 7),
-				getWord(FUNCTOR, 2),
+				getWord(FUNC, 2),
 				getWord(REF, 8),
 				getWord(LIS, 10),   // Second term
 				getWord(REF, 10),
 				getWord(STR, 12),
-				getWord(FUNCTOR, 0),
+				getWord(FUNC, 0),
 				getWord(REF, 13),
 				getWord(CONS, 3),
 				getWord(LIS, 16),   // Third term

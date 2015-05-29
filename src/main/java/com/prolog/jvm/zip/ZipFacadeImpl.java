@@ -14,17 +14,13 @@ import static com.prolog.jvm.zip.util.MemoryConstants.MIN_PDL_INDEX;
 import static com.prolog.jvm.zip.util.MemoryConstants.MIN_SCRATCHPAD_INDEX;
 import static com.prolog.jvm.zip.util.MemoryConstants.MIN_TRAIL_INDEX;
 import static com.prolog.jvm.zip.util.PlWords.CONS;
-import static com.prolog.jvm.zip.util.PlWords.FUNCTOR;
+import static com.prolog.jvm.zip.util.PlWords.FUNC;
 import static com.prolog.jvm.zip.util.PlWords.LIS;
 import static com.prolog.jvm.zip.util.PlWords.REF;
 import static com.prolog.jvm.zip.util.PlWords.STR;
 import static com.prolog.jvm.zip.util.PlWords.getWord;
 
-import java.io.IOException;
-import java.io.Writer;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import com.prolog.jvm.exceptions.BacktrackException;
 import com.prolog.jvm.symbol.ClauseSymbol;
@@ -272,7 +268,7 @@ public class ZipFacadeImpl implements ZipFacade {
 		assert symbol.getArity() > 0;
 
 		int result = getWord(STR,this.globalptr);
-		this.wordStore.writeTo(this.globalptr++,getWord(FUNCTOR, getConstantPoolIndex(symbol)));
+		this.wordStore.writeTo(this.globalptr++,getWord(FUNC, getConstantPoolIndex(symbol)));
 		for (int i = 0; i < symbol.getArity(); i++) {
 			int word = getWord(REF, this.globalptr);
 			this.wordStore.writeTo(this.globalptr++, word);
@@ -543,65 +539,6 @@ public class ZipFacadeImpl implements ZipFacade {
 		// Return the local stack frame address for the target frame
 		return this.targetfrm.localptr;
 	}
-
-	// === Answers ===
-
-	private final Map<Integer,String> varNames = new HashMap<>();
-	private int ctr;
-	private final Writer out = null; // TODO
-
-	private String getVarName(int addr) {
-		String result = this.varNames.get(addr);
-		if (result == null) {
-			result = "?" + this.ctr;
-			this.varNames.put(addr, result);
-		}
-		return result;
-	}
-
-	// TODO Unit test this!!!
-	// Note: first call should ensure addr >= MIN_LOCAL_INDEX && addr <= MAX_LOCAL_INDEX
-	private final void walkCode(final int addr) throws IOException {
-		int word = getWordAt(addr);
-		switch (PlWords.getTag(word)) {
-		case REF:
-			// Since we already dereferenced, value must be equal to addr
-			this.out.write(getVarName(addr));
-		case STR:
-			walkCode(PlWords.getValue(addr));
-		case LIS: {
-			int headAddr = PlWords.getValue(word);
-			this.out.write("[");
-			walkCode(headAddr);
-			this.out.write(", ");
-			walkCode(headAddr + 1);
-			this.out.write("]");
-		}
-		case FUNCTOR: {
-			int index = PlWords.getValue(word);
-			FunctorSymbol symbol = getConstant(index, FunctorSymbol.class);
-			assert symbol.getArity() > 0;
-			this.out.write(symbol.getName());
-			this.out.write('(');
-			for (int i = 1; i <= symbol.getArity(); i++) {
-				walkCode(addr + i);
-				if (i < symbol.getArity()) {
-					this.out.write(", ");
-				}
-			}
-			this.out.write(')');
-		}
-		case CONS: {
-			int index = PlWords.getValue(word);
-			FunctorSymbol symbol = getConstant(index, FunctorSymbol.class);
-			assert symbol.getArity() == 0;
-			this.out.write(symbol.getName());
-		}
-		default:
-			throw new AssertionError();
-		}
-	}
-
 
 	private static final class ActivationRecordImpl implements ActivationRecord {
 

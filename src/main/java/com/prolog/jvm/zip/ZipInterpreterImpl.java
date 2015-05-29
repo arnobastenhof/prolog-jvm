@@ -14,14 +14,19 @@ import static com.prolog.jvm.zip.util.Instructions.POP;
 import static com.prolog.jvm.zip.util.Instructions.VAR;
 import static com.prolog.jvm.zip.util.MemoryConstants.MIN_LOCAL_INDEX;
 import static com.prolog.jvm.zip.util.PlWords.CONS;
+import static com.prolog.jvm.zip.util.PlWords.FUNC;
 import static com.prolog.jvm.zip.util.PlWords.REF;
 import static com.prolog.jvm.zip.util.PlWords.STR;
 import static com.prolog.jvm.zip.util.PlWords.getWord;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 import com.prolog.jvm.exceptions.BacktrackException;
+import com.prolog.jvm.main.Factory;
 import com.prolog.jvm.symbol.ClauseSymbol;
 import com.prolog.jvm.symbol.FunctorSymbol;
 import com.prolog.jvm.symbol.PredicateSymbol;
@@ -137,7 +142,7 @@ public final class ZipInterpreterImpl implements ZipInterpreter {
 				case ARG | EXIT: {
 					// If popSourceFrame returns true, that means we're done
 					if (this.facade.popSourceFrame()) {
-						out.write(this.SUCCESS);
+						writeAnswer(out);
 						return;
 					}
 					// Else, push a new target frame
@@ -288,5 +293,73 @@ public final class ZipInterpreterImpl implements ZipInterpreter {
 	private <T extends Symbol> T readSymbolOperand(Class<T> clazz) {
 		int index = this.facade.readOperand(false);
 		return this.facade.getConstant(index, clazz);
+	}
+
+	// == Answers ===
+
+	private void writeAnswer(Writer out) throws IOException {
+		Set<Integer> set = new HashSet<>();
+		set.addAll(Factory.getQueryVars().keySet());
+		if (set.isEmpty()) {
+			out.write(this.SUCCESS);
+			return;
+		}
+		for (Integer i : set) {
+			out.append(Factory.getQueryVars().get(i)).write(" = ");
+			walkCode(i.intValue(), out);
+			out.write('\n');
+		}
+	}
+
+	private String getVarName(int addr) {
+		Map<Integer,String> queryVars = Factory.getQueryVars();
+		Integer address = Integer.valueOf(addr);
+		String result = queryVars.get(address);
+		if (result == null) {
+			result = "?" + queryVars.keySet().size();
+			queryVars.put(address, result);
+		}
+		return result;
+	}
+
+	private final void walkCode(int addr, Writer out)
+			throws IOException {
+		int word = this.facade.getWordAt(addr);
+		switch (PlWords.getTag(word)) {
+		case REF: {
+			// Since we already dereferenced, value must be equal to addr
+			out.write(getVarName(addr));
+			return;
+		}
+		case STR: {
+			walkCode(PlWords.getValue(word), out);
+			return;
+		}
+		case FUNC: {
+			int index = PlWords.getValue(word);
+			FunctorSymbol symbol =
+					this.facade.getConstant(index, FunctorSymbol.class);
+			assert symbol.getArity() > 0;
+			out.append(symbol.getName()).write('(');
+			for (int i = 1; i <= symbol.getArity(); i++) {
+				walkCode(addr + i, out);
+				if (i < symbol.getArity()) {
+					out.write(", ");
+				}
+			}
+			out.write(')');
+			return;
+		}
+		case CONS: {
+			int index = PlWords.getValue(word);
+			FunctorSymbol symbol =
+					this.facade.getConstant(index, FunctorSymbol.class);
+			assert symbol.getArity() == 0;
+			out.write(symbol.getName());
+			return;
+		}
+		default:
+			throw new AssertionError();
+		}
 	}
 }

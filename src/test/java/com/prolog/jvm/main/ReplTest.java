@@ -31,9 +31,11 @@ public final class ReplTest {
 		buffer.append("grandparent(hera, harmonia).\n");
 		buffer.append("ancestor(zeus, harmonia).\n");
 		buffer.append("grandparent(dionisius, zeus).\n");
+		buffer.append("parent(zeus,X), parent(X,harmonia).\n");
 		buffer.append("halt\n");
 
-		assertEquals(runQueries(EXAMPLE_1,buffer.toString()),"yes\nyes\nno\n");
+		assertEquals(runQueries(EXAMPLE_1,buffer.toString()),
+				"yes\nyes\nno\nX = ares\n");
 	}
 
 	@Test
@@ -41,9 +43,11 @@ public final class ReplTest {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("append(cons(a,[]),cons(b,[]),cons(a,cons(b,[]))).\n");
 		buffer.append("reverse(cons(a,cons(b,[])),cons(b,cons(a,[]))).\n");
+		buffer.append("reverse(cons(a,cons(b,[])),X).\n");
 		buffer.append("halt\n");
 
-		assertEquals(runQueries(EXAMPLE_2,buffer.toString()),"yes\nyes\n");
+		assertEquals(runQueries(EXAMPLE_2,buffer.toString()),
+				"yes\nyes\nX = cons(b, cons(a, []))\n");
 	}
 
 	private String runQueries(String resource, String queries)

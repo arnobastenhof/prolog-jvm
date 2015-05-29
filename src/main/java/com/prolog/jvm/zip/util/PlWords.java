@@ -72,7 +72,7 @@ public final class PlWords {
 	 * Tag used for functors. The value of a functor consists of a pointer to
 	 * to a data aggregate containing both the atom and arity.
 	 */
-	public static final int FUNCTOR = 4;
+	public static final int FUNC = 4;
 
 	/**
 	 * Tag used for representing constants.
@@ -89,7 +89,7 @@ public final class PlWords {
 		map.put(REF,"REF");
 		map.put(STR, "STR");
 		map.put(LIS, "LIS");
-		map.put(FUNCTOR, "FUNCTOR");
+		map.put(FUNC, "FUNCTOR");
 		map.put(CONS, "CONS");
 		TAGS = Collections.unmodifiableMap(map);
 	}

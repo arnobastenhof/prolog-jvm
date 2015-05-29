@@ -1,5 +1,6 @@
 package com.prolog.jvm.main;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static com.prolog.jvm.zip.util.MemoryConstants.MAX_CODE_INDEX;
 import static com.prolog.jvm.zip.util.MemoryConstants.MAX_GLOBAL_INDEX;
 import static com.prolog.jvm.zip.util.MemoryConstants.MAX_LOCAL_INDEX;
@@ -15,16 +16,20 @@ import static com.prolog.jvm.zip.util.MemoryConstants.MIN_SCRATCHPAD_INDEX;
 import static com.prolog.jvm.zip.util.MemoryConstants.MIN_TRAIL_INDEX;
 
 import java.io.IOException;
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import com.prolog.jvm.compiler.Compiler;
+import com.prolog.jvm.compiler.AbstractCompiler;
 import com.prolog.jvm.compiler.ast.Ast;
 import com.prolog.jvm.compiler.ast.AstWalker;
 import com.prolog.jvm.compiler.parser.PrologParser;
 import com.prolog.jvm.compiler.parser.Tokens;
 import com.prolog.jvm.compiler.visitor.PrologVisitor;
+import com.prolog.jvm.compiler.visitor.QueryVariableTracker;
 import com.prolog.jvm.compiler.visitor.SourcePass;
 import com.prolog.jvm.exceptions.RecognitionException;
 import com.prolog.jvm.symbol.Scope;
@@ -58,6 +63,12 @@ public final class Factory {
 	 * are compiled separately, we have to cache this scope in between.
 	 */
 	private static Scope rootScope;
+
+	/*
+	 * Tracks the names of query variables and the local stack addresses at
+	 * which said variables are allocated.
+	 */
+	private static Map<Integer,String> queryVars = new HashMap<>();
 
 	static {
 		CONSTANT_POOL = new ArrayList<>();
@@ -133,12 +144,12 @@ public final class Factory {
 	}
 
 	/**
-	 * Returns a new {@link Compiler} instance for Prolog programs.
+	 * Returns a new {@link AbstractCompiler} instance for Prolog programs.
 	 */
-	public static final Compiler newProgramCompiler() {
+	public static final AbstractCompiler newProgramCompiler() {
 		rootScope = Scope.newRootInstance();
 		PROLOG_BYTECODE.setMemento(BYTECODE_MEMENTO);
-		return new Compiler(PROLOG_BYTECODE, rootScope) {
+		return new AbstractCompiler(PROLOG_BYTECODE, rootScope) {
 
 			@Override
 			protected SourcePass createSourcePassVisitor() {
@@ -159,28 +170,24 @@ public final class Factory {
 	}
 
 	/**
-	 * Returns a new {@link Compiler} instance for Prolog queries.
+	 * Returns a new {@link AbstractCompiler} instance for Prolog queries.
 	 */
-	public static final Compiler newQueryCompiler() {
-		return new Compiler(PROLOG_BYTECODE, Scope.copyOf(rootScope)) {
+	public static final AbstractCompiler newQueryCompiler() {
+		queryVars.clear();
+		return new QueryCompiler(
+				PROLOG_BYTECODE, Scope.copyOf(rootScope), queryVars);
+	}
 
-			@Override
-			protected SourcePass createSourcePassVisitor() {
-				return new SourcePass(Tokens.IMPLIES);
-			}
-
-			@Override
-			protected void parseSource(PrologParser parser)
-					throws IOException, RecognitionException {
-				parser.parseQuery();
-			}
-
-			@Override
-			protected void walkAst(Ast root, PrologVisitor<Ast> visitor) {
-				AstWalker.INSTANCE.walkQuery(root, visitor);
-			}
-
-		};
+	/**
+	 * Returns the correspondence between the names of query variables and
+	 * their local stack addresses, used for writing out answers. Repeated
+	 * invocations of this method are guaranteed to return the same instance.
+	 * Moreover, the latter is cleared every time {@link #newQueryCompiler()}
+	 * is called, and filled after {@link AbstractCompiler#compile(Reader)} is
+	 * invoked on the instance returned thereby.
+	 */
+	public static final Map<Integer,String> getQueryVars() {
+		return queryVars;
 	}
 
 	private enum MemoryAreas implements MemoryArea {
@@ -226,6 +233,41 @@ public final class Factory {
 				throw new IndexOutOfBoundsException();
 			}
 		}
+	}
+
+	private static final class QueryCompiler extends AbstractCompiler {
+
+		private final Map<Integer,String> queryVars;
+
+		public QueryCompiler(PrologBytecode<?> code, Scope scope,
+				Map<Integer,String> queryVars) {
+			super(code, scope);
+			this.queryVars = checkNotNull(queryVars);
+		}
+
+		@Override
+		public void compile(Reader source)
+				throws IOException, RecognitionException {
+			super.compile(source);
+			walkAst(this.root, new QueryVariableTracker(this.symbols, this.queryVars));
+		}
+
+		@Override
+		protected SourcePass createSourcePassVisitor() {
+			return new SourcePass(Tokens.IMPLIES);
+		}
+
+		@Override
+		protected void parseSource(PrologParser parser)
+				throws IOException, RecognitionException {
+			parser.parseQuery();
+		}
+
+		@Override
+		protected void walkAst(Ast root, PrologVisitor<Ast> visitor) {
+			AstWalker.INSTANCE.walkQuery(root, visitor);
+		}
+
 	}
 
 }

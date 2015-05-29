@@ -13,6 +13,7 @@ import com.prolog.jvm.compiler.visitor.PrologVisitor;
 import com.prolog.jvm.compiler.visitor.SourcePass;
 import com.prolog.jvm.compiler.visitor.SymbolResolver;
 import com.prolog.jvm.exceptions.RecognitionException;
+import com.prolog.jvm.main.Factory;
 import com.prolog.jvm.symbol.Scope;
 import com.prolog.jvm.symbol.Symbol;
 import com.prolog.jvm.zip.api.PrologBytecode;
@@ -20,14 +21,32 @@ import com.prolog.jvm.zip.api.PrologBytecode;
 /**
  * Abstract implementation of a Prolog compiler based on the Template method
  * design pattern, allowing for implementations targeting either programs
- * or queries.
+ * or queries. It is recommended that client code obtains instances through
+ * one of the static factory methods on {@link Factory}.
  *
  * @author Arno Bastenhof
  */
-public abstract class Compiler {
+public abstract class AbstractCompiler {
 
 	private final PrologBytecode<?> code;
 	private final Scope scope;
+
+	/**
+	 * The {@link Ast} that is built while executing {@link #compile(Reader)},
+	 * made available for subclasses for the purpose of adding extra compiler
+	 * passes (i.e., by overriding said method and first calling its super
+	 * implementation).
+	 */
+	protected Ast root;
+
+	/**
+	 * The correspondence between {@link Ast}'s and the symbols to which they
+	 * have been resolved while executing {@link #compile(Reader)}, made
+	 * available for subclasses for the purpose of adding extra compiler passes
+	 * (i.e., by overriding said method and first calling its super
+	 * implementation).
+	 */
+	protected Map<Ast,Symbol> symbols;
 
 	/**
 	 *
@@ -35,17 +54,20 @@ public abstract class Compiler {
 	 * allowed to be null
 	 * @param scope the ground scope to use when resolving symbols; not allowed
 	 * to be null
-	 * @throws NullPointerException if {@code code == null} if {@code scope ==
-	 * null}
+	 * @throws NullPointerException if {@code code == null || scope == null}
 	 *
 	 */
-	protected Compiler(PrologBytecode<?> code, Scope scope) {
+	protected AbstractCompiler(PrologBytecode<?> code, Scope scope) {
 		this.code = checkNotNull(code);
 		this.scope = checkNotNull(scope);
 	}
 
 	/**
-	 * Compiles the specified {@code source}.
+	 * Compiles the specified {@code source} by building an {@link Ast},
+	 * resolving {@link Symbol}s and generating bytecode. Intermediate results
+	 * are made available through {@link #root} and {@link #symbols}, allowing
+	 * subclasses to add additional passes by overriding this method and first
+	 * calling the current (super) implementation.
 	 *
 	 * @param source a reader for a program or -query; not allowed to be null
 	 * @throws IOException
@@ -54,9 +76,9 @@ public abstract class Compiler {
 	 */
 	public void compile(Reader source)
 			throws IOException, RecognitionException {
-		Ast ast = constructAst(checkNotNull(source));
-		Map<Ast, Symbol> symbols = resolveSymbols(ast);
-		generateBytecode(ast, symbols);
+		this.root = constructAst(checkNotNull(source));
+		this.symbols = resolveSymbols(this.root);
+		generateBytecode(this.root, this.symbols);
 	}
 
 	// First compiler pass.

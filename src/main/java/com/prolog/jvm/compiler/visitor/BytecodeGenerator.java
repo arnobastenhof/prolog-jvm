@@ -34,9 +34,8 @@ import com.prolog.jvm.zip.api.PrologBytecode;
  * @author Arno Bastenhof
  *
  */
-public final class BytecodeGenerator extends BasicPrologVisitor<Ast> {
+public final class BytecodeGenerator extends AbstractSymbolVisitor {
 
-	private final Map<Ast,Symbol> symbols;
 	private final PrologBytecode<?> code;
 
 	/**
@@ -47,13 +46,8 @@ public final class BytecodeGenerator extends BasicPrologVisitor<Ast> {
 	 * @throws NullPointerException if {@code symbols == null}
 	 */
 	public BytecodeGenerator(Map<Ast,Symbol> symbols, PrologBytecode<?> code) {
-		this.symbols = checkNotNull(symbols);
+		super(symbols);
 		this.code = checkNotNull(code);
-	}
-
-	private <T extends Symbol> T getSymbol(Ast node, Class<T> clazz) {
-		Symbol symbol = this.symbols.get(node);
-		return clazz.cast(symbol);
 	}
 
 	@Override
