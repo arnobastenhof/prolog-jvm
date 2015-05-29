@@ -72,13 +72,13 @@ public final class MemoryConstants {
 	public static final int MAX_SCRATCHPAD_INDEX = 24000511;
 
 	/**
-	 * The smallest address in virtual memory for use by the code memory.
+	 * The smallest address in virtual memory for use by the heap.
 	 */
-	public static final int MIN_CODE_INDEX = MAX_SCRATCHPAD_INDEX + 1;
+	public static final int MIN_HEAP_INDEX = MAX_SCRATCHPAD_INDEX + 1;
 
 	/**
-	 * The largest address in virtual memory for use by the code memory.
+	 * The largest address in virtual memory for use by the heap.
 	 */
-	public static final int MAX_CODE_INDEX = MEMORY_SIZE - 1;
+	public static final int MAX_HEAP_INDEX = MEMORY_SIZE - 1;
 
 }

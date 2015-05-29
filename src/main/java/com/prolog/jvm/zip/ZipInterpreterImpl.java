@@ -287,7 +287,7 @@ public final class ZipInterpreterImpl implements ZipInterpreter {
 		// Set the machine mode and jump to the first clause alternative for
 		// the called predicate
 		this.facade.setMode(MATCH);
-		return this.facade.jump(symbol.getCode());
+		return this.facade.jump(symbol.getHeapptr());
 	}
 
 	private <T extends Symbol> T readSymbolOperand(Class<T> clazz) {

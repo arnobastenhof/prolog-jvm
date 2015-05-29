@@ -23,8 +23,10 @@ import com.prolog.jvm.zip.util.PlWords;
  * <li> A small scratchpad area, used for storing return addresses and the
  * machine mode while executing bytecode instructions in between
  * {@link Instructions#FUNCTOR} and {@link Instructions#POP}.
- * <li> The code memory, storing the bytecode instructions for a compiled
- * program and for the compiled queries executed against it.
+ * <li> The heap, storing the bytecode instructions for a compiled program
+ * and for the compiled queries executed against it. (Note this terminology
+ * differs from that of [1], where 'heap' is used as a synonym for the global
+ * stack.)
  * </ul>
  * The global and local stacks are to be placed together in the lower memory
  * region, as is necessary to ensure their cells can be addressed by {@link
@@ -32,6 +34,9 @@ import com.prolog.jvm.zip.util.PlWords;
  * representation of {@link PlWords}, the combined size of the global- and
  * local stacks is constrained by the largest array cell that can be addressed
  * using a 24-bit unsigned integer.
+ * <p>
+ * [1] Aït-Kaci, Hassan. "Warren's Abstract Machine A Tutorial Reconstruction."
+ * (1999).
  *
  * @author Arno Bastenhof
  */

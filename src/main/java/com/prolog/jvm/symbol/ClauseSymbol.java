@@ -20,7 +20,7 @@ public final class ClauseSymbol implements Symbol {
 
 	private int params;        // number of parameters
 	private int locals;        // number of local variables
-	private int code;          // offset into code area
+	private int heapptr;       // offset into heap
 	private ClauseSymbol next; // next clause alternative
 
 	/**
@@ -50,15 +50,15 @@ public final class ClauseSymbol implements Symbol {
 	}
 
 	/**
-	 * Sets the offset into the code area of the bytecode block for the clause
+	 * Sets the offset into the heap of the bytecode block for the clause
 	 * represented by this symbol.
 	 *
-	 * @param code an offset into the code area; must  be {@code >= 0}
+	 * @param heapptr an offset into the heap; must  be {@code >= 0}
 	 * @throws IllegalArgumentException if {@code code < 0}
 	 */
-	public void setCode(int code) {
-		checkArgument(code >= 0);
-		this.code = code;
+	public void setHeapptr(int heapptr) {
+		checkArgument(heapptr >= 0);
+		this.heapptr = heapptr;
 	}
 
 	/**
@@ -90,11 +90,11 @@ public final class ClauseSymbol implements Symbol {
 	}
 
 	/**
-	 * Returns the offset into the code area of the bytecode block for the
-	 * clause represented by this symbol.
+	 * Returns the offset into the heap of the bytecode block for the clause
+	 * represented by this symbol.
 	 */
-	public int getCode() {
-		return this.code;
+	public int getHeapptr() {
+		return this.heapptr;
 	}
 
 	/**

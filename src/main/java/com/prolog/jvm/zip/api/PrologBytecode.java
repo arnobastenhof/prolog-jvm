@@ -24,8 +24,8 @@ public interface PrologBytecode<M extends PrologBytecode.Memento> {
 	 * {@link Instructions#VAR}, {@link Instructions#FISTVAR},
 	 * {@link Instructions#CALL} or {@link Instructions#ENTER}
 	 * @param operand the instruction's operand
-	 * @throws IndexOutOfBoundsException if the code area has grown to its
-	 * maximum size, as defined by {@link ProcessorModes#CODE_SIZE}
+	 * @throws IndexOutOfBoundsException if the heap has grown to its maximum
+	 * size
 	 * @throws IllegalArgumentException if {@code opcode} is not one of the
 	 * permitted opcodes
 	 */
@@ -36,17 +36,17 @@ public interface PrologBytecode<M extends PrologBytecode.Memento> {
 	 *
 	 * @param opcode the instruction's opcode; must be one of
 	 * {@link Instructions#POP} or {@link Instructions#EXIT}
-	 * @throws IndexOutOfBoundsException if the code area has grown to its
-	 * maximum size, as defined by {@link ProcessorModes#CODE_SIZE}
+	 * @throws IndexOutOfBoundsException if the heap has grown to its
+	 * maximum size
 	 * @throws IllegalArgumentException if {@code opcode} is not one of the
 	 * permitted opcodes
 	 */
 	void writeIns(int opcode);
 
 	/**
-	 * Reads an integer from the specified address in the code area.
+	 * Reads an integer from the specified address in the heap.
 	 *
-	 * @param address the address in the code area to read from
+	 * @param address the address in the heap to read from
 	 * @throws IndexOutOfBoundsException if {@code address < 0 ||
 	 * address >= ZipConstants.CODE_SIZE}
 	 */
@@ -75,7 +75,7 @@ public interface PrologBytecode<M extends PrologBytecode.Memento> {
 	 * Meant for invocation immediately after compilation of a program, and
 	 * prior to compiling the first query. The returned memento may then be
 	 * (re)used through {@link #setMemento(Memento)} each time after a query
-	 * has been executed to prevent the code area from overflowing.
+	 * has been executed to prevent the heap from overflowing.
 	 */
 	M createMemento();
 

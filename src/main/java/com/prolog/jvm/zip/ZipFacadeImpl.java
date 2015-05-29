@@ -5,10 +5,10 @@ import static com.google.common.base.Preconditions.checkState;
 import static com.prolog.jvm.zip.util.Instructions.ARG;
 import static com.prolog.jvm.zip.util.Instructions.COPY;
 import static com.prolog.jvm.zip.util.Instructions.MATCH;
-import static com.prolog.jvm.zip.util.MemoryConstants.MAX_CODE_INDEX;
+import static com.prolog.jvm.zip.util.MemoryConstants.MAX_HEAP_INDEX;
 import static com.prolog.jvm.zip.util.MemoryConstants.MAX_LOCAL_INDEX;
-import static com.prolog.jvm.zip.util.MemoryConstants.MIN_CODE_INDEX;
 import static com.prolog.jvm.zip.util.MemoryConstants.MIN_GLOBAL_INDEX;
+import static com.prolog.jvm.zip.util.MemoryConstants.MIN_HEAP_INDEX;
 import static com.prolog.jvm.zip.util.MemoryConstants.MIN_LOCAL_INDEX;
 import static com.prolog.jvm.zip.util.MemoryConstants.MIN_PDL_INDEX;
 import static com.prolog.jvm.zip.util.MemoryConstants.MIN_SCRATCHPAD_INDEX;
@@ -51,7 +51,7 @@ public class ZipFacadeImpl implements ZipFacade {
 	private final List<Object> constants;
 
 	// Memory areas
-	private final MemoryArea codeMemory;
+	private final MemoryArea heap;
 	private final MemoryArea globalStack;
 	private final MemoryArea localStack;
 	private final MemoryArea wordStore;
@@ -77,7 +77,8 @@ public class ZipFacadeImpl implements ZipFacade {
 	 * that are used only for unit testing specific methods, and for which not
 	 * all of the parameters below are actually needed.
 	 *
-	 * @param code the compiled Prolog program and -query
+	 * @param constants the constant pool
+	 * @param heap the memory area used for storing the bytecode instructions
 	 * @param globalStack the memory area used for the global stack
 	 * @param localStack the memory area used for the local stack
 	 * @param wordStore the combined memory areas for the global and local
@@ -87,12 +88,12 @@ public class ZipFacadeImpl implements ZipFacade {
 	 * @param scratchpad the memory area used for the scratchpad
 	 */
 	protected ZipFacadeImpl(
-			List<Object> constants, MemoryArea codeMemory,
+			List<Object> constants, MemoryArea heap,
 			MemoryArea globalStack, MemoryArea localStack,
 			MemoryArea wordStore, MemoryArea trailStack,
 			MemoryArea pdl, MemoryArea scratchpad) {
 		this.constants = constants;
-		this.codeMemory = codeMemory;
+		this.heap = heap;
 		this.globalStack = globalStack;
 		this.localStack = localStack;
 		this.wordStore = wordStore;
@@ -162,7 +163,7 @@ public class ZipFacadeImpl implements ZipFacade {
 	 */
 	@Override
 	public final void reset(int queryAddr) {
-		if (queryAddr < MIN_CODE_INDEX || queryAddr > MAX_CODE_INDEX) {
+		if (queryAddr < MIN_HEAP_INDEX || queryAddr > MAX_HEAP_INDEX) {
 			throw new IndexOutOfBoundsException();
 		}
 		this.mode = MATCH;
@@ -216,12 +217,12 @@ public class ZipFacadeImpl implements ZipFacade {
 
 	@Override
 	public final int readOperator() {
-		return this.mode | this.codeMemory.readFrom(this.programctr++);
+		return this.mode | this.heap.readFrom(this.programctr++);
 	}
 
 	@Override
 	public final int readOperand(boolean isVariable) {
-		int result = this.codeMemory.readFrom(this.programctr++);
+		int result = this.heap.readFrom(this.programctr++);
 		if (!isVariable) {
 			return result;
 		}
@@ -252,7 +253,7 @@ public class ZipFacadeImpl implements ZipFacade {
 	public final int jump(int address) {
 		// API sacrifices preconditions for performance, so use asserts instead
 		assert this.targetfrm != null;
-		assert address >= MIN_CODE_INDEX && address <= MAX_CODE_INDEX;
+		assert address >= MIN_HEAP_INDEX && address <= MAX_HEAP_INDEX;
 
 		this.targetfrm.programctr = this.programctr;
 		this.programctr = address;
@@ -516,7 +517,7 @@ public class ZipFacadeImpl implements ZipFacade {
 		}
 
 		// Restore machine state and unwind the trail
-		this.programctr = this.choicepnt.clause.getCode();
+		this.programctr = this.choicepnt.clause.getHeapptr();
 		if (this.choicepnt.sourcefrm != null) { // choicepnt != targetfrm
 			this.sourcefrm = this.choicepnt.sourcefrm;
 			this.targetfrm = this.choicepnt;
@@ -578,13 +579,13 @@ public class ZipFacadeImpl implements ZipFacade {
 		public ZipFacadeImpl build() {
 			// Build the facade
 			ZipFacadeImpl facade = new ZipFacadeImpl(
-					this.constants, this.codeMemory, this.globalStack,
+					this.constants, this.heap, this.globalStack,
 					this.localStack, this.wordStore, this.trailStack,
 					this.pdl, this.scratchpad);
 
 			// Validate
 			checkState(facade.constants != null);
-			checkState(facade.codeMemory != null);
+			checkState(facade.heap != null);
 			checkState(facade.globalStack != null);
 			checkState(facade.localStack != null);
 			checkState(facade.wordStore != null);

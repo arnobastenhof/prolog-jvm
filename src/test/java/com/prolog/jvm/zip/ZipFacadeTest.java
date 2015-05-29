@@ -231,11 +231,11 @@ public final class ZipFacadeTest {
 	private static final class ZipFacadeMockImpl extends ZipFacadeImpl {
 
 		private ZipFacadeMockImpl(
-				List<Object> constants, MemoryArea codeMemory,
+				List<Object> constants, MemoryArea heap,
 				MemoryArea globalStack, MemoryArea localStack,
 				MemoryArea wordStore, MemoryArea trailStack,
 				MemoryArea pdl, MemoryArea scratchpad) {
-			super(constants, codeMemory, globalStack, localStack,
+			super(constants, heap, globalStack, localStack,
 					wordStore, trailStack, pdl, scratchpad);
 		}
 
@@ -268,7 +268,7 @@ public final class ZipFacadeTest {
 
 			@Override
 			public ZipFacadeMockImpl build() {
-				return new ZipFacadeMockImpl(this.constants, this.codeMemory,
+				return new ZipFacadeMockImpl(this.constants, this.heap,
 						this.globalStack, this.localStack, this.wordStore,
 						this.trailStack, this.pdl, this.scratchpad);
 			}

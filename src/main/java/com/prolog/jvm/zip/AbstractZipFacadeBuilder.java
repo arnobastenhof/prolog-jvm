@@ -23,7 +23,7 @@ implements ZipFacade.Builder<T> {
 	 * The memory area used for storing the bytecode instructions. Defaults to
 	 * null.
 	 */
-	protected MemoryArea codeMemory;
+	protected MemoryArea heap;
 
 	/**
 	 * The memory area used for the global stack. Defaults to null.
@@ -63,8 +63,8 @@ implements ZipFacade.Builder<T> {
 	}
 
 	@Override
-	public ZipFacade.Builder<T> setCodeMemory(MemoryArea codeMemory) {
-		this.codeMemory = codeMemory;
+	public ZipFacade.Builder<T> setHeap(MemoryArea heap) {
+		this.heap = heap;
 		return this;
 	}
 

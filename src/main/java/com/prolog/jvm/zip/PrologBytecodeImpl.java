@@ -29,7 +29,7 @@ public final class PrologBytecodeImpl implements PrologBytecode<MementoImpl> {
 	private final MemoryArea code;
 	private final List<Object> constants;
 
-	private int codeptr = MemoryConstants.MIN_CODE_INDEX;
+	private int codeptr = MemoryConstants.MIN_HEAP_INDEX;
 
 	public PrologBytecodeImpl(List<Object> constants, MemoryArea code) {
 		this.constants = checkNotNull(constants);
@@ -101,7 +101,7 @@ public final class PrologBytecodeImpl implements PrologBytecode<MementoImpl> {
 	 *
 	 */
 	public static class MementoImpl implements PrologBytecode.Memento {
-		private final int codeptr;  // allocated code area top
+		private final int codeptr;  // allocated heap top
 		private final int poolSize; // constant pool size
 
 		// Private constructor so only the surrounding class can invoke it

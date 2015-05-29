@@ -53,7 +53,7 @@ public final class BytecodeGenerator extends AbstractSymbolVisitor {
 	@Override
 	public void preVisitClause(Ast clause) {
 		ClauseSymbol symbol = getSymbol(clause,ClauseSymbol.class);
-		symbol.setCode(this.code.getCodeSize());
+		symbol.setHeapptr(this.code.getCodeSize());
 	}
 
 	@Override

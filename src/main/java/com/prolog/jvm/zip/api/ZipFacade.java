@@ -233,7 +233,7 @@ public interface ZipFacade {
 		 * Sets the memory area used for storing the bytecode instructions
 		 * (allowed to be null).
 		 */
-		Builder<T> setCodeMemory(MemoryArea codeMemory);
+		Builder<T> setHeap(MemoryArea heap);
 
 		/**
 		 * Sets the memory area used for the global stack (allowed to be null).

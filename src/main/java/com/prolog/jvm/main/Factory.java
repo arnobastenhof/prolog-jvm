@@ -1,14 +1,14 @@
 package com.prolog.jvm.main;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.prolog.jvm.zip.util.MemoryConstants.MAX_CODE_INDEX;
+import static com.prolog.jvm.zip.util.MemoryConstants.MAX_HEAP_INDEX;
 import static com.prolog.jvm.zip.util.MemoryConstants.MAX_GLOBAL_INDEX;
 import static com.prolog.jvm.zip.util.MemoryConstants.MAX_LOCAL_INDEX;
 import static com.prolog.jvm.zip.util.MemoryConstants.MAX_PDL_INDEX;
 import static com.prolog.jvm.zip.util.MemoryConstants.MAX_SCRATCHPAD_INDEX;
 import static com.prolog.jvm.zip.util.MemoryConstants.MAX_TRAIL_INDEX;
 import static com.prolog.jvm.zip.util.MemoryConstants.MEMORY_SIZE;
-import static com.prolog.jvm.zip.util.MemoryConstants.MIN_CODE_INDEX;
+import static com.prolog.jvm.zip.util.MemoryConstants.MIN_HEAP_INDEX;
 import static com.prolog.jvm.zip.util.MemoryConstants.MIN_GLOBAL_INDEX;
 import static com.prolog.jvm.zip.util.MemoryConstants.MIN_LOCAL_INDEX;
 import static com.prolog.jvm.zip.util.MemoryConstants.MIN_PDL_INDEX;
@@ -76,14 +76,14 @@ public final class Factory {
 		CONSTANT_POOL.add(null);
 
 		PROLOG_BYTECODE = new PrologBytecodeImpl(CONSTANT_POOL,
-				MemoryAreas.CODE_MEMORY);
+				MemoryAreas.HEAP);
 
 		// Keep a memento of PROLOG_BYTECODE in still pristine condition
 		BYTECODE_MEMENTO = PROLOG_BYTECODE.createMemento();
 
 		ZIP_FACADE = new ZipFacadeImpl.Builder().
 				setConstants(Collections.unmodifiableList(CONSTANT_POOL)).
-				setCodeMemory(MemoryAreas.CODE_MEMORY).
+				setHeap(MemoryAreas.HEAP).
 				setGlobalStack(MemoryAreas.GLOBAL_STACK).
 				setLocalStack(MemoryAreas.LOCAL_STACK).
 				setWordStore(MemoryAreas.WORD_STORE).
@@ -101,8 +101,8 @@ public final class Factory {
 
 	/**
 	 * Returns a representation of the compiled bytecode instructions for a
-	 * program and query, using addresses {@link ProcessorModes#MIN_CODE_INDEX}
-	 * up to and including {@link ProcessorModes#MAX_CODE_INDEX} for its code
+	 * program and query, using addresses {@link ProcessorModes#MIN_HEAP_INDEX}
+	 * up to and including {@link ProcessorModes#MAX_HEAP_INDEX} for its code
 	 * memory.
 	 * <p>
 	 * This method is guaranteed to return the same instance upon each of its
@@ -204,7 +204,7 @@ public final class Factory {
 
 		SCRATCHPAD(MIN_SCRATCHPAD_INDEX, MAX_SCRATCHPAD_INDEX),
 
-		CODE_MEMORY(MIN_CODE_INDEX, MAX_CODE_INDEX);
+		HEAP(MIN_HEAP_INDEX, MAX_HEAP_INDEX);
 
 		// Virtual memory
 		private static final int[] memory = new int[MEMORY_SIZE];
