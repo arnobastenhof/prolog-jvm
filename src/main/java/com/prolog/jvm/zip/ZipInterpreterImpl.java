@@ -299,15 +299,15 @@ public final class ZipInterpreterImpl implements ZipInterpreter {
 	// == Answers ===
 
 	private void writeAnswer(Writer out) throws IOException {
-		Set<Integer> set = new HashSet<>();
-		set.addAll(Factory.getQueryVars().keySet());
-		if (set.isEmpty()) {
+		Set<Integer> addresses = new HashSet<>();
+		addresses.addAll(Factory.getQueryVars().keySet());
+		if (addresses.isEmpty()) {
 			out.write(this.SUCCESS);
 			return;
 		}
-		for (Integer i : set) {
-			out.append(Factory.getQueryVars().get(i)).write(" = ");
-			walkCode(i.intValue(), out);
+		for (Integer address : addresses) {
+			out.append(Factory.getQueryVars().get(address)).write(" = ");
+			walkCode(address.intValue(), out);
 			out.write('\n');
 		}
 	}
