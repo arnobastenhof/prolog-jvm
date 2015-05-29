@@ -37,13 +37,14 @@ import com.prolog.jvm.zip.util.Instructions;
 import com.prolog.jvm.zip.util.PlWords;
 
 /**
- * Implementation of a {@link ZipInterpreter} targeting the minimal instruction
- * set described in [1], consisting of VAR, CONSTANT, FUNCTOR, POP, ENTER, CALL
- * and EXIT.
+ * Implementation of a {@link ZipInterpreter}, as described in [1] and [2].
  * <p>
  * [1] Bowen, David L., Lawrence Byrd, and William F. Clocksin. A portable
  * Prolog compiler. Department of Artificial Intelligence, University of
  * Edinburgh, 1983.
+ * <p>
+ * [2] Clocksin, William F. "Design and simulation of a sequential Prolog
+ * machine." New Generation Computing 3.1 (1985): 101-120.
  *
  * @author Arno Bastenhof
  *
