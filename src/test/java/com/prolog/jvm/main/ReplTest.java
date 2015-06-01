@@ -1,5 +1,9 @@
 package com.prolog.jvm.main;
 
+import static com.prolog.jvm.zip.util.ReplConstants.FAILURE;
+import static com.prolog.jvm.zip.util.ReplConstants.HALT;
+import static com.prolog.jvm.zip.util.ReplConstants.NEXT_ANSWER;
+import static com.prolog.jvm.zip.util.ReplConstants.SUCCESS;
 import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
@@ -27,27 +31,56 @@ public final class ReplTest {
 
 	@Test
 	public void ancestry() throws IOException {
-		StringBuilder buffer = new StringBuilder();
-		buffer.append("grandparent(hera, harmonia).\n");
-		buffer.append("ancestor(zeus, harmonia).\n");
-		buffer.append("grandparent(dionisius, zeus).\n");
-		buffer.append("parent(zeus,X), parent(X,harmonia).\n");
-		buffer.append("halt\n");
+		StringBuilder queries = new StringBuilder().
+				append("grandparent(hera, harmonia).\n").
+				append("ancestor(zeus, harmonia).\n").
+				append("grandparent(dionisius, zeus).\n").
+				append("parent(zeus,X), parent(X,harmonia).\n\n").
+				append("mother(X,dionisius).\n").
+				append(NEXT_ANSWER).append('\n').
+				append("father(zeus,Y).\n").
+				append(NEXT_ANSWER).append('\n').
+				append(NEXT_ANSWER).append('\n').
+				append(HALT).append('\n');
 
-		assertEquals(runQueries(EXAMPLE_1,buffer.toString()),
-				"yes\nyes\nno\nX = ares\n");
+		StringBuilder answers = new StringBuilder().
+				append(SUCCESS).
+				append(SUCCESS).
+				append(FAILURE).
+				append("X = ares\n").
+				append("X = semele\n").
+				append(FAILURE).
+				append("Y = ares\n").
+				append("Y = dionisius\n").
+				append(FAILURE);
+
+		assertEquals(runQueries(EXAMPLE_1, queries.toString()),
+				answers.toString());
 	}
 
 	@Test
 	public void lists() throws IOException {
-		StringBuilder buffer = new StringBuilder();
-		buffer.append("append(cons(a,[]),cons(b,[]),cons(a,cons(b,[]))).\n");
-		buffer.append("reverse(cons(a,cons(b,[])),cons(b,cons(a,[]))).\n");
-		buffer.append("reverse(cons(a,cons(b,[])),X).\n");
-		buffer.append("halt\n");
+		StringBuilder queries = new StringBuilder().
+				append("append(cons(a,[]),cons(b,[]),cons(a,cons(b,[]))).\n").
+				append("reverse(cons(a,cons(b,[])),cons(b,cons(a,[]))).\n").
+				append("reverse(cons(a,[]),X).\n").
+				append(NEXT_ANSWER).append('\n').
+				append("reverse(cons(a,cons(b,[])),X).\n").
+				append(NEXT_ANSWER).append('\n').
+				append("reverse(X,Y.\n").
+				append("halt\n");
 
-		assertEquals(runQueries(EXAMPLE_2,buffer.toString()),
-				"yes\nyes\nX = cons(b, cons(a, []))\n");
+		StringBuilder answers = new StringBuilder().
+				append(SUCCESS).
+				append(SUCCESS).
+				append("X = cons(a, [])\n").
+				append(FAILURE).
+				append("X = cons(b, cons(a, []))\n").
+				append(FAILURE).
+				append("<.;PERIOD> unexpected at line 1. Expected RBRACK.\n");
+
+		assertEquals(runQueries(EXAMPLE_2, queries.toString()),
+				answers.toString());
 	}
 
 	private String runQueries(String resource, String queries)

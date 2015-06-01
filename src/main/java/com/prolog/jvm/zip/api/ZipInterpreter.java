@@ -1,5 +1,6 @@
 package com.prolog.jvm.zip.api;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Writer;
 
@@ -18,9 +19,11 @@ public interface ZipInterpreter {
 	 * program counter to the supplied {@code queryAddress}.
 	 *
 	 * @param queryAddress the code memory address for a compiled query
+	 * @param in the source for reading in user commands
 	 * @param out the target for writing the answer to
 	 * @throws IOException
 	 */
-	public void execute(int queryAddress, Writer out) throws IOException;
+	public void execute(int queryAddress, BufferedReader in, Writer out)
+			throws IOException;
 
 }

@@ -18,7 +18,11 @@ import static com.prolog.jvm.zip.util.PlWords.FUNC;
 import static com.prolog.jvm.zip.util.PlWords.REF;
 import static com.prolog.jvm.zip.util.PlWords.STR;
 import static com.prolog.jvm.zip.util.PlWords.getWord;
+import static com.prolog.jvm.zip.util.ReplConstants.FAILURE;
+import static com.prolog.jvm.zip.util.ReplConstants.NEXT_ANSWER;
+import static com.prolog.jvm.zip.util.ReplConstants.SUCCESS;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.HashSet;
@@ -51,12 +55,6 @@ import com.prolog.jvm.zip.util.PlWords;
  */
 public final class ZipInterpreterImpl implements ZipInterpreter {
 
-	// indicates the query was found to be true
-	private final String SUCCESS = "yes\n";
-
-	// indicates the query was found to be false
-	private final String FAILURE = "no\n";
-
 	private final ZipFacade facade;
 
 	/**
@@ -68,7 +66,8 @@ public final class ZipInterpreterImpl implements ZipInterpreter {
 	}
 
 	@Override
-	public void execute(int queryAddress, Writer out) throws IOException {
+	public void execute(int queryAddress, BufferedReader in, Writer out)
+			throws IOException {
 		// Initialize the ZIP machine
 		this.facade.reset(queryAddress);
 
@@ -143,7 +142,10 @@ public final class ZipInterpreterImpl implements ZipInterpreter {
 				case ARG | EXIT: {
 					// If popSourceFrame returns true, that means we're done
 					if (this.facade.popSourceFrame()) {
-						writeAnswer(out);
+						if (writeAnswer(in, out)) {
+							this.facade.backtrack();
+							continue;
+						}
 						return;
 					}
 					// Else, push a new target frame
@@ -159,7 +161,7 @@ public final class ZipInterpreterImpl implements ZipInterpreter {
 			}
 		}
 		catch (BacktrackException e) {
-			out.write(this.FAILURE);
+			out.write(FAILURE);
 		}
 	}
 
@@ -168,7 +170,9 @@ public final class ZipInterpreterImpl implements ZipInterpreter {
 		int word = this.facade.getWordAt(addr);
 		switch (PlWords.getTag(word)) {
 		case REF: {
-			return writeFunctor(symbol, PlWords.getValue(word));
+			int address = PlWords.getValue(word);
+			this.facade.trail(address);
+			return writeFunctor(symbol, address);
 		}
 		case STR: {
 			int globalAddr = PlWords.getValue(word);
@@ -189,7 +193,9 @@ public final class ZipInterpreterImpl implements ZipInterpreter {
 		int word = this.facade.getWordAt(addr);
 		switch (PlWords.getTag(word)) {
 		case REF: {
-			this.facade.writeConstant(PlWords.getValue(word), symbol);
+			int address = PlWords.getValue(word);
+			this.facade.setWord(address, symbol);
+			this.facade.trail(address);
 			break;
 		}
 		case CONS: {
@@ -224,7 +230,7 @@ public final class ZipInterpreterImpl implements ZipInterpreter {
 
 	private int copyConstant(int addr) {
 		FunctorSymbol symbol = readSymbolOperand(FunctorSymbol.class);
-		this.facade.writeConstant(addr, symbol);
+		this.facade.setWord(addr, symbol);
 		return addr + 1;
 	}
 
@@ -298,18 +304,21 @@ public final class ZipInterpreterImpl implements ZipInterpreter {
 
 	// == Answers ===
 
-	private void writeAnswer(Writer out) throws IOException {
+	// Returns whether to backtrack and look for more answers
+	private boolean writeAnswer(BufferedReader in, Writer out)
+			throws IOException {
 		Set<Integer> addresses = new HashSet<>();
 		addresses.addAll(Factory.getQueryVars().keySet());
 		if (addresses.isEmpty()) {
-			out.write(this.SUCCESS);
-			return;
+			out.write(SUCCESS);
+			return false;
 		}
 		for (Integer address : addresses) {
 			out.append(Factory.getQueryVars().get(address)).write(" = ");
 			walkCode(address.intValue(), out);
 			out.write('\n');
 		}
+		return in.readLine().equals(NEXT_ANSWER);
 	}
 
 	private String getVarName(int addr) {

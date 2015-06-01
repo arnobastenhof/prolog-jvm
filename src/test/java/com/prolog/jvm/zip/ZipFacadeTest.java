@@ -127,17 +127,9 @@ public final class ZipFacadeTest {
 
 		// Mock backtrack global- and trail stack pointers
 		facade.backtrackGlobalptr = 5;
-		facade.backtrackLocalptr = 7;
 		facade.local = true;
 
-		// #1: Bind a local unbound variable to a global unbound variable (no
-		// trailing)
-		facade.bind(7, 1);
-		assertEquals(wordStore[7], getWord(REF, 1));
-		assertEquals(wordStore[1], getWord(REF, 1));
-		assertEquals(trailStack[0], 0);
-
-		// #2: Bind a global unbound variable to another global unbound
+		// #1: Bind a global unbound variable to another global unbound
 		// variable (no trailing)
 		facade.local = false;
 		facade.bind(5, 1);
@@ -145,12 +137,12 @@ public final class ZipFacadeTest {
 		assertEquals(wordStore[1], getWord(REF, 1));
 		assertEquals(trailStack[0], 0);
 
-		// #3: Bind a global variable to an atom (with trailing)
+		// #2: Bind a global variable to an atom (with trailing)
 		facade.bind(1, 0);
 		assertEquals(wordStore[1], getWord(CONS, 0));
 		assertEquals(trailStack[0], 1);
 
-		// #4: Bind a local variable to a global bound variable (with trailing)
+		// #3: Bind a local variable to a global bound variable (with trailing)
 		facade.local = true;
 		facade.bind(6, 2);
 		assertEquals(wordStore[6], getWord(REF, 3));
@@ -241,7 +233,6 @@ public final class ZipFacadeTest {
 
 		private boolean local;
 		private int backtrackGlobalptr;
-		private int backtrackLocalptr;
 
 		@Override
 		protected boolean isLocal(int address) {
@@ -251,11 +242,6 @@ public final class ZipFacadeTest {
 		@Override
 		protected int getBacktrackGlobalPointer() {
 			return this.backtrackGlobalptr;
-		}
-
-		@Override
-		protected int getBacktrackLocalPointer() {
-			return this.backtrackLocalptr;
 		}
 
 		@Override

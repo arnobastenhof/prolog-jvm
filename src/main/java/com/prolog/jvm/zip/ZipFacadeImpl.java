@@ -131,18 +131,6 @@ public class ZipFacadeImpl implements ZipFacade {
 	}
 
 	/**
-	 * Returns the local stack address of the last choice point, or {@link
-	 * ProcessorModes#MIN_LOCAL_INDEX} if none exists. Invoked by {@link
-	 * #bind(int, int)} to determine whether trailing is needed.
-	 * <p>
-	 * This method is intended to be overridden by mock implementations.
-	 */
-	protected int getBacktrackLocalPointer() {
-		return this.choicepnt != null
-				? this.choicepnt.localptr : MIN_LOCAL_INDEX;
-	}
-
-	/**
 	 * Returns the smallest address in virtual memory for use by the Push-Down
 	 * List, being invoked by {@link #unifiable(int, int)} to determine whether
 	 * unification has succeeded. By default, {@link
@@ -269,7 +257,11 @@ public class ZipFacadeImpl implements ZipFacade {
 		assert symbol.getArity() > 0;
 
 		int result = getWord(STR,this.globalptr);
-		this.wordStore.writeTo(this.globalptr++,getWord(FUNC, getConstantPoolIndex(symbol)));
+		this.wordStore.writeTo(
+				this.globalptr++,
+				getWord(FUNC, getConstantPoolIndex(symbol)));
+		// Push arguments as unbound variables
+		// (needed when executing FIRSTVAR in COPY mode)
 		for (int i = 0; i < symbol.getArity(); i++) {
 			int word = getWord(REF, this.globalptr);
 			this.wordStore.writeTo(this.globalptr++, word);
@@ -278,7 +270,7 @@ public class ZipFacadeImpl implements ZipFacade {
 	}
 
 	@Override
-	public final void writeConstant(int address, FunctorSymbol symbol) {
+	public final void setWord(int address, FunctorSymbol symbol) {
 		// API sacrifices preconditions for performance, so use asserts instead
 		assert symbol != null;
 		assert symbol.getArity() == 0;
@@ -300,7 +292,9 @@ public class ZipFacadeImpl implements ZipFacade {
 					&& this.sourcefrm.localptr < this.choicepnt.localptr) {
 				address = this.choicepnt.localptr + this.choicepnt.size;
 			}
-			address = this.sourcefrm.localptr + this.sourcefrm.size;
+			else {
+				address = this.sourcefrm.localptr + this.sourcefrm.size;
+			}
 		}
 		this.targetfrm = new ActivationRecordImpl(address);
 		return address;
@@ -359,19 +353,10 @@ public class ZipFacadeImpl implements ZipFacade {
 
 	// === Trail methods ===
 
-	/*
-	 * Trails the specified address if needed. I.e., if a choice point has been
-	 * allocated on the local stack and either: (a) {@code address} is part of
-	 * the global stack and occurs before the backtrack global stack top; or
-	 * (b) it is part of the local stack and occurs before the backtrack local
-	 * frame. If neither condition applies, trailing would have no effect as
-	 * the contents at {@code address} would already be garbage-collected at
-	 * backtracking.
-	 */
-	private void trail(int address) {
+	@Override
+	public void trail(int address) {
 		assert address >= MIN_GLOBAL_INDEX && address <= MAX_LOCAL_INDEX;
-		if (address < getBacktrackGlobalPointer() ||
-				(isLocal(address) && address < getBacktrackLocalPointer())) {
+		if (address < getBacktrackGlobalPointer() || isLocal(address)) {
 			this.trailStack.writeTo(this.trailptr++, address);
 		}
 	}
@@ -386,8 +371,8 @@ public class ZipFacadeImpl implements ZipFacade {
 		assert fromAddress > 0;
 		assert fromAddress <= toAddress;
 		for (int i = fromAddress; i < toAddress; i++) {
-			int binding = this.trailStack.readFrom(i);
-			this.wordStore.writeTo(binding, getWord(REF, binding));
+			int address = this.trailStack.readFrom(i);
+			this.wordStore.writeTo(address, getWord(REF, address));
 		}
 		this.trailptr = fromAddress;
 	}
@@ -517,6 +502,7 @@ public class ZipFacadeImpl implements ZipFacade {
 		}
 
 		// Restore machine state and unwind the trail
+		this.mode = MATCH;
 		this.programctr = this.choicepnt.clause.getHeapptr();
 		if (this.choicepnt.sourcefrm != null) { // choicepnt != targetfrm
 			this.sourcefrm = this.choicepnt.sourcefrm;

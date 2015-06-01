@@ -96,12 +96,6 @@ public interface ZipFacade {
 	 */
 	int pushFunctor(FunctorSymbol symbol);
 
-	/**
-	 * Writes the given constant {@code symbol} to the specified {@code
-	 * address}.
-	 */
-	void writeConstant(int address, FunctorSymbol symbol);
-
 	// === Local stack ===
 
 	/**
@@ -167,13 +161,30 @@ public interface ZipFacade {
 	void setWord(int address, int word);
 
 	/**
+	 * Writes the given constant {@code symbol} to the specified global- or
+	 * local stack {@code address}.
+	 */
+	void setWord(int address, FunctorSymbol symbol);
+
+	/**
 	 * Performs binding on the specified addresses, at least one of which is to
-	 * contain a reference-tagged word.
+	 * contain a reference-tagged word, and {@link #trail(int) trails} if
+	 * necessary.
 	 *
 	 * @param address1 a local- or global stack address
 	 * @param address2 a local- or global stack address
 	 */
 	void bind(int address1, int address2);
+
+	/**
+	 * Trails the specified {@code address} if needed. I.e., if a choice point
+	 * has been allocated on the local stack and either: (a) {@code address} is
+	 * part of the global stack and occurs before the backtrack global stack
+	 * top; or (b) it is part of the local stack. If neither condition applies,
+	 * trailing would have no effect as the contents at {@code address} would
+	 * already be garbage-collected at backtracking.
+	 */
+	void trail(int address);
 
 	/**
 	 * Attempts unification on the specified addresses and returns whether said

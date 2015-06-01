@@ -1,6 +1,7 @@
 package com.prolog.jvm.main;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.prolog.jvm.zip.util.ReplConstants.HALT;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -26,8 +27,6 @@ public enum Repl {
 	 */
 	INSTANCE;
 
-	private static final String HALT = "halt";
-
 	/**
 	 * Executes the Read-Eval-Print Loop.
 	 *
@@ -51,22 +50,26 @@ public enum Repl {
 		final AbstractCompiler compiler = Factory.newQueryCompiler();
 
 		try (BufferedReader reader = new BufferedReader(in)) {
-			String userInput = reader.readLine();
-			while (!userInput.equals(HALT) && userInput != null) {
-				try (StringReader sr = new StringReader(userInput)) {
-					compiler.compile(sr);
-				}
-				catch (RecognitionException e) {
-					out.write(e.getMessage());
-					out.write('\n');
+			String userInput = null;
+			while (true) {
+				userInput = reader.readLine();
+				if (userInput != null && !userInput.equals(HALT)) {
+					try (StringReader sr = new StringReader(userInput)) {
+						compiler.compile(sr);
+					}
+					catch (RecognitionException e) {
+						out.write(e.getMessage());
+						out.write('\n');
+						continue;
+					}
+					catch (Exception e) {
+						throw new InternalCompilerException(e);
+					}
+					Factory.getInterpreter().execute(queryAddr, reader, out);
+					Factory.getBytecode().setMemento(m);
 					continue;
 				}
-				catch (Exception e) {
-					throw new InternalCompilerException(e);
-				}
-				Factory.getInterpreter().execute(queryAddr, out);
-				Factory.getBytecode().setMemento(m);
-				userInput = reader.readLine();
+				return;
 			}
 		}
 	}
