@@ -4,6 +4,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Class representing a possibly nested scope for storing Prolog {@link
@@ -84,6 +85,14 @@ public final class Scope {
 	 */
 	public int getSize() {
 		return this.symbols.keySet().size();
+	}
+
+	/**
+	 * Returns the {@link SymbolKey}s for which a {@link Symbol} is stored in
+	 * this scope.
+	 */
+	public Set<SymbolKey<?>> getKeys() {
+		return this.symbols.keySet();
 	}
 
 	/**

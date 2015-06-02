@@ -9,9 +9,6 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.io.Writer;
 
-import com.prolog.jvm.compiler.AbstractCompiler;
-import com.prolog.jvm.exceptions.InternalCompilerException;
-import com.prolog.jvm.exceptions.RecognitionException;
 import com.prolog.jvm.zip.PrologBytecodeImpl.MementoImpl;
 
 /**
@@ -47,23 +44,18 @@ public enum Repl {
 		// bytecode state prior to the compilation of any queries
 		final MementoImpl m = Factory.getBytecode().createMemento();
 
-		final AbstractCompiler compiler = Factory.newQueryCompiler();
-
 		try (BufferedReader reader = new BufferedReader(in)) {
 			String userInput = null;
 			while (true) {
+				out.flush();
 				userInput = reader.readLine();
 				if (userInput != null && !userInput.equals(HALT)) {
 					try (StringReader sr = new StringReader(userInput)) {
-						compiler.compile(sr);
-					}
-					catch (RecognitionException e) {
-						out.write(e.getMessage());
-						out.write('\n');
-						continue;
+						Factory.newQueryCompiler().compile(sr);
 					}
 					catch (Exception e) {
-						throw new InternalCompilerException(e);
+						out.append(e.getMessage()).write('\n');
+						continue;
 					}
 					Factory.getInterpreter().execute(queryAddr, reader, out);
 					Factory.getBytecode().setMemento(m);

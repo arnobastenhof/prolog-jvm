@@ -115,6 +115,11 @@ public final class SymbolKeys {
 			VariableKey other = (VariableKey)obj;
 			return this.name.equals(other.name); // name cannot be null
 		}
+
+		@Override
+		public String toString() {
+			return this.name;
+		}
 	}
 
 	// Key for relational symbols; i.e., functors, clauses and predicates
@@ -144,6 +149,11 @@ public final class SymbolKeys {
 			return this.arity == other.arity &&
 					this.name.equals(other.name) &&  // name cannot be null
 					this.clazz.equals(other.clazz);  // clazz cannot be null
+		}
+
+		@Override
+		public final String toString() {
+			return this.name + "/" + this.arity;
 		}
 	}
 }

@@ -318,6 +318,7 @@ public final class ZipInterpreterImpl implements ZipInterpreter {
 			walkCode(address.intValue(), out);
 			out.write('\n');
 		}
+		out.flush();
 		return in.readLine().equals(NEXT_ANSWER);
 	}
 

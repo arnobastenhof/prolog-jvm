@@ -15,4 +15,7 @@ public interface SymbolKey<T extends Symbol> {
 	 */
 	Class<T> getSymbolClass();
 
+	@Override
+	String toString();
+
 }

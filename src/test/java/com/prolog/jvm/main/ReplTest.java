@@ -33,7 +33,6 @@ public final class ReplTest {
 	public void ancestry() throws IOException {
 		StringBuilder queries = new StringBuilder().
 				append("grandparent(hera, harmonia).\n").
-				append("ancestor(zeus, harmonia).\n").
 				append("grandparent(dionisius, zeus).\n").
 				append("parent(zeus,X), parent(X,harmonia).\n\n").
 				append("mother(X,dionisius).\n").
@@ -41,10 +40,11 @@ public final class ReplTest {
 				append("father(zeus,Y).\n").
 				append(NEXT_ANSWER).append('\n').
 				append(NEXT_ANSWER).append('\n').
+				append("ancestor(zeus,harmonia).\n").
+				append("fathers(zeus,Y).\n").
 				append(HALT).append('\n');
 
 		StringBuilder answers = new StringBuilder().
-				append(SUCCESS).
 				append(SUCCESS).
 				append(FAILURE).
 				append("X = ares\n").
@@ -52,7 +52,9 @@ public final class ReplTest {
 				append(FAILURE).
 				append("Y = ares\n").
 				append("Y = dionisius\n").
-				append(FAILURE);
+				append(FAILURE).
+				append(SUCCESS).
+				append("No clauses defined for predicate fathers/2\n");
 
 		assertEquals(runQueries(EXAMPLE_1, queries.toString()),
 				answers.toString());

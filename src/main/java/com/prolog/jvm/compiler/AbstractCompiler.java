@@ -12,10 +12,13 @@ import com.prolog.jvm.compiler.visitor.BytecodeGenerator;
 import com.prolog.jvm.compiler.visitor.PrologVisitor;
 import com.prolog.jvm.compiler.visitor.SourcePass;
 import com.prolog.jvm.compiler.visitor.SymbolResolver;
+import com.prolog.jvm.exceptions.InternalCompilerException;
 import com.prolog.jvm.exceptions.RecognitionException;
 import com.prolog.jvm.main.Factory;
+import com.prolog.jvm.symbol.PredicateSymbol;
 import com.prolog.jvm.symbol.Scope;
 import com.prolog.jvm.symbol.Symbol;
+import com.prolog.jvm.symbol.SymbolKey;
 import com.prolog.jvm.zip.api.PrologBytecode;
 
 /**
@@ -77,8 +80,8 @@ public abstract class AbstractCompiler {
 	public void compile(Reader source)
 			throws IOException, RecognitionException {
 		this.root = constructAst(checkNotNull(source));
-		this.symbols = resolveSymbols(this.root);
-		generateBytecode(this.root, this.symbols);
+		this.symbols = resolveSymbols();
+		generateBytecode();
 	}
 
 	// First compiler pass.
@@ -91,19 +94,33 @@ public abstract class AbstractCompiler {
 	}
 
 	// Second compiler pass.
-	private Map<Ast, Symbol> resolveSymbols(Ast root) {
-		assert root != null;
+	private Map<Ast, Symbol> resolveSymbols() {
 		SymbolResolver visitor = new SymbolResolver(this.scope);
-		walkAst(root, visitor);
+		walkAst(this.root, visitor);
+		verifySymbols();
 		return visitor.getSymbols();
 	}
 
 	// Third compiler pass.
-	private void generateBytecode(Ast root, Map<Ast, Symbol> symbols) {
-		assert symbols != null;
+	private void generateBytecode() {
 		BytecodeGenerator visitor = new BytecodeGenerator(
-				symbols,this.code);
-		walkAst(root, visitor);
+				this.symbols,this.code);
+		walkAst(this.root, visitor);
+	}
+
+	// Checks for each declared predicate if it has any clauses.
+	private void verifySymbols() {
+		for (SymbolKey<?> key : this.scope.getKeys()) {
+			if (key.getSymbolClass().equals(PredicateSymbol.class)) {
+				PredicateSymbol symbol =
+						(PredicateSymbol) this.scope.resolveLocal(key);
+				if (symbol.getFirst() == null) {
+					throw new InternalCompilerException(
+							"No clauses defined for predicate "
+									+ key.toString());
+				}
+			}
+		}
 	}
 
 	/**
