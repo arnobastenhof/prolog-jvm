@@ -32,7 +32,7 @@ public abstract class AbstractParser {
 	/**
 	 * Returns the type of the current lookahead token.
 	 */
-	protected TokenType getLookaheadType() {
+	protected final TokenType getLookaheadType() {
 		return this.lookahead.getType();
 	}
 
@@ -42,11 +42,12 @@ public abstract class AbstractParser {
 	 *
 	 * @param expected the expected token type; not allowed to be null
 	 * @throws NullPointerException if {@code expected == null}
-	 * @throws RecognitionException if the encountered token type does not
+	 * @throws RecognitionException if {@link #getLookaheadType()} does not
 	 * coincide with {@code expected}
 	 * @throws IOException
 	 */
-	protected void match(TokenType expected) throws IOException, RecognitionException {
+	protected final void match(TokenType expected)
+			throws IOException, RecognitionException {
 		checkNotNull(expected);
 		if (this.lookahead.getType() == expected) {
 			consume();
@@ -65,7 +66,7 @@ public abstract class AbstractParser {
 	 * @throws IOException
 	 * @throws RecognitionException
 	 */
-	protected void consume() throws IOException, RecognitionException {
+	protected final void consume() throws IOException, RecognitionException {
 		this.lookahead = this.input.nextToken();
 	}
 
@@ -74,14 +75,14 @@ public abstract class AbstractParser {
 	/**
 	 * Returns the current lookahead token.
 	 */
-	protected Token getLookahead() {
+	protected final Token getLookahead() {
 		return this.lookahead;
 	}
 
 	/**
 	 * Returns the line number currently being proccessed.
 	 */
-	protected int getLine() {
+	protected final int getLine() {
 		return this.input.getLine();
 	}
 

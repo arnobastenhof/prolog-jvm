@@ -140,15 +140,17 @@ public final class ZipInterpreterImpl implements ZipInterpreter {
 					continue;
 				}
 				case ARG | EXIT: {
-					// If popSourceFrame returns true, that means we're done
+					// If popSourceFrame returns true, we have an answer
 					if (this.facade.popSourceFrame()) {
+						// If writeAnswer returns true, look for more
 						if (writeAnswer(in, out)) {
 							this.facade.backtrack();
 							continue;
 						}
+						// else, we're done
 						return;
 					}
-					// Else, push a new target frame
+					// If we're not done yet, push a new target frame
 					// TODO Does double work if preceded by ENTER or jumps to
 					// another EXIT (i.e., last call)
 					address = this.facade.pushTargetFrame();

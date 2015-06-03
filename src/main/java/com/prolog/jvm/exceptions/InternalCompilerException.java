@@ -11,7 +11,7 @@ import com.prolog.jvm.compiler.ast.Ast;
  */
 public final class InternalCompilerException extends RuntimeException {
 
-	private static final long serialVersionUID = 7856350557692616483L;
+	private static final long serialVersionUID = 4827614110430193020L;
 
 	/**
 	 *

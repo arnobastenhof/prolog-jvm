@@ -1,21 +1,19 @@
 package com.prolog.jvm.main;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.prolog.jvm.zip.util.MemoryConstants.MAX_HEAP_INDEX;
 import static com.prolog.jvm.zip.util.MemoryConstants.MAX_GLOBAL_INDEX;
+import static com.prolog.jvm.zip.util.MemoryConstants.MAX_HEAP_INDEX;
 import static com.prolog.jvm.zip.util.MemoryConstants.MAX_LOCAL_INDEX;
 import static com.prolog.jvm.zip.util.MemoryConstants.MAX_PDL_INDEX;
 import static com.prolog.jvm.zip.util.MemoryConstants.MAX_SCRATCHPAD_INDEX;
 import static com.prolog.jvm.zip.util.MemoryConstants.MAX_TRAIL_INDEX;
 import static com.prolog.jvm.zip.util.MemoryConstants.MEMORY_SIZE;
-import static com.prolog.jvm.zip.util.MemoryConstants.MIN_HEAP_INDEX;
 import static com.prolog.jvm.zip.util.MemoryConstants.MIN_GLOBAL_INDEX;
+import static com.prolog.jvm.zip.util.MemoryConstants.MIN_HEAP_INDEX;
 import static com.prolog.jvm.zip.util.MemoryConstants.MIN_LOCAL_INDEX;
 import static com.prolog.jvm.zip.util.MemoryConstants.MIN_PDL_INDEX;
 import static com.prolog.jvm.zip.util.MemoryConstants.MIN_SCRATCHPAD_INDEX;
 import static com.prolog.jvm.zip.util.MemoryConstants.MIN_TRAIL_INDEX;
 
-import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -24,14 +22,8 @@ import java.util.List;
 import java.util.Map;
 
 import com.prolog.jvm.compiler.AbstractCompiler;
-import com.prolog.jvm.compiler.ast.Ast;
-import com.prolog.jvm.compiler.ast.AstWalker;
-import com.prolog.jvm.compiler.parser.PrologParser;
-import com.prolog.jvm.compiler.parser.Tokens;
-import com.prolog.jvm.compiler.visitor.PrologVisitor;
-import com.prolog.jvm.compiler.visitor.QueryVariableTracker;
-import com.prolog.jvm.compiler.visitor.SourcePass;
-import com.prolog.jvm.exceptions.RecognitionException;
+import com.prolog.jvm.compiler.ProgramCompiler;
+import com.prolog.jvm.compiler.QueryCompiler;
 import com.prolog.jvm.symbol.Scope;
 import com.prolog.jvm.zip.PrologBytecodeImpl;
 import com.prolog.jvm.zip.PrologBytecodeImpl.MementoImpl;
@@ -149,24 +141,7 @@ public final class Factory {
 	public static final AbstractCompiler newProgramCompiler() {
 		rootScope = Scope.newRootInstance();
 		PROLOG_BYTECODE.setMemento(BYTECODE_MEMENTO);
-		return new AbstractCompiler(PROLOG_BYTECODE, rootScope) {
-
-			@Override
-			protected SourcePass createSourcePassVisitor() {
-				return new SourcePass(Tokens.PROGRAM);
-			}
-
-			@Override
-			protected void parseSource(PrologParser parser)
-					throws IOException, RecognitionException {
-				parser.parseProgram();
-			}
-
-			@Override
-			protected void walkAst(Ast root, PrologVisitor<Ast> visitor) {
-				AstWalker.INSTANCE.walkProgram(root, visitor);
-			}
-		};
+		return new ProgramCompiler(PROLOG_BYTECODE, rootScope);
 	}
 
 	/**
@@ -234,40 +209,4 @@ public final class Factory {
 			}
 		}
 	}
-
-	private static final class QueryCompiler extends AbstractCompiler {
-
-		private final Map<Integer,String> queryVars;
-
-		public QueryCompiler(PrologBytecode<?> code, Scope scope,
-				Map<Integer,String> queryVars) {
-			super(code, scope);
-			this.queryVars = checkNotNull(queryVars);
-		}
-
-		@Override
-		public void compile(Reader source)
-				throws IOException, RecognitionException {
-			super.compile(source);
-			walkAst(this.root, new QueryVariableTracker(this.symbols, this.queryVars));
-		}
-
-		@Override
-		protected SourcePass createSourcePassVisitor() {
-			return new SourcePass(Tokens.IMPLIES);
-		}
-
-		@Override
-		protected void parseSource(PrologParser parser)
-				throws IOException, RecognitionException {
-			parser.parseQuery();
-		}
-
-		@Override
-		protected void walkAst(Ast root, PrologVisitor<Ast> visitor) {
-			AstWalker.INSTANCE.walkQuery(root, visitor);
-		}
-
-	}
-
 }

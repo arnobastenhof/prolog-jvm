@@ -58,7 +58,6 @@ public abstract class AbstractCompiler {
 	 * @param scope the ground scope to use when resolving symbols; not allowed
 	 * to be null
 	 * @throws NullPointerException if {@code code == null || scope == null}
-	 *
 	 */
 	protected AbstractCompiler(PrologBytecode<?> code, Scope scope) {
 		this.code = checkNotNull(code);

@@ -1,4 +1,4 @@
-package com.prolog.jvm.util;
+package com.prolog.jvm.zip.util;
 
 import static org.junit.Assert.assertEquals;
 

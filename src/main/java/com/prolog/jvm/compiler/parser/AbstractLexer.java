@@ -31,9 +31,6 @@ public abstract class AbstractLexer implements Lexer {
 		this.input = checkNotNull(input);
 	}
 
-	/**
-	 * @inheritDoc
-	 */
 	@Override
 	public final int getLine() {
 		return this.line;
@@ -53,7 +50,7 @@ public abstract class AbstractLexer implements Lexer {
 	 *
 	 * @throws IOException
 	 */
-	protected void consume() throws IOException {
+	protected final void consume() throws IOException {
 		if (this.lookahead == '\n') {
 			this.line++;
 		}
@@ -66,7 +63,7 @@ public abstract class AbstractLexer implements Lexer {
 	 *
 	 * @throws IOException
 	 */
-	protected void consumeNonLinefeed() throws IOException {
+	protected final void consumeNonLinefeed() throws IOException {
 		this.lookahead = (char)this.input.read();
 	}
 
@@ -74,11 +71,13 @@ public abstract class AbstractLexer implements Lexer {
 	 * Compares the lookahead character against the supplied parameter, throwing
 	 * an exception in case of a mismatch.
 	 *
-	 * @param expected The expected character.
+	 * @param expected the expected character
 	 * @throws IOException
-	 * @throws RecognitionException
+	 * @throws RecognitionException if {@code expected} does not match {@link
+	 * #getLookahead()}
 	 */
-	protected void match(char expected) throws IOException, RecognitionException {
+	protected final void match(char expected)
+			throws IOException, RecognitionException {
 		if (this.lookahead == expected) {
 			consumeNonLinefeed();
 		}

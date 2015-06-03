@@ -35,6 +35,7 @@ public final class Ast implements Iterable<Ast> {
 	/**
 	 * Static factory method returning a leaf node (i.e., with empty child
 	 * list).
+	 *
 	 * @param token the token to be stored at this node; not allowed to be
 	 * null
 	 * @throws NullPointerException if {@code token == null}
@@ -46,6 +47,7 @@ public final class Ast implements Iterable<Ast> {
 	/**
 	 * Static factory method returning a Builder for an internal node (i.e.,
 	 * with non-empty child list).
+	 *
 	 * @param token the token to be stored at this node; not allowed to be
 	 * null
 	 * @throws NullPointerException if {@code token == null}

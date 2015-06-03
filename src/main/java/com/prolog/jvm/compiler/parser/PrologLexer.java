@@ -115,14 +115,14 @@ public final class PrologLexer extends AbstractLexer {
 	// Comments reference the ISO standard for Extended Backus-Naur Form.
 
 	// ws = {"\t" | "\n" | "\r" | " "}- ; (* whitespace *)
-	void ws() throws IOException {
+	private void ws() throws IOException {
 		do {
 			consume();
 		} while (isWhitespace());
 	}
 
 	// Inline comments.
-	void single() throws IOException {
+	private void single() throws IOException {
 		consumeNonLinefeed(); // Consume '%'
 		while (getLookahead() != '\n') {
 			if (getLookahead() == -1) {
@@ -134,7 +134,7 @@ public final class PrologLexer extends AbstractLexer {
 	}
 
 	// Multiline comments.
-	void multi() throws IOException, RecognitionException {
+	private void multi() throws IOException, RecognitionException {
 		consumeNonLinefeed(); // Consume '/'
 		match('*');
 		while (true) {
@@ -158,7 +158,7 @@ public final class PrologLexer extends AbstractLexer {
 		}
 	}
 
-	Token implies() throws IOException, RecognitionException {
+	private Token implies() throws IOException, RecognitionException {
 		consumeNonLinefeed(); // Consume ':'
 		match('-');
 		return Tokens.IMPLIES;
@@ -171,7 +171,7 @@ public final class PrologLexer extends AbstractLexer {
 	 * while a VAR if the first character is a capital letter or underscore.
 	 * In particular, identifiers are not allowed to begin with a digit.
 	 */
-	Token id() throws IOException {
+	private Token id() throws IOException {
 		boolean smallLetter = isSmallLetter();
 		StringBuilder buffer = new StringBuilder();
 		do {
@@ -187,7 +187,7 @@ public final class PrologLexer extends AbstractLexer {
 	}
 
 	// Graphic tokens
-	Token graphic() throws IOException {
+	private Token graphic() throws IOException {
 		StringBuilder buffer = new StringBuilder();
 		do {
 			buffer.append(getLookahead());
@@ -197,7 +197,7 @@ public final class PrologLexer extends AbstractLexer {
 	}
 
 	// nil = "[]" ;
-	Token nil() throws IOException, RecognitionException {
+	private Token nil() throws IOException, RecognitionException {
 		consumeNonLinefeed(); // Consumes '['
 		match(']');
 		return Tokens.NIL;

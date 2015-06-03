@@ -8,8 +8,8 @@ import com.prolog.jvm.compiler.ast.Ast;
 import com.prolog.jvm.symbol.Symbol;
 
 /**
- * Skeletal implementation of a {@link PrologVisitor}, to be used for defining
- * compiler passes following that defined by {@link SymbolResolver}.
+ * Skeletal implementation of a {@link PrologVisitor}, to be used for
+ * specifying compiler passes following that defined by {@link SymbolResolver}.
  *
  * @author Arno Bastenhof
  */
@@ -29,7 +29,7 @@ public abstract class AbstractSymbolVisitor extends BasicPrologVisitor<Ast> {
 
 	/**
 	 * Returns the symbol to which the specified {@code node} has been resolved
-	 * and casts it to the specified {@code clazz}.
+	 * and casts it to {@code clazz}.
 	 *
 	 * @param node the {@link Ast} node for which the resolved symbol is to be
 	 * returned

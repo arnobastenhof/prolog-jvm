@@ -66,7 +66,7 @@ public final class ClauseSymbol implements Symbol {
 	 *
 	 * @param next clause symbol for the next alternative; not allowed to be
 	 * null
-	 * @throws NullPointerException if {@code next == null}.
+	 * @throws NullPointerException if {@code next == null}
 	 */
 	public void setNext(ClauseSymbol next) {
 		this.next = checkNotNull(next);

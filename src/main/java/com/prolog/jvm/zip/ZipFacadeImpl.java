@@ -60,15 +60,15 @@ public class ZipFacadeImpl implements ZipFacade {
 	private final MemoryArea scratchpad;
 
 	// Machine registers
-	private int mode;                      // Processor mode (PM)
-	private int programctr;                // Program counter (PC)
+	private int mode;                       // Processor mode (PM)
+	private int programctr;                 // Program counter (PC)
 	private ActivationRecordImpl targetfrm; // Target (local) frame (L)
 	private ActivationRecordImpl sourcefrm; // Source (local) frame (CL)
-	private int globalptr;                 // Global stack top (G0)
-	private int trailptr;                  // Trail top (TR0)
+	private int globalptr;                  // Global stack top (G0)
+	private int trailptr;                   // Trail top (TR0)
 	private ActivationRecordImpl choicepnt; // Backtrack (local) frame (BL)
-	private int pdlptr;                    // Push-Down List top
-	private int scratchpadptr;             // Scratchpad top
+	private int pdlptr;                     // Push-Down List top
+	private int scratchpadptr;              // Scratchpad top
 
 	/**
 	 * Constructor. Note no null checks are done on any of the supplied
@@ -544,7 +544,6 @@ public class ZipFacadeImpl implements ZipFacade {
 			assert localptr <= MAX_LOCAL_INDEX;
 			this.localptr = localptr;
 		}
-
 	}
 
 	/**

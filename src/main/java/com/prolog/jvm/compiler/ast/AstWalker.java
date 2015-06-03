@@ -44,12 +44,12 @@ public enum AstWalker {
 	 * to the specified {@code visitor}.
 	 *
 	 * @param root the root node of the AST to be walked; not allowed to be
-	 * null and must have type {@link TokenType#IMPLIES}
+	 * null and must have type {@link TokenType#PROGRAM}
 	 * @param visitor the visitor containing the actions to be applied to the
 	 * discovered nodes; not allowed to be null.
 	 * @throws NullPointerException if {@code root == null || visitor == null}
 	 * @throws IllegalArgumentException if root is not of type {@link
-	 * TokenType#IMPLIES}
+	 * TokenType#PROGRAM}
 	 */
 	public void walkProgram(Ast root, PrologVisitor<Ast> visitor) {
 		checkNotNull(root);

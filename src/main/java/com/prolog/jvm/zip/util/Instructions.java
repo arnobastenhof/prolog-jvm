@@ -14,7 +14,6 @@ import java.util.Map;
  * a bitwise or to arrive at the 'real' instruction to be dispatched on.
  *
  * @author Arno Bastenhof
- * @see ProcessorModes
  *
  */
 public final class Instructions {
