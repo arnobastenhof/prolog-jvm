@@ -144,7 +144,7 @@ public final class Ast implements Iterable<Ast> {
 		 * child list.
 		 */
 		public Ast build() {
-			return new Ast(this.token, this.children);
+			return new Ast(this.token, new ArrayList<>(this.children));
 		}
 	}
 }

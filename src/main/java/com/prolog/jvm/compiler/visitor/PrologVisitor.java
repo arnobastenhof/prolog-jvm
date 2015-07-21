@@ -6,14 +6,14 @@ import com.prolog.jvm.compiler.ast.Ast;
 import com.prolog.jvm.compiler.parser.PrologParser;
 
 /**
- * A visitor interface for collecting the semantic actions associated with a
+ * A visitor interface for specifying the semantic actions associated with a
  * single pass through a Prolog source program. Implementations may be passed
  * as an argument to a {@link PrologParser} (for the first pass) or to {@link
  * ASTWalker} (for subsequent passes over the constructed {@link Ast}).
  * <p>
  * This interface draws its inspiration from the {@link FileVisitor} API
- * introduced in Java SE 7 and from the ParseTreeVisitor interface part of
- * ANTLR4.
+ * introduced in Java SE 7 and from the {@code ParseTreeVisitor} interface part
+ * of ANTLR4.
  *
  * @author Arno Bastenhof
  *

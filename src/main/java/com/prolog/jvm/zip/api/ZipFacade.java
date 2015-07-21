@@ -23,7 +23,7 @@ import com.prolog.jvm.symbol.FunctorSymbol;
  */
 public interface ZipFacade {
 
-	// === Initialization ===
+	// === (Re)initialization ===
 
 	/**
 	 * (Re)sets the ZIP machine for executing the query at the specified {@code

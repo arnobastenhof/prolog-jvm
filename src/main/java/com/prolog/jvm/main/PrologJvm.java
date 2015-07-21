@@ -18,7 +18,7 @@ import com.prolog.jvm.exceptions.RecognitionException;
  */
 public final class PrologJvm {
 
-	private static final String HELP = "Usage: javac PrologJvm <file name>.";
+	private static final String HELP = "Usage: java PrologJvm <file name>.";
 
 	/**
 	 * Main method.
