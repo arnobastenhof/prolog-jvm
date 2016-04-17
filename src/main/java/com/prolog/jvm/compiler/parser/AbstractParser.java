@@ -1,6 +1,6 @@
 package com.prolog.jvm.compiler.parser;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static java.util.Objects.requireNonNull;
 
 import java.io.IOException;
 
@@ -24,7 +24,7 @@ public abstract class AbstractParser {
 	 * @throws NullPointerException if {@code input == null}
 	 */
 	protected AbstractParser(final Lexer input) {
-		this.input = checkNotNull(input);
+		this.input = requireNonNull(input);
 	}
 
 	// === Token consumption ===
@@ -48,7 +48,7 @@ public abstract class AbstractParser {
 	 */
 	protected final void match(final TokenType expected)
 			throws IOException, RecognitionException {
-		checkNotNull(expected);
+		requireNonNull(expected);
 		if (this.lookahead.getType() == expected) {
 			consume();
 		}

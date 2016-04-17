@@ -1,7 +1,5 @@
 package com.prolog.jvm.zip;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Preconditions.checkState;
 import static com.prolog.jvm.zip.util.Instructions.ARG;
 import static com.prolog.jvm.zip.util.Instructions.COPY;
 import static com.prolog.jvm.zip.util.Instructions.MATCH;
@@ -19,6 +17,7 @@ import static com.prolog.jvm.zip.util.PlWords.LIS;
 import static com.prolog.jvm.zip.util.PlWords.REF;
 import static com.prolog.jvm.zip.util.PlWords.STR;
 import static com.prolog.jvm.zip.util.PlWords.getWord;
+import static java.util.Objects.requireNonNull;
 
 import java.util.List;
 
@@ -31,6 +30,7 @@ import com.prolog.jvm.zip.api.ZipFacade;
 import com.prolog.jvm.zip.util.Instructions;
 import com.prolog.jvm.zip.util.MemoryConstants;
 import com.prolog.jvm.zip.util.PlWords;
+import com.prolog.jvm.zip.util.Validate;
 
 /**
  * A {@link ZipFacade} implementation.
@@ -181,7 +181,7 @@ public class ZipFacadeImpl implements ZipFacade {
 
 	@Override
 	public final <T> T getConstant(int index, Class<T> clazz) {
-		checkNotNull(clazz);
+		requireNonNull(clazz);
 		if (index < 0 || index >= this.constants.size()) {
 			throw new IndexOutOfBoundsException();
 		}
@@ -573,14 +573,14 @@ public class ZipFacadeImpl implements ZipFacade {
 					this.pdl, this.scratchpad);
 
 			// Validate
-			checkState(facade.constants != null);
-			checkState(facade.heap != null);
-			checkState(facade.globalStack != null);
-			checkState(facade.localStack != null);
-			checkState(facade.wordStore != null);
-			checkState(facade.trailStack != null);
-			checkState(facade.pdl != null);
-			checkState(facade.scratchpad != null);
+			Validate.state(facade.constants != null);
+			Validate.state(facade.heap != null);
+			Validate.state(facade.globalStack != null);
+			Validate.state(facade.localStack != null);
+			Validate.state(facade.wordStore != null);
+			Validate.state(facade.trailStack != null);
+			Validate.state(facade.pdl != null);
+			Validate.state(facade.scratchpad != null);
 
 			// If the build instance is in a consistent state, return it
 			return facade;

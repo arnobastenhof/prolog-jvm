@@ -1,6 +1,6 @@
 package com.prolog.jvm.compiler.parser;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static java.util.Objects.requireNonNull;
 
 import java.util.Objects;
 
@@ -67,7 +67,7 @@ public final class Tokens {
 	 * @throws NullPointerException if {@code text == null}
 	 */
 	public static final Token getAtom(final String text) {
-		return new PrologToken(TokenType.ATOM, checkNotNull(text));
+		return new PrologToken(TokenType.ATOM, requireNonNull(text));
 	}
 
 	/**
@@ -78,7 +78,7 @@ public final class Tokens {
 	 * @throws NullPointerException if {@code text == null}
 	 */
 	public static final Token getVar(final String text) {
-		return new PrologToken(TokenType.VAR, checkNotNull(text));
+		return new PrologToken(TokenType.VAR, requireNonNull(text));
 	}
 
 	// Private constructor to prevent instantiation

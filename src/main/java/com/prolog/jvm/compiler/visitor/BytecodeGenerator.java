@@ -1,6 +1,5 @@
 package com.prolog.jvm.compiler.visitor;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static com.prolog.jvm.zip.util.Instructions.CALL;
 import static com.prolog.jvm.zip.util.Instructions.CONSTANT;
 import static com.prolog.jvm.zip.util.Instructions.ENTER;
@@ -9,6 +8,7 @@ import static com.prolog.jvm.zip.util.Instructions.FIRSTVAR;
 import static com.prolog.jvm.zip.util.Instructions.FUNCTOR;
 import static com.prolog.jvm.zip.util.Instructions.POP;
 import static com.prolog.jvm.zip.util.Instructions.VAR;
+import static java.util.Objects.requireNonNull;
 
 import java.util.Map;
 
@@ -48,7 +48,7 @@ public final class BytecodeGenerator extends AbstractSymbolVisitor {
 	public BytecodeGenerator(final Map<Ast,Symbol> symbols,
 			final PrologBytecode<?> code) {
 		super(symbols);
-		this.code = checkNotNull(code);
+		this.code = requireNonNull(code);
 	}
 
 	@Override

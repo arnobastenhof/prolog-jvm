@@ -1,6 +1,5 @@
 package com.prolog.jvm.zip;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static com.prolog.jvm.zip.util.Instructions.ARG;
 import static com.prolog.jvm.zip.util.Instructions.CALL;
 import static com.prolog.jvm.zip.util.Instructions.CONSTANT;
@@ -21,6 +20,7 @@ import static com.prolog.jvm.zip.util.PlWords.getWord;
 import static com.prolog.jvm.zip.util.ReplConstants.FAILURE;
 import static com.prolog.jvm.zip.util.ReplConstants.NEXT_ANSWER;
 import static com.prolog.jvm.zip.util.ReplConstants.SUCCESS;
+import static java.util.Objects.requireNonNull;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -62,7 +62,7 @@ public final class ZipInterpreterImpl implements ZipInterpreter {
 	 * @param facade a facade for the ZIP's internals; not allowed to be null
 	 */
 	public ZipInterpreterImpl(ZipFacade facade) {
-		this.facade = checkNotNull(facade);
+		this.facade = requireNonNull(facade);
 	}
 
 	@Override

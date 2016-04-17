@@ -1,6 +1,6 @@
 package com.prolog.jvm.compiler.visitor;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static java.util.Objects.requireNonNull;
 
 import java.util.Map;
 
@@ -24,7 +24,7 @@ public abstract class AbstractSymbolVisitor extends BasicPrologVisitor<Ast> {
 	 * @throws NullPointerException if {@code symbols == null}
 	 */
 	public AbstractSymbolVisitor(final Map<Ast,Symbol> symbols) {
-		this.symbols = checkNotNull(symbols);
+		this.symbols = requireNonNull(symbols);
 	}
 
 	/**
@@ -41,7 +41,7 @@ public abstract class AbstractSymbolVisitor extends BasicPrologVisitor<Ast> {
 	protected <T extends Symbol> T getSymbol(final Ast node,
 			final Class<T> clazz) {
 		final Symbol symbol = this.symbols.get(node);
-		return clazz.cast(checkNotNull(symbol));
+		return clazz.cast(requireNonNull(symbol));
 	}
 
 }

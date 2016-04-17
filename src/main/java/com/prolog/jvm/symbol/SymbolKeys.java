@@ -1,9 +1,10 @@
 package com.prolog.jvm.symbol;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
+import static java.util.Objects.requireNonNull;
 
 import java.util.Objects;
+
+import com.prolog.jvm.zip.util.Validate;
 
 /**
  * Utility class containing static factory methods for obtaining {@link
@@ -61,8 +62,8 @@ public final class SymbolKeys {
 
 	private static <T extends Symbol> SymbolKey<T> ofRelationalSymbol(
 			final String name, final int arity, final Class<T> clazz) {
-		checkArgument(arity >= 0);
-		return new RelationalKey<T>(checkNotNull(name), arity, clazz);
+		Validate.argument(arity >= 0);
+		return new RelationalKey<T>(requireNonNull(name), arity, clazz);
 	}
 
 	/**
@@ -72,7 +73,7 @@ public final class SymbolKeys {
 	 * @throws NullPointerException if {@code name == null}
 	 */
 	public static SymbolKey<VariableSymbol> ofVariable(final String name) {
-		return new VariableKey(checkNotNull(name));
+		return new VariableKey(requireNonNull(name));
 	}
 
 	// Skeletal implementation for SymbolKey

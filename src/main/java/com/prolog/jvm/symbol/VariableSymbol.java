@@ -1,8 +1,7 @@
 package com.prolog.jvm.symbol;
 
-import static com.google.common.base.Preconditions.checkArgument;
-
 import com.prolog.jvm.zip.util.Instructions;
+import com.prolog.jvm.zip.util.Validate;
 
 /**
  * A data aggregate collecting information about the occurrences of a variable
@@ -25,7 +24,7 @@ public final class VariableSymbol implements Symbol {
 	 * @throws IllegalArgumentException if {@code offset < 0}
 	 */
 	public VariableSymbol(final int offset) {
-		checkArgument(offset >= 0);
+		Validate.argument(offset >= 0);
 		this.offset = offset;
 	}
 

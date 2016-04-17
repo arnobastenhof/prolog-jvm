@@ -1,7 +1,7 @@
 package com.prolog.jvm.main;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static com.prolog.jvm.zip.util.ReplConstants.HALT;
+import static java.util.Objects.requireNonNull;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -35,8 +35,8 @@ public enum Repl {
 	 */
 	public void run(final Reader in, final Writer out) throws IOException {
 		// check preconditions
-		checkNotNull(in);
-		checkNotNull(out);
+		requireNonNull(in);
+		requireNonNull(out);
 
 		// the code address where compiled queries will be stored
 		final int queryAddr = Factory.getBytecode().getCodeSize();

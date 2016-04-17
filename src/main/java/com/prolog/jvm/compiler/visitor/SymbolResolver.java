@@ -1,6 +1,6 @@
 package com.prolog.jvm.compiler.visitor;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static java.util.Objects.requireNonNull;
 
 import java.util.Collections;
 import java.util.IdentityHashMap;
@@ -51,7 +51,7 @@ public final class SymbolResolver extends BasicPrologVisitor<Ast> {
 	 * @throws NullPointerException if {@code scope == null}
 	 */
 	public SymbolResolver(final Scope scope) {
-		this.currentScope = checkNotNull(scope);
+		this.currentScope = requireNonNull(scope);
 	}
 
 	private void pushScope() {

@@ -1,8 +1,5 @@
 package com.prolog.jvm.compiler.visitor;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkState;
-
 import java.util.ArrayDeque;
 import java.util.Deque;
 
@@ -11,6 +8,7 @@ import com.prolog.jvm.compiler.ast.Ast.ASTBuilder;
 import com.prolog.jvm.compiler.parser.Token;
 import com.prolog.jvm.compiler.parser.TokenType;
 import com.prolog.jvm.compiler.parser.Tokens;
+import com.prolog.jvm.zip.util.Validate;
 
 /**
  * Visitor detailing the first pass through a Prolog source program, converting
@@ -31,7 +29,7 @@ public final class SourcePass extends BasicPrologVisitor<Token> {
 	 * type {@link TokenType#PROGRAM} or {@link TokenType#IMPLIES}
 	 */
 	public SourcePass(final Token token) {
-		checkArgument(token == Tokens.PROGRAM || token == Tokens.IMPLIES);
+		Validate.argument(token == Tokens.PROGRAM || token == Tokens.IMPLIES);
 		push(token); // Create the AST root node
 	}
 
@@ -41,7 +39,7 @@ public final class SourcePass extends BasicPrologVisitor<Token> {
 	 * @throws IllegalStateException if this pass has not yet completed
 	 */
 	public Ast getAst() {
-		checkState(this.builders.size() == 1);
+		Validate.state(this.builders.size() == 1);
 		return this.builders.getLast().build();
 	}
 

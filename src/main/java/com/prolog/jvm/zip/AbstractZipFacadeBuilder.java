@@ -64,7 +64,7 @@ public abstract class AbstractZipFacadeBuilder<T extends AbstractZipFacadeBuilde
 	/**
 	 * Sets the constant pool.
 	 */
-	public T setConstants(final List<Object> constants) {
+	public final T setConstants(final List<Object> constants) {
 		this.constants = constants;
 		return this.instance;
 	}
@@ -73,7 +73,7 @@ public abstract class AbstractZipFacadeBuilder<T extends AbstractZipFacadeBuilde
 	 * Sets the memory area used for storing the bytecode instructions
 	 * (allowed to be null).
 	 */
-	public T setHeap(final MemoryArea heap) {
+	public final T setHeap(final MemoryArea heap) {
 		this.heap = heap;
 		return this.instance;
 	}
@@ -81,7 +81,7 @@ public abstract class AbstractZipFacadeBuilder<T extends AbstractZipFacadeBuilde
 	/**
 	 * Sets the memory area used for the global stack (allowed to be null).
 	 */
-	public T setGlobalStack(final MemoryArea globalStack) {
+	public final T setGlobalStack(final MemoryArea globalStack) {
 		this.globalStack = globalStack;
 		return this.instance;
 	}
@@ -89,7 +89,7 @@ public abstract class AbstractZipFacadeBuilder<T extends AbstractZipFacadeBuilde
 	/**
 	 * Sets the memory area used for the local stack (allowed to be null).
 	 */
-	public T setLocalStack(final MemoryArea localStack) {
+	public final T setLocalStack(final MemoryArea localStack) {
 		this.localStack = localStack;
 		return this.instance;
 	}
@@ -105,7 +105,7 @@ public abstract class AbstractZipFacadeBuilder<T extends AbstractZipFacadeBuilde
 	 * necessitating the current separate {@link MemoryArea} instance
 	 * beside those used for accessing the global- and local stacks proper.
 	 */
-	public T setWordStore(final MemoryArea wordStore) {
+	public final T setWordStore(final MemoryArea wordStore) {
 		this.wordStore = wordStore;
 		return this.instance;
 	}
@@ -113,7 +113,7 @@ public abstract class AbstractZipFacadeBuilder<T extends AbstractZipFacadeBuilde
 	/**
 	 * Sets the memory area used for the trail (allowed to be null).
 	 */
-	public T setTrailStack(final MemoryArea trailStack) {
+	public final T setTrailStack(final MemoryArea trailStack) {
 		this.trailStack = trailStack;
 		return this.instance;
 	}
@@ -122,7 +122,7 @@ public abstract class AbstractZipFacadeBuilder<T extends AbstractZipFacadeBuilde
 	 * Sets the memory area used for the Push-Down List (allowed to be
 	 * null).
 	 */
-	public T setPdl(final MemoryArea pdl) {
+	public final T setPdl(final MemoryArea pdl) {
 		this.pdl = pdl;
 		return this.instance;
 	}
@@ -130,7 +130,7 @@ public abstract class AbstractZipFacadeBuilder<T extends AbstractZipFacadeBuilde
 	/**
 	 * Sets the memory area used for the scratchpad (allowed to be null).
 	 */
-	public T setScratchpad(final MemoryArea scratchpad) {
+	public final T setScratchpad(final MemoryArea scratchpad) {
 		this.scratchpad = scratchpad;
 		return this.instance;
 	}

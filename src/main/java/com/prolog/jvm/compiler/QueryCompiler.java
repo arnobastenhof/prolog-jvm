@@ -1,6 +1,6 @@
 package com.prolog.jvm.compiler;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static java.util.Objects.requireNonNull;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -41,7 +41,7 @@ public final class QueryCompiler extends AbstractCompiler {
 	public QueryCompiler(final PrologBytecode<?> code, final Scope scope,
 			final Map<Integer,String> queryVars) {
 		super(code, scope);
-		this.queryVars = checkNotNull(queryVars);
+		this.queryVars = requireNonNull(queryVars);
 	}
 
 	/**

@@ -1,6 +1,6 @@
 package com.prolog.jvm.compiler.parser;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static java.util.Objects.requireNonNull;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -40,7 +40,7 @@ public final class PrologLexer extends AbstractLexer {
 	 * @throws IOException
 	 */
 	public static PrologLexer newInstance(final Reader input) {
-		return new PrologLexer(checkNotNull(input));
+		return new PrologLexer(requireNonNull(input));
 	}
 
 	// Package-private constructor used by static factory method

@@ -1,7 +1,8 @@
 package com.prolog.jvm.symbol;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
+import static java.util.Objects.requireNonNull;
+
+import com.prolog.jvm.zip.util.Validate;
 
 /**
  * A data aggregate adhering to the JavaBeans pattern, used for storing and
@@ -32,7 +33,7 @@ public final class ClauseSymbol implements Symbol {
 	 * @throws IllegalArgumentException if {@code params < 0}
 	 */
 	public void setParams(final int params) {
-		checkArgument(params >= 0);
+		Validate.argument(params >= 0);
 		this.params = params;
 	}
 
@@ -45,7 +46,7 @@ public final class ClauseSymbol implements Symbol {
 	 * @throws IllegalArgumentException if {@code locals < 0}
 	 */
 	public void setLocals(final int locals) {
-		checkArgument(locals >= 0);
+		Validate.argument(locals >= 0);
 		this.locals = locals;
 	}
 
@@ -57,7 +58,7 @@ public final class ClauseSymbol implements Symbol {
 	 * @throws IllegalArgumentException if {@code code < 0}
 	 */
 	public void setHeapptr(final int heapptr) {
-		checkArgument(heapptr >= 0);
+		Validate.argument(heapptr >= 0);
 		this.heapptr = heapptr;
 	}
 
@@ -69,7 +70,7 @@ public final class ClauseSymbol implements Symbol {
 	 * @throws NullPointerException if {@code next == null}
 	 */
 	public void setNext(final ClauseSymbol next) {
-		this.next = checkNotNull(next);
+		this.next = requireNonNull(next);
 	}
 
 	/**

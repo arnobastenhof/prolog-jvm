@@ -1,6 +1,5 @@
 package com.prolog.jvm.zip;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static com.prolog.jvm.zip.util.Instructions.CALL;
 import static com.prolog.jvm.zip.util.Instructions.CONSTANT;
 import static com.prolog.jvm.zip.util.Instructions.ENTER;
@@ -9,6 +8,7 @@ import static com.prolog.jvm.zip.util.Instructions.FIRSTVAR;
 import static com.prolog.jvm.zip.util.Instructions.FUNCTOR;
 import static com.prolog.jvm.zip.util.Instructions.POP;
 import static com.prolog.jvm.zip.util.Instructions.VAR;
+import static java.util.Objects.requireNonNull;
 
 import java.util.List;
 
@@ -32,8 +32,8 @@ public final class PrologBytecodeImpl implements PrologBytecode<MementoImpl> {
 	private int codeptr = MemoryConstants.MIN_HEAP_INDEX;
 
 	public PrologBytecodeImpl(List<Object> constants, MemoryArea code) {
-		this.constants = checkNotNull(constants);
-		this.code = checkNotNull(code);
+		this.constants = requireNonNull(constants);
+		this.code = requireNonNull(code);
 	}
 
 	@Override
@@ -73,7 +73,7 @@ public final class PrologBytecodeImpl implements PrologBytecode<MementoImpl> {
 
 	@Override
 	public int getConstantPoolIndex(Object obj) {
-		checkNotNull(obj);
+		requireNonNull(obj);
 		int index = this.constants.indexOf(obj);
 		if (index != -1) {
 			return index;

@@ -1,12 +1,12 @@
 package com.prolog.jvm.compiler.ast;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
+import static java.util.Objects.requireNonNull;
 
 import java.util.Iterator;
 
 import com.prolog.jvm.compiler.parser.TokenType;
 import com.prolog.jvm.compiler.visitor.PrologVisitor;
+import com.prolog.jvm.zip.util.Validate;
 
 /**
  * Walker for {@link Ast} nodes based on Pattern 14 of of Parr (2010), Language
@@ -52,9 +52,9 @@ public enum AstWalker {
 	 * TokenType#PROGRAM}
 	 */
 	public void walkProgram(final Ast root, final PrologVisitor<Ast> visitor) {
-		checkNotNull(root);
-		checkNotNull(visitor);
-		checkArgument(root.getNodeType() == TokenType.PROGRAM);
+		requireNonNull(root);
+		requireNonNull(visitor);
+		Validate.argument(root.getNodeType() == TokenType.PROGRAM);
 		final Iterator<Ast> it = root.iterator();
 		while (it.hasNext()) {
 			clause(match(it, TokenType.IMPLIES), visitor);
@@ -75,9 +75,9 @@ public enum AstWalker {
 	 * TokenType#IMPLIES}
 	 */
 	public void walkQuery(final Ast root, final PrologVisitor<Ast> visitor) {
-		checkNotNull(root);
-		checkNotNull(visitor);
-		checkArgument(root.getNodeType() == TokenType.IMPLIES);
+		requireNonNull(root);
+		requireNonNull(visitor);
+		Validate.argument(root.getNodeType() == TokenType.IMPLIES);
 		final Iterator<Ast> it = root.iterator();
 		visitor.preVisitClause(root);
 		match(it, TokenType.ATOM); // Match the imaginary clause head

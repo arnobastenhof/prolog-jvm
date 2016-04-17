@@ -1,6 +1,6 @@
 package com.prolog.jvm.compiler.ast;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static java.util.Objects.requireNonNull;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -41,7 +41,7 @@ public final class Ast implements Iterable<Ast> {
 	 * @throws NullPointerException if {@code token == null}
 	 */
 	public static Ast getLeaf(final Token token) {
-		return new Ast(checkNotNull(token), Collections.<Ast>emptyList());
+		return new Ast(requireNonNull(token), Collections.<Ast>emptyList());
 	}
 
 	/**
@@ -53,7 +53,7 @@ public final class Ast implements Iterable<Ast> {
 	 * @throws NullPointerException if {@code token == null}
 	 */
 	public static ASTBuilder getInternal(final Token token) {
-		return new ASTBuilder(checkNotNull(token));
+		return new ASTBuilder(requireNonNull(token));
 	}
 
 	// Instantiation through static factory methods.
@@ -133,7 +133,7 @@ public final class Ast implements Iterable<Ast> {
 		 * @throws NullPointerException if {@code child == null}
 		 */
 		public void addChild(final Ast child) {
-			this.children.add(checkNotNull(child));
+			this.children.add(requireNonNull(child));
 		}
 
 		/**

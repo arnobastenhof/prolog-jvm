@@ -1,7 +1,8 @@
 package com.prolog.jvm.symbol;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Preconditions.checkState;
+import static java.util.Objects.requireNonNull;
+
+import com.prolog.jvm.zip.util.Validate;
 
 /**
  * A data aggregate adhering to the JavaBeans pattern, used for collecting
@@ -29,8 +30,8 @@ public final class PredicateSymbol implements Symbol {
 	 * already set
 	 */
 	public void setFirst(final ClauseSymbol first) {
-		checkState(this.first == null);
-		this.first = checkNotNull(first);
+		Validate.state(this.first == null);
+		this.first = requireNonNull(first);
 	}
 
 	/**

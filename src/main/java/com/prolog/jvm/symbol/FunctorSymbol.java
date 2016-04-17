@@ -1,9 +1,10 @@
 package com.prolog.jvm.symbol;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
+import static java.util.Objects.requireNonNull;
 
 import java.util.Objects;
+
+import com.prolog.jvm.zip.util.Validate;
 
 /**
  * The type of functors as they are represented in the constant pool. An atom
@@ -32,8 +33,8 @@ public final class FunctorSymbol implements Symbol {
 	 */
 	public static final FunctorSymbol valueOf(final String name,
 			final int arity) {
-		checkArgument(arity >= 0);
-		return new FunctorSymbol(checkNotNull(name), arity);
+		Validate.argument(arity >= 0);
+		return new FunctorSymbol(requireNonNull(name), arity);
 	}
 
 	/**

@@ -1,6 +1,6 @@
 package com.prolog.jvm.compiler.parser;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static java.util.Objects.requireNonNull;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -28,7 +28,7 @@ public abstract class AbstractLexer implements Lexer {
 	 * @throws NullPointerException if {@code input == null}
 	 */
 	protected AbstractLexer(final Reader input) {
-		this.input = checkNotNull(input);
+		this.input = requireNonNull(input);
 	}
 
 	@Override

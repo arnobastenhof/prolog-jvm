@@ -1,7 +1,7 @@
 package com.prolog.jvm.compiler.visitor;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static com.prolog.jvm.zip.util.MemoryConstants.MIN_LOCAL_INDEX;
+import static java.util.Objects.requireNonNull;
 
 import java.util.Map;
 
@@ -38,7 +38,7 @@ public final class QueryVariableTracker extends AbstractSymbolVisitor {
 	public QueryVariableTracker(final Map<Ast,Symbol> symbols,
 			final Map<Integer,String> queryVars) {
 		super(symbols);
-		this.queryVars = checkNotNull(queryVars);
+		this.queryVars = requireNonNull(queryVars);
 	}
 
 	@Override

@@ -1,6 +1,6 @@
 package com.prolog.jvm.symbol;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static java.util.Objects.requireNonNull;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -45,7 +45,7 @@ public final class Scope {
 	 * @throws NullPointerException if {@code parent == null}
 	 */
 	public static Scope newIntermediateInstance(final Scope parent) {
-		return new Scope(checkNotNull(parent));
+		return new Scope(requireNonNull(parent));
 	}
 
 	/**
@@ -55,7 +55,7 @@ public final class Scope {
 	 * @throws NullPointerException if {@code original == null}
 	 */
 	public static Scope copyOf(final Scope original) {
-		checkNotNull(original);
+		requireNonNull(original);
 		// Copy the parent.
 		Scope parent = null;
 		if (original.parent != null) {
@@ -103,7 +103,7 @@ public final class Scope {
 	 * @throws NullPointerException if {@code key == null}
 	 */
 	public <T extends Symbol> T resolveGlobal(final SymbolKey<T> key) {
-		return resolveRecursive(checkNotNull(key));
+		return resolveRecursive(requireNonNull(key));
 	}
 
 	/**
@@ -116,7 +116,7 @@ public final class Scope {
 	 */
 	public <T extends Symbol> void defineGlobal(final SymbolKey<T> key,
 			final T symbol) {
-		defineRecursive(checkNotNull(key), checkNotNull(symbol));
+		defineRecursive(requireNonNull(key), requireNonNull(symbol));
 	}
 
 	/**
@@ -129,7 +129,7 @@ public final class Scope {
 	 * @throws NullPointerException if {@code key == null}
 	 */
 	public <T extends Symbol> T resolveLocal(final SymbolKey<T> key) {
-		return resolve(checkNotNull(key));
+		return resolve(requireNonNull(key));
 	}
 
 	/**
@@ -142,7 +142,7 @@ public final class Scope {
 	 */
 	public <T extends Symbol> void defineLocal(final SymbolKey<T> key,
 			final T symbol) {
-		this.symbols.put(checkNotNull(key), checkNotNull(symbol));
+		this.symbols.put(requireNonNull(key), requireNonNull(symbol));
 	}
 
 	// Recursively calls itself on the parent scope until found to be null

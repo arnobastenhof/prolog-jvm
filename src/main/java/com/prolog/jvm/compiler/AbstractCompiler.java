@@ -1,6 +1,6 @@
 package com.prolog.jvm.compiler;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static java.util.Objects.requireNonNull;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -58,8 +58,8 @@ public abstract class AbstractCompiler {
 	 */
 	protected AbstractCompiler(final PrologBytecode<?> code,
 			final Scope scope) {
-		this.code = checkNotNull(code);
-		this.scope = checkNotNull(scope);
+		this.code = requireNonNull(code);
+		this.scope = requireNonNull(scope);
 	}
 
 	/**
@@ -76,7 +76,7 @@ public abstract class AbstractCompiler {
 	 */
 	public void compile(final Reader source)
 			throws IOException, RecognitionException {
-		this.root = constructAst(checkNotNull(source));
+		this.root = constructAst(requireNonNull(source));
 		this.symbols = resolveSymbols();
 		generateBytecode();
 	}
