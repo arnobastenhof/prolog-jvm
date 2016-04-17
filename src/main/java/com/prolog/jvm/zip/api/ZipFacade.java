@@ -1,7 +1,5 @@
 package com.prolog.jvm.zip.api;
 
-import java.util.List;
-
 import com.prolog.jvm.exceptions.BacktrackException;
 import com.prolog.jvm.main.Factory;
 import com.prolog.jvm.symbol.ClauseSymbol;
@@ -228,62 +226,12 @@ public interface ZipFacade {
 	 * @author Arno Bastenhof
 	 *
 	 */
-	public interface Builder<T extends ZipFacade> {
+	public interface Builder {
 
 		/**
 		 * Builds a {@link ZipFacade} instance.
 		 */
-		T build();
-
-		/**
-		 * Sets the constant pool.
-		 */
-		Builder<T> setConstants(List<Object> constants);
-
-		/**
-		 * Sets the memory area used for storing the bytecode instructions
-		 * (allowed to be null).
-		 */
-		Builder<T> setHeap(MemoryArea heap);
-
-		/**
-		 * Sets the memory area used for the global stack (allowed to be null).
-		 */
-		Builder<T> setGlobalStack(MemoryArea globalStack);
-
-		/**
-		 * Sets the memory area used for the local stack (allowed to be null).
-		 */
-		Builder<T> setLocalStack(MemoryArea localStack);
-
-		/**
-		 * Sets the combined memory areas of the local and global stacks
-		 * (allowed to be null). Practical considerations require these to
-		 * appear adjacent in the lower region of virtual memory in order for
-		 * them to be addressable through a 24-bit unsigned integer, used for
-		 * encoding word values. Moreover, operations like dereferencing,
-		 * binding and unification are agnostic as to whether the words they
-		 * operate on have been allocated on the global- or local stack,
-		 * necessitating the current separate {@link MemoryArea} instance
-		 * beside those used for accessing the global- and local stacks proper.
-		 */
-		Builder<T> setWordStore(MemoryArea wordStore);
-
-		/**
-		 * Sets the memory area used for the trail (allowed to be null).
-		 */
-		Builder<T> setTrailStack(MemoryArea trailStack);
-
-		/**
-		 * Sets the memory area used for the Push-Down List (allowed to be
-		 * null).
-		 */
-		Builder<T> setPdl(MemoryArea pdl);
-
-		/**
-		 * Sets the memory area used for the scratchpad (allowed to be null).
-		 */
-		Builder<T> setScratchpad(MemoryArea scratchpad);
+		ZipFacade build();
 
 	}
 

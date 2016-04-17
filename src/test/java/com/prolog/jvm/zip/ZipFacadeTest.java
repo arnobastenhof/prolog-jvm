@@ -18,7 +18,6 @@ import org.junit.Test;
 
 import com.prolog.jvm.symbol.FunctorSymbol;
 import com.prolog.jvm.zip.api.MemoryArea;
-import com.prolog.jvm.zip.api.ZipFacade;
 
 /**
  * Test class for {@link ZipFacadeImpl}.
@@ -28,7 +27,7 @@ import com.prolog.jvm.zip.api.ZipFacade;
  */
 public final class ZipFacadeTest {
 
-	private final ZipFacade.Builder<ZipFacadeMockImpl> builder =
+	private final AbstractZipFacadeBuilder<ZipFacadeMockImpl.Builder> builder =
 			new ZipFacadeMockImpl.Builder();
 
 	@Test
@@ -250,7 +249,11 @@ public final class ZipFacadeTest {
 		}
 
 		private static final class Builder
-		extends AbstractZipFacadeBuilder<ZipFacadeMockImpl> {
+		extends AbstractZipFacadeBuilder<Builder> {
+
+			private Builder() {
+				this.instance = this;
+			}
 
 			@Override
 			public ZipFacadeMockImpl build() {

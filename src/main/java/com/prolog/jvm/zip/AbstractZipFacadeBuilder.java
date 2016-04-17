@@ -11,8 +11,13 @@ import com.prolog.jvm.zip.api.ZipFacade;
  * @author Arno Bastenhof
  *
  */
-public abstract class AbstractZipFacadeBuilder<T extends ZipFacade>
-implements ZipFacade.Builder<T> {
+public abstract class AbstractZipFacadeBuilder<T extends AbstractZipFacadeBuilder<T>>
+		implements ZipFacade.Builder {
+
+	/**
+	 * An instance of an implementing class.
+	 */
+	protected T instance;
 
 	/**
 	 * The constant pool. Defaults to null.
@@ -56,51 +61,77 @@ implements ZipFacade.Builder<T> {
 	 */
 	protected MemoryArea scratchpad;
 
-	@Override
-	public ZipFacade.Builder<T> setConstants(final List<Object> constants) {
+	/**
+	 * Sets the constant pool.
+	 */
+	public T setConstants(final List<Object> constants) {
 		this.constants = constants;
-		return this;
+		return this.instance;
 	}
 
-	@Override
-	public ZipFacade.Builder<T> setHeap(final MemoryArea heap) {
+	/**
+	 * Sets the memory area used for storing the bytecode instructions
+	 * (allowed to be null).
+	 */
+	public T setHeap(final MemoryArea heap) {
 		this.heap = heap;
-		return this;
+		return this.instance;
 	}
 
-	@Override
-	public ZipFacade.Builder<T> setGlobalStack(final MemoryArea globalStack) {
+	/**
+	 * Sets the memory area used for the global stack (allowed to be null).
+	 */
+	public T setGlobalStack(final MemoryArea globalStack) {
 		this.globalStack = globalStack;
-		return this;
+		return this.instance;
 	}
 
-	@Override
-	public ZipFacade.Builder<T> setLocalStack(final MemoryArea localStack) {
+	/**
+	 * Sets the memory area used for the local stack (allowed to be null).
+	 */
+	public T setLocalStack(final MemoryArea localStack) {
 		this.localStack = localStack;
-		return this;
+		return this.instance;
 	}
 
-	@Override
-	public ZipFacade.Builder<T> setWordStore(final MemoryArea wordStore) {
+	/**
+	 * Sets the combined memory areas of the local and global stacks
+	 * (allowed to be null). Practical considerations require these to
+	 * appear adjacent in the lower region of virtual memory in order for
+	 * them to be addressable through a 24-bit unsigned integer, used for
+	 * encoding word values. Moreover, operations like dereferencing,
+	 * binding and unification are agnostic as to whether the words they
+	 * operate on have been allocated on the global- or local stack,
+	 * necessitating the current separate {@link MemoryArea} instance
+	 * beside those used for accessing the global- and local stacks proper.
+	 */
+	public T setWordStore(final MemoryArea wordStore) {
 		this.wordStore = wordStore;
-		return this;
+		return this.instance;
 	}
 
-	@Override
-	public ZipFacade.Builder<T> setTrailStack(final MemoryArea trailStack) {
+	/**
+	 * Sets the memory area used for the trail (allowed to be null).
+	 */
+	public T setTrailStack(final MemoryArea trailStack) {
 		this.trailStack = trailStack;
-		return this;
+		return this.instance;
 	}
 
-	@Override
-	public ZipFacade.Builder<T> setPdl(final MemoryArea pdl) {
+	/**
+	 * Sets the memory area used for the Push-Down List (allowed to be
+	 * null).
+	 */
+	public T setPdl(final MemoryArea pdl) {
 		this.pdl = pdl;
-		return this;
+		return this.instance;
 	}
 
-	@Override
-	public ZipFacade.Builder<T> setScratchpad(final MemoryArea scratchpad) {
+	/**
+	 * Sets the memory area used for the scratchpad (allowed to be null).
+	 */
+	public T setScratchpad(final MemoryArea scratchpad) {
 		this.scratchpad = scratchpad;
-		return this;
+		return this.instance;
 	}
 }

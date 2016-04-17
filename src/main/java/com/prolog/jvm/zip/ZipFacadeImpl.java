@@ -552,7 +552,11 @@ public class ZipFacadeImpl implements ZipFacade {
 	 * @author Arno Bastenhof
 	 */
 	public static final class Builder
-	extends AbstractZipFacadeBuilder<ZipFacadeImpl> {
+	extends AbstractZipFacadeBuilder<Builder> {
+
+		public Builder() {
+			this.instance = this;
+		}
 
 		/**
 		 * Builds a {@link ZipFacadeImpl} instance.

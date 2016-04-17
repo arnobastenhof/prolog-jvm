@@ -69,6 +69,7 @@ public final class Tokens {
 	public static final Token getAtom(final String text) {
 		return new PrologToken(TokenType.ATOM, checkNotNull(text));
 	}
+
 	/**
 	 * Static factory method for obtaining a {@link Token} of type
 	 * {@link TokenType#VAR}.
@@ -109,7 +110,7 @@ public final class Tokens {
 		}
 
 		@Override
-		public final String toString() {
+		public String toString() {
 			return "<" + this.getText() + ";" + this.getType() + ">";
 		}
 
@@ -119,7 +120,7 @@ public final class Tokens {
 		}
 
 		@Override
-		public final boolean equals(final Object obj) {
+		public boolean equals(final Object obj) {
 			if (obj == this) {
 				return true;
 			}
