@@ -24,7 +24,7 @@ public final class VariableSymbol implements Symbol {
 	 * {@code >= 0}
 	 * @throws IllegalArgumentException if {@code offset < 0}
 	 */
-	public VariableSymbol(int offset) {
+	public VariableSymbol(final int offset) {
 		checkArgument(offset >= 0);
 		this.offset = offset;
 	}

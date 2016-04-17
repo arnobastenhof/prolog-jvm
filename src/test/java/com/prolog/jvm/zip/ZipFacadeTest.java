@@ -32,17 +32,17 @@ public final class ZipFacadeTest {
 			new ZipFacadeMockImpl.Builder();
 
 	@Test
-	public final void pushFunctor() {
+	public void pushFunctor() {
 		// Keep a reference to the word store for post-asserts
-		int[] wordStore = new int[4];
+		final int[] wordStore = new int[4];
 
 		// Mock constant pool
-		FunctorSymbol symbol = FunctorSymbol.valueOf("f", 2);
-		List<Object> constants = new ArrayList<>();
+		final FunctorSymbol symbol = FunctorSymbol.valueOf("f", 2);
+		final List<Object> constants = new ArrayList<>();
 		constants.add(symbol);
 
 		// Build
-		ZipFacadeMockImpl facade = this.builder
+		final ZipFacadeMockImpl facade = this.builder
 				.setWordStore(new MemoryAreaMockImpl(wordStore))
 				.setConstants(constants)
 				.build();
@@ -55,21 +55,21 @@ public final class ZipFacadeTest {
 	}
 
 	@Test
-	public final void unwindTrail() {
+	public void unwindTrail() {
 		// Keep a reference to the word store for post-asserts
-		int[] wordStore = new int[]{
+		final int[] wordStore = new int[]{
 				getWord(REF, 3),  // Unbound variable
 				getWord(REF, 2),  // Bound variable
 				getWord(REF, 0),  // Bound variable
 				getWord(REF, 3)}; // Unbound variable
 
 		// Expected word store after the trail is unbound between addresses 1-3
-		int[] expected = Arrays.copyOf(wordStore, 4);
+		final int[] expected = Arrays.copyOf(wordStore, 4);
 		expected[1] = getWord(REF, 1);
 		expected[2] = getWord(REF, 2);
 
 		// Build the facade
-		ZipFacadeMockImpl facade = this.builder
+		final ZipFacadeMockImpl facade = this.builder
 				.setWordStore(new MemoryAreaMockImpl(wordStore))
 				.setTrailStack(new MemoryAreaMockImpl(new int[]{0, 2, 1, 3}))
 				.build();
@@ -80,9 +80,9 @@ public final class ZipFacadeTest {
 	}
 
 	@Test
-	public final void getWordAt() {
+	public void getWordAt() {
 		// Keep a reference to the word store for post-asserts
-		int[] wordStore = new int[]{
+		final int[] wordStore = new int[]{
 				getWord(REF, 5),
 				getWord(REF, 3),
 				getWord(REF, 0),
@@ -92,7 +92,7 @@ public final class ZipFacadeTest {
 		};
 
 		// Build the facade
-		ZipFacadeMockImpl facade = this.builder
+		final ZipFacadeMockImpl facade = this.builder
 				.setWordStore(new MemoryAreaMockImpl(wordStore))
 				.build();
 
@@ -107,7 +107,7 @@ public final class ZipFacadeTest {
 	@Test
 	public final void bind() {
 		// Keep references to the word store and trail stack for post-asserts
-		int[] wordStore = new int[]{
+		final int[] wordStore = new int[]{
 				getWord(CONS, 0),
 				getWord(REF, 1),
 				getWord(REF, 3),
@@ -117,10 +117,10 @@ public final class ZipFacadeTest {
 				getWord(REF, 6),
 				getWord(REF, 7)
 		};
-		int[] trailStack = new int[2];
+		final int[] trailStack = new int[2];
 
 		// Build (Note: trailing disabled by default)
-		ZipFacadeMockImpl facade = this.builder
+		final ZipFacadeMockImpl facade = this.builder
 				.setWordStore(new MemoryAreaMockImpl(wordStore))
 				.setTrailStack(new MemoryAreaMockImpl(trailStack))
 				.build();
@@ -152,7 +152,7 @@ public final class ZipFacadeTest {
 	@Test
 	public final void unify() {
 		// Keep a reference to the word store for post-asserts
-		int[] wordStore = new int[]{
+		final int[] wordStore = new int[]{
 				getWord(LIS, 1),    // First term
 				getWord(CONS, 1),
 				getWord(STR, 3),
@@ -174,11 +174,11 @@ public final class ZipFacadeTest {
 		};
 
 		// Mock constant pool
-		List<Object> constants = new ArrayList<>();
+		final List<Object> constants = new ArrayList<>();
 		constants.add(FunctorSymbol.valueOf("f", 2));
 
 		// Build (Note: trailing disabled by default)
-		ZipFacadeMockImpl facade = this.builder
+		final ZipFacadeMockImpl facade = this.builder
 				.setConstants(constants)
 				.setWordStore(new MemoryAreaMockImpl(wordStore))
 				.setPdl(new MemoryAreaMockImpl(new int[6]))
@@ -201,18 +201,18 @@ public final class ZipFacadeTest {
 
 		private final int[] memory;
 
-		private MemoryAreaMockImpl(int[] memory) {
+		private MemoryAreaMockImpl(final int[] memory) {
 			assert memory != null;
 			this.memory = memory;
 		}
 
 		@Override
-		public int readFrom(int address) {
+		public int readFrom(final int address) {
 			return this.memory[address];
 		}
 
 		@Override
-		public void writeTo(int address, int value) {
+		public void writeTo(final int address, final int value) {
 			this.memory[address] = value;
 		}
 
@@ -223,10 +223,10 @@ public final class ZipFacadeTest {
 	private static final class ZipFacadeMockImpl extends ZipFacadeImpl {
 
 		private ZipFacadeMockImpl(
-				List<Object> constants, MemoryArea heap,
-				MemoryArea globalStack, MemoryArea localStack,
-				MemoryArea wordStore, MemoryArea trailStack,
-				MemoryArea pdl, MemoryArea scratchpad) {
+				final List<Object> constants, final MemoryArea heap,
+				final MemoryArea globalStack, final MemoryArea localStack,
+				final MemoryArea wordStore, final MemoryArea trailStack,
+				final MemoryArea pdl, final MemoryArea scratchpad) {
 			super(constants, heap, globalStack, localStack,
 					wordStore, trailStack, pdl, scratchpad);
 		}
@@ -235,7 +235,7 @@ public final class ZipFacadeTest {
 		private int backtrackGlobalptr;
 
 		@Override
-		protected boolean isLocal(int address) {
+		protected boolean isLocal(final int address) {
 			return this.local;
 		}
 

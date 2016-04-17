@@ -57,49 +57,49 @@ implements ZipFacade.Builder<T> {
 	protected MemoryArea scratchpad;
 
 	@Override
-	public ZipFacade.Builder<T> setConstants(List<Object> constants) {
+	public ZipFacade.Builder<T> setConstants(final List<Object> constants) {
 		this.constants = constants;
 		return this;
 	}
 
 	@Override
-	public ZipFacade.Builder<T> setHeap(MemoryArea heap) {
+	public ZipFacade.Builder<T> setHeap(final MemoryArea heap) {
 		this.heap = heap;
 		return this;
 	}
 
 	@Override
-	public ZipFacade.Builder<T> setGlobalStack(MemoryArea globalStack) {
+	public ZipFacade.Builder<T> setGlobalStack(final MemoryArea globalStack) {
 		this.globalStack = globalStack;
 		return this;
 	}
 
 	@Override
-	public ZipFacade.Builder<T> setLocalStack(MemoryArea localStack) {
+	public ZipFacade.Builder<T> setLocalStack(final MemoryArea localStack) {
 		this.localStack = localStack;
 		return this;
 	}
 
 	@Override
-	public ZipFacade.Builder<T> setWordStore(MemoryArea wordStore) {
+	public ZipFacade.Builder<T> setWordStore(final MemoryArea wordStore) {
 		this.wordStore = wordStore;
 		return this;
 	}
 
 	@Override
-	public ZipFacade.Builder<T> setTrailStack(MemoryArea trailStack) {
+	public ZipFacade.Builder<T> setTrailStack(final MemoryArea trailStack) {
 		this.trailStack = trailStack;
 		return this;
 	}
 
 	@Override
-	public ZipFacade.Builder<T> setPdl(MemoryArea pdl) {
+	public ZipFacade.Builder<T> setPdl(final MemoryArea pdl) {
 		this.pdl = pdl;
 		return this;
 	}
 
 	@Override
-	public ZipFacade.Builder<T> setScratchpad(MemoryArea scratchpad) {
+	public ZipFacade.Builder<T> setScratchpad(final MemoryArea scratchpad) {
 		this.scratchpad = scratchpad;
 		return this;
 	}

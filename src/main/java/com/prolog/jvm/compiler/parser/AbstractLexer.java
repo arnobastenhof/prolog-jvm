@@ -27,7 +27,7 @@ public abstract class AbstractLexer implements Lexer {
 	 * allowed to be null
 	 * @throws NullPointerException if {@code input == null}
 	 */
-	protected AbstractLexer(Reader input) {
+	protected AbstractLexer(final Reader input) {
 		this.input = checkNotNull(input);
 	}
 
@@ -76,7 +76,7 @@ public abstract class AbstractLexer implements Lexer {
 	 * @throws RecognitionException if {@code expected} does not match {@link
 	 * #getLookahead()}
 	 */
-	protected final void match(char expected)
+	protected final void match(final char expected)
 			throws IOException, RecognitionException {
 		if (this.lookahead == expected) {
 			consumeNonLinefeed();

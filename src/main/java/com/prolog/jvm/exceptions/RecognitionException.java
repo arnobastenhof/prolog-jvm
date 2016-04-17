@@ -27,7 +27,7 @@ public final class RecognitionException extends Exception {
 	 * character(s); can be empty or null
 	 */
 	public static RecognitionException newInstance(
-			char actual, int line, String[] expected) {
+			final char actual, final int line, final String[] expected) {
 		return new RecognitionException(
 				getErrorMsg(getErrorChar(actual), line, expected));
 	}
@@ -38,7 +38,8 @@ public final class RecognitionException extends Exception {
 	 * @param actual the encountered character
 	 * @param line the line number at which {@code actual} was encountered
 	 */
-	public static RecognitionException newInstance(char actual, int line) {
+	public static RecognitionException newInstance(final char actual,
+			final int line) {
 		return newInstance(actual, line, null);
 	}
 
@@ -51,7 +52,7 @@ public final class RecognitionException extends Exception {
 	 * type(s); can be empty or null
 	 */
 	public static RecognitionException newInstance(
-			Token actual, int line, String[] expected) {
+			final Token actual, final int line, final String[] expected) {
 		return new RecognitionException(
 				getErrorMsg(actual.toString(), line, expected));
 	}
@@ -62,13 +63,14 @@ public final class RecognitionException extends Exception {
 	 * @param actual the encountered token type
 	 * @param line the line number at which {@code actual} was encountered
 	 */
-	public static RecognitionException newInstance(Token actual, int line) {
+	public static RecognitionException newInstance(final Token actual,
+			final int line) {
 		return new RecognitionException(
 				getErrorMsg(actual.toString(), line, null));
 	}
 
 	// Private constructor
-	private RecognitionException(String msg) {
+	private RecognitionException(final String msg) {
 		super(msg);
 	}
 
@@ -76,16 +78,12 @@ public final class RecognitionException extends Exception {
 			String actual, int line, String[] expected) {
 		assert actual != null;
 		assert line > 0;
-		StringBuilder buffer = new StringBuilder(actual);
-		buffer.append(UNEXPECTED_AT_LINE);
-		buffer.append(line);
-		buffer.append(".");
+		final StringBuilder buffer = new StringBuilder(actual)
+			.append(UNEXPECTED_AT_LINE).append(line).append(".");
 		if (expected != null && expected.length > 0) {
-			buffer.append(EXPECTED);
-			buffer.append(expected[0]);
+			buffer.append(EXPECTED).append(expected[0]);
 			for (int i = 1; i < expected.length; i++) {
-				buffer.append(OR);
-				buffer.append(expected[i]);
+				buffer.append(OR).append(expected[i]);
 			}
 			buffer.append(".");
 		}

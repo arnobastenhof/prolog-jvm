@@ -45,20 +45,21 @@ public final class BytecodeGenerator extends AbstractSymbolVisitor {
 	 * @param code the target for writing the bytecode instructions
 	 * @throws NullPointerException if {@code symbols == null}
 	 */
-	public BytecodeGenerator(Map<Ast,Symbol> symbols, PrologBytecode<?> code) {
+	public BytecodeGenerator(final Map<Ast,Symbol> symbols,
+			final PrologBytecode<?> code) {
 		super(symbols);
 		this.code = checkNotNull(code);
 	}
 
 	@Override
 	public void preVisitClause(Ast clause) {
-		ClauseSymbol symbol = getSymbol(clause,ClauseSymbol.class);
+		final ClauseSymbol symbol = getSymbol(clause,ClauseSymbol.class);
 		symbol.setHeapptr(this.code.getCodeSize());
 	}
 
 	@Override
 	public void inVisitClause(Ast clause) {
-		ClauseSymbol symbol = getSymbol(clause,ClauseSymbol.class);
+		final ClauseSymbol symbol = getSymbol(clause,ClauseSymbol.class);
 		this.code.writeIns(ENTER, symbol.getParams() + symbol.getLocals());
 	}
 
@@ -89,7 +90,7 @@ public final class BytecodeGenerator extends AbstractSymbolVisitor {
 
 	@Override
 	public void visitVariable(Ast var) {
-		VariableSymbol symbol = getSymbol(var, VariableSymbol.class);
+		final VariableSymbol symbol = getSymbol(var, VariableSymbol.class);
 		int opcode = VAR;
 		if (!symbol.hasBeenSeenBefore()) {
 			opcode = FIRSTVAR;
@@ -101,7 +102,7 @@ public final class BytecodeGenerator extends AbstractSymbolVisitor {
 	// Writes an instruction taking a constant pool entry as its parameter
 	private <T extends Symbol> void writeGroundIns(Class<T> clazz, Ast node,
 			int opcode) {
-		T symbol = getSymbol(node, clazz);
+		final T symbol = getSymbol(node, clazz);
 		int index = this.code.getConstantPoolIndex(symbol);
 		this.code.writeIns(opcode, index);
 	}

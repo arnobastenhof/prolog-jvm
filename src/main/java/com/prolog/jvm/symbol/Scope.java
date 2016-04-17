@@ -44,7 +44,7 @@ public final class Scope {
 	 * @param parent the parent scope; not allowed to be null
 	 * @throws NullPointerException if {@code parent == null}
 	 */
-	public static Scope newIntermediateInstance(Scope parent) {
+	public static Scope newIntermediateInstance(final Scope parent) {
 		return new Scope(checkNotNull(parent));
 	}
 
@@ -54,7 +54,7 @@ public final class Scope {
 	 * @param original the scope to be copied; not allowed to be null
 	 * @throws NullPointerException if {@code original == null}
 	 */
-	public static Scope copyOf(Scope original) {
+	public static Scope copyOf(final Scope original) {
 		checkNotNull(original);
 		// Copy the parent.
 		Scope parent = null;
@@ -62,14 +62,14 @@ public final class Scope {
 			parent = Scope.copyOf(original.parent);
 		}
 		// Create a new instance using the parent copy.
-		Scope result = new Scope(parent);
+		final Scope result = new Scope(parent);
 		// Copy the symbol entries and return the result.
 		result.symbols.putAll(original.symbols);
 		return result;
 	}
 
 	// Package-private to force instantiation through static factory methods.
-	private Scope(Scope parent) {
+	private Scope(final Scope parent) {
 		this.parent = parent;
 	}
 
@@ -102,7 +102,7 @@ public final class Scope {
 	 * @param key the search key; not allowed to be null
 	 * @throws NullPointerException if {@code key == null}
 	 */
-	public <T extends Symbol> T resolveGlobal(SymbolKey<T> key) {
+	public <T extends Symbol> T resolveGlobal(final SymbolKey<T> key) {
 		return resolveRecursive(checkNotNull(key));
 	}
 
@@ -114,7 +114,8 @@ public final class Scope {
 	 * @param symbol the symbol to be stored; not allowed to be null
 	 * @throws NullPointerException if {@code key == null || symbol == null}
 	 */
-	public <T extends Symbol> void defineGlobal(SymbolKey<T> key, T symbol) {
+	public <T extends Symbol> void defineGlobal(final SymbolKey<T> key,
+			final T symbol) {
 		defineRecursive(checkNotNull(key), checkNotNull(symbol));
 	}
 
@@ -127,7 +128,7 @@ public final class Scope {
 	 * @param key the search key; not allowed to be null
 	 * @throws NullPointerException if {@code key == null}
 	 */
-	public <T extends Symbol> T resolveLocal(SymbolKey<T> key) {
+	public <T extends Symbol> T resolveLocal(final SymbolKey<T> key) {
 		return resolve(checkNotNull(key));
 	}
 
@@ -139,12 +140,13 @@ public final class Scope {
 	 * @param symbol the symbol to be stored; not allowed to be null
 	 * @throws NullPointerException if {@code key == null || symbol == null}
 	 */
-	public <T extends Symbol> void defineLocal(SymbolKey<T> key, T symbol) {
+	public <T extends Symbol> void defineLocal(final SymbolKey<T> key,
+			final T symbol) {
 		this.symbols.put(checkNotNull(key), checkNotNull(symbol));
 	}
 
 	// Recursively calls itself on the parent scope until found to be null
-	private <T extends Symbol> T resolveRecursive(SymbolKey<T> key) {
+	private <T extends Symbol> T resolveRecursive(final SymbolKey<T> key) {
 		assert key != null;
 		if (this.parent != null) {
 			return this.parent.resolveRecursive(key);
@@ -153,13 +155,14 @@ public final class Scope {
 	}
 
 	// Searches the current scope
-	private <T extends Symbol> T resolve(SymbolKey<T> key) {
+	private <T extends Symbol> T resolve(final SymbolKey<T> key) {
 		assert key != null;
 		return key.getSymbolClass().cast(this.symbols.get(key));
 	}
 
 	// Recursively calls itself on the parent scope until found to be null
-	private <T extends Symbol> void defineRecursive(SymbolKey<T> key, T symbol) {
+	private <T extends Symbol> void defineRecursive(final SymbolKey<T> key,
+			final T symbol) {
 		assert key != null;
 		assert symbol != null;
 		if (this.parent != null) {

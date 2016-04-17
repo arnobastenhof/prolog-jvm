@@ -23,7 +23,7 @@ public abstract class AbstractParser {
 	 * not allowed to be null
 	 * @throws NullPointerException if {@code input == null}
 	 */
-	protected AbstractParser(Lexer input) {
+	protected AbstractParser(final Lexer input) {
 		this.input = checkNotNull(input);
 	}
 
@@ -46,7 +46,7 @@ public abstract class AbstractParser {
 	 * coincide with {@code expected}
 	 * @throws IOException
 	 */
-	protected final void match(TokenType expected)
+	protected final void match(final TokenType expected)
 			throws IOException, RecognitionException {
 		checkNotNull(expected);
 		if (this.lookahead.getType() == expected) {
@@ -85,6 +85,5 @@ public abstract class AbstractParser {
 	protected final int getLine() {
 		return this.input.getLine();
 	}
-
 
 }

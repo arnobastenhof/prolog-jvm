@@ -33,7 +33,7 @@ public enum Repl {
 	 * null}
 	 * @throws IOException
 	 */
-	public void run(Reader in, Writer out) throws IOException {
+	public void run(final Reader in, final Writer out) throws IOException {
 		// check preconditions
 		checkNotNull(in);
 		checkNotNull(out);
@@ -44,13 +44,13 @@ public enum Repl {
 		// bytecode state prior to the compilation of any queries
 		final MementoImpl m = Factory.getBytecode().createMemento();
 
-		try (BufferedReader reader = new BufferedReader(in)) {
+		try (final BufferedReader reader = new BufferedReader(in)) {
 			String userInput = null;
 			while (true) {
 				out.flush();
 				userInput = reader.readLine();
 				if (userInput != null && !userInput.equals(HALT)) {
-					try (StringReader sr = new StringReader(userInput)) {
+					try (final StringReader sr = new StringReader(userInput)) {
 						Factory.newQueryCompiler().compile(sr);
 					}
 					catch (Exception e) {

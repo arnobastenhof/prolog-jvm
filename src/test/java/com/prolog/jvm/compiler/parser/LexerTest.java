@@ -28,12 +28,12 @@ public final class LexerTest {
 	private static final String MULTILINE_COMMENT = " \t\r\n";
 
 	@Test
-	public final void nextToken() throws IOException, RecognitionException {
+	public void nextToken() throws IOException, RecognitionException {
 		// Expected tokens
-		Token varUnderscoreToken = Tokens.getVar(VAR_UNDERSCORE);
-		Token varCapitalToken = Tokens.getVar(VAR_CAPITAL);
-		Token constantToken = Tokens.getAtom(CONSTANT);
-		Token graphicToken = Tokens.getAtom(GRAPHIC);
+		final Token varUnderscoreToken = Tokens.getVar(VAR_UNDERSCORE);
+		final Token varCapitalToken = Tokens.getVar(VAR_CAPITAL);
+		final Token constantToken = Tokens.getAtom(CONSTANT);
+		final Token graphicToken = Tokens.getAtom(GRAPHIC);
 
 		// Assertions
 		expectMatch("(", Tokens.LBRACK);
@@ -52,34 +52,36 @@ public final class LexerTest {
 	}
 
 	@Test(expected=RecognitionException.class)
-	public final void wrongSlash() throws IOException, RecognitionException {
+	public void wrongSlash() throws IOException, RecognitionException {
 		expectException("/");
 	}
 
 	@Test(expected=RecognitionException.class)
-	public final void wrongColon() throws IOException, RecognitionException {
+	public void wrongColon() throws IOException, RecognitionException {
 		expectException(":");
 	}
 
 	@Test(expected=RecognitionException.class)
-	public final void wrongNil() throws IOException, RecognitionException {
+	public void wrongNil() throws IOException, RecognitionException {
 		expectException("[");
 	}
 
 	@Test(expected=RecognitionException.class)
-	public final void unknownChar() throws IOException, RecognitionException {
+	public void unknownChar() throws IOException, RecognitionException {
 		expectException("|");
 	}
 
-	private void expectMatch(String input, Token expected) throws IOException, RecognitionException {
-		try (Reader reader = new StringReader(input)) {
-			Token token = PrologLexer.newInstance(reader).nextToken();
+	private void expectMatch(final String input, final Token expected)
+			throws IOException, RecognitionException {
+		try (final Reader reader = new StringReader(input)) {
+			final Token token = PrologLexer.newInstance(reader).nextToken();
 			assertEquals(token, expected);
 		}
 	}
 
-	private void expectException(String input) throws IOException, RecognitionException {
-		try (Reader reader = new StringReader(input)) {
+	private void expectException(final String input) throws IOException,
+			RecognitionException {
+		try (final Reader reader = new StringReader(input)) {
 			PrologLexer.newInstance(reader).nextToken();
 		}
 	}

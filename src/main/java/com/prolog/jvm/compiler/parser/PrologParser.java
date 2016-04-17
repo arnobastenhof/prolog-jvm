@@ -36,14 +36,15 @@ public final class PrologParser extends AbstractParser {
 	 * @throws NullPointerException if {@code input == null || visitor == null}
 	 * @throws IOException
 	 */
-	public static final PrologParser newInstance(Reader input,
-			PrologVisitor<Token> visitor) throws IOException {
-		PrologLexer lexer = new PrologLexer(checkNotNull(input));
+	public static final PrologParser newInstance(final Reader input,
+			final PrologVisitor<Token> visitor) throws IOException {
+		final PrologLexer lexer = new PrologLexer(checkNotNull(input));
 		return new PrologParser(lexer, checkNotNull(visitor));
 	}
 
 	// Instantiation through static factory methods
-	private PrologParser(PrologLexer input, PrologVisitor<Token> visitor) {
+	private PrologParser(final PrologLexer input,
+			final PrologVisitor<Token> visitor) {
 		super(input);
 		this.visitor = visitor;
 	}
@@ -85,7 +86,7 @@ public final class PrologParser extends AbstractParser {
 
 	// 'Parses' an imaginary token to stand in for the clause head
 	private void queryHead() {
-		Token functor = Tokens.getAtom("~"); // ~ not recognized by lexer
+		final Token functor = Tokens.getAtom("~"); // ~ not recognized by lexer
 		this.visitor.visitConstant(functor);
 	}
 
@@ -109,7 +110,7 @@ public final class PrologParser extends AbstractParser {
 		structure(); // match first goal
 		while (getLookaheadType() == TokenType.COMMA) {
 			consume();
-			Token functor = structure(); // match subsequent goals
+			final Token functor = structure(); // match subsequent goals
 			this.visitor.postVisitGoal(functor);
 		}
 	}
@@ -140,7 +141,7 @@ public final class PrologParser extends AbstractParser {
 
 	// structure = atom, ["(", term, {",", term}, ")"] ;
 	private Token structure() throws IOException, RecognitionException {
-		Token functor = getLookahead();
+		final Token functor = getLookahead();
 		match(TokenType.ATOM);
 		if (getLookaheadType() == TokenType.LBRACK) {
 			consume();

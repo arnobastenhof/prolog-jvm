@@ -51,11 +51,11 @@ public enum AstWalker {
 	 * @throws IllegalArgumentException if root is not of type {@link
 	 * TokenType#PROGRAM}
 	 */
-	public void walkProgram(Ast root, PrologVisitor<Ast> visitor) {
+	public void walkProgram(final Ast root, final PrologVisitor<Ast> visitor) {
 		checkNotNull(root);
 		checkNotNull(visitor);
 		checkArgument(root.getNodeType() == TokenType.PROGRAM);
-		Iterator<Ast> it = root.iterator();
+		final Iterator<Ast> it = root.iterator();
 		while (it.hasNext()) {
 			clause(match(it, TokenType.IMPLIES), visitor);
 		}
@@ -74,11 +74,11 @@ public enum AstWalker {
 	 * @throws IllegalArgumentException if root is not of type {@link
 	 * TokenType#IMPLIES}
 	 */
-	public void walkQuery(Ast root, PrologVisitor<Ast> visitor) {
+	public void walkQuery(final Ast root, final PrologVisitor<Ast> visitor) {
 		checkNotNull(root);
 		checkNotNull(visitor);
 		checkArgument(root.getNodeType() == TokenType.IMPLIES);
-		Iterator<Ast> it = root.iterator();
+		final Iterator<Ast> it = root.iterator();
 		visitor.preVisitClause(root);
 		match(it, TokenType.ATOM); // Match the imaginary clause head
 		visitor.inVisitClause(root);
@@ -86,12 +86,12 @@ public enum AstWalker {
 		visitor.postVisitClause(root);
 	}
 
-	private void clause(Ast clause, PrologVisitor<Ast> visitor) {
+	private void clause(final Ast clause, final PrologVisitor<Ast> visitor) {
 		assert clause != null;
 		assert clause.getNodeType() == TokenType.IMPLIES;
 		assert visitor != null;
 		visitor.preVisitClause(clause);
-		Iterator<Ast> it = clause.iterator();
+		final Iterator<Ast> it = clause.iterator();
 		literal(match(it, TokenType.ATOM), visitor); // Walk the head
 		visitor.inVisitClause(clause);
 		if (it.hasNext()) {
@@ -100,28 +100,30 @@ public enum AstWalker {
 		visitor.postVisitClause(clause);
 	}
 
-	private void walkGoals(Iterator<Ast> it, PrologVisitor<Ast> visitor) {
+	private void walkGoals(final Iterator<Ast> it,
+			final PrologVisitor<Ast> visitor) {
 		assert it != null;
 		assert visitor != null;
 		assert it.hasNext();
 		do { // Walk the goals (>= 1)
-			Ast goal = match(it, TokenType.ATOM);
+			final Ast goal = match(it, TokenType.ATOM);
 			literal(goal, visitor);
 			visitor.postVisitGoal(goal);
 		} while (it.hasNext());
 	}
 
-	private void literal(Ast structure, PrologVisitor<Ast> visitor) {
+	private void literal(final Ast structure,
+			final PrologVisitor<Ast> visitor) {
 		assert structure != null;
 		assert visitor != null;
-		Iterator<Ast> it = structure.iterator();
+		final Iterator<Ast> it = structure.iterator();
 		// Visit the arguments, if any
 		while (it.hasNext()) {
 			term(it.next(), visitor);
 		}
 	}
 
-	private void term(Ast term, PrologVisitor<Ast> visitor) {
+	private void term(final Ast term, final PrologVisitor<Ast> visitor) {
 		assert term != null;
 		assert visitor != null;
 		switch (term.getNodeType()) {
@@ -140,10 +142,11 @@ public enum AstWalker {
 		}
 	}
 
-	private void structure(Ast structure, PrologVisitor<Ast> visitor) {
+	private void structure(final Ast structure,
+			final PrologVisitor<Ast> visitor) {
 		assert structure != null;
 		assert visitor != null;
-		Iterator<Ast> it = structure.iterator();
+		final Iterator<Ast> it = structure.iterator();
 		if (it.hasNext()) {
 			visitor.preVisitCompound(structure);
 			do {
@@ -156,10 +159,10 @@ public enum AstWalker {
 		}
 	}
 
-	private Ast match(Iterator<Ast> it, TokenType type) {
+	private Ast match(final Iterator<Ast> it, final TokenType type) {
 		assert it != null;
 		assert it.hasNext();
-		Ast next = it.next();
+		final Ast next = it.next();
 		if (next.getNodeType() != type) {
 			throw new IllegalStateException(
 					"Expected node type " + type + ", but found "

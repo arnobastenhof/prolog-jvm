@@ -186,24 +186,24 @@ public final class Factory {
 
 		private final int lower, upper;
 
-		private MemoryAreas(int lower, int upper) {
+		private MemoryAreas(final int lower, final int upper) {
 			this.lower = lower;
 			this.upper = upper;
 		}
 
 		@Override
-		public int readFrom(int address) {
+		public int readFrom(final int address) {
 			checkBounds(address);
 			return memory[address];
 		}
 
 		@Override
-		public void writeTo(int address, int value) {
+		public void writeTo(final int address, final int value) {
 			checkBounds(address);
 			memory[address] = value;
 		}
 
-		private void checkBounds(int address) {
+		private void checkBounds(final int address) {
 			if (address < this.lower || address > this.upper) {
 				throw new IndexOutOfBoundsException();
 			}

@@ -30,7 +30,7 @@ public final class PrologJvm {
 			System.out.println(HELP); // print help message
 			return;
 		}
-		try (Reader program = new FileReader(args[0])) {
+		try (final Reader program = new FileReader(args[0])) {
 			Factory.newProgramCompiler().compile(program);
 		}
 		catch (IOException | RecognitionException e) {
@@ -40,7 +40,7 @@ public final class PrologJvm {
 		catch (Exception e) {
 			throw new InternalCompilerException(e);
 		}
-		try (Reader reader = new InputStreamReader(System.in);
+		try (final Reader reader = new InputStreamReader(System.in);
 				Writer writer = new PrintWriter(System.out)) {
 			Repl.INSTANCE.run(reader, writer);
 		} catch (IOException e) {

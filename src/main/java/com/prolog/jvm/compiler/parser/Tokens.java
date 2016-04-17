@@ -66,7 +66,7 @@ public final class Tokens {
 	 * @param text the matched input text; not allowed to be null
 	 * @throws NullPointerException if {@code text == null}
 	 */
-	public static final Token getAtom(String text) {
+	public static final Token getAtom(final String text) {
 		return new PrologToken(TokenType.ATOM, checkNotNull(text));
 	}
 	/**
@@ -76,7 +76,7 @@ public final class Tokens {
 	 * @param text the matched input text; not allowed to be null
 	 * @throws NullPointerException if {@code text == null}
 	 */
-	public static final Token getVar(String text) {
+	public static final Token getVar(final String text) {
 		return new PrologToken(TokenType.VAR, checkNotNull(text));
 	}
 
@@ -91,7 +91,7 @@ public final class Tokens {
 		private final TokenType type;
 		private final String text;
 
-		private PrologToken(TokenType type, String text) {
+		private PrologToken(final TokenType type, final String text) {
 			assert type != null;
 			assert text != null;
 			this.type = type;
@@ -119,14 +119,14 @@ public final class Tokens {
 		}
 
 		@Override
-		public final boolean equals(Object obj) {
+		public final boolean equals(final Object obj) {
 			if (obj == this) {
 				return true;
 			}
 			if (!(obj instanceof PrologToken)) {
 				return false;
 			}
-			PrologToken other = (PrologToken)obj;
+			final PrologToken other = (PrologToken)obj;
 			return this.getType() == other.getType() &&
 					this.getText().equals(other.getText()); // text non-null
 		}

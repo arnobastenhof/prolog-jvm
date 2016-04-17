@@ -31,36 +31,36 @@ public final class ParserTest {
 			new BasicPrologVisitor<>();
 
 	@Test
-	public final void program() throws IOException, RecognitionException {
+	public void program() throws IOException, RecognitionException {
 		parseProgram(PROGRAM);
 	}
 
 	@Test
-	public final void query() throws IOException, RecognitionException {
+	public void query() throws IOException, RecognitionException {
 		parseQuery(QUERY);
 	}
 
 	@Test(expected = RecognitionException.class)
-	public final void wrongQuery() throws IOException, RecognitionException {
+	public void wrongQuery() throws IOException, RecognitionException {
 		parseQuery(WRONG_QUERY);
 	}
 
 	// === Private implementation ===
 
-	private final void parseProgram(String program)
+	private void parseProgram(final String program)
 			throws IOException, RecognitionException {
-		try (InputStream is = this.getClass().getResourceAsStream(program);
-				Reader reader = new InputStreamReader(is)) {
-			PrologParser parser = PrologParser.newInstance(reader, VISITOR);
+		try (final InputStream is = this.getClass().getResourceAsStream(program);
+				final Reader reader = new InputStreamReader(is)) {
+			final PrologParser parser = PrologParser.newInstance(reader, VISITOR);
 			parser.parseProgram();
 			assertEquals(parser.isDone(), true);
 		}
 	}
 
-	private final void parseQuery(String query)
+	private void parseQuery(final String query)
 			throws IOException, RecognitionException {
-		try (Reader reader = new StringReader(query)) {
-			PrologParser parser = PrologParser.newInstance(reader, VISITOR);
+		try (final Reader reader = new StringReader(query)) {
+			final PrologParser parser = PrologParser.newInstance(reader, VISITOR);
 			parser.parseQuery();
 			assertEquals(parser.isDone(), true);
 		}

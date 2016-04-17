@@ -28,7 +28,7 @@ public final class PredicateSymbol implements Symbol {
 	 * @throws IllegalStateException if the first clause alternative was
 	 * already set
 	 */
-	public void setFirst(ClauseSymbol first) {
+	public void setFirst(final ClauseSymbol first) {
 		checkState(this.first == null);
 		this.first = checkNotNull(first);
 	}

@@ -17,7 +17,7 @@ public final class InternalCompilerException extends RuntimeException {
 	 *
 	 * @param cause the lower-level exception to be wrapped
 	 */
-	public InternalCompilerException(Throwable cause) {
+	public InternalCompilerException(final Throwable cause) {
 		super(cause);
 	}
 
@@ -25,7 +25,7 @@ public final class InternalCompilerException extends RuntimeException {
 	 *
 	 * @param msg the exception message
 	 */
-	public InternalCompilerException(String msg) {
+	public InternalCompilerException(final String msg) {
 		super(msg);
 	}
 

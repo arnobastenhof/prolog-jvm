@@ -28,7 +28,7 @@ public final class ProgramCompiler extends AbstractCompiler {
 	 * to be null
 	 * @throws NullPointerException if {@code code == null || scope == null}
 	 */
-	public ProgramCompiler(PrologBytecode<?> code, Scope scope) {
+	public ProgramCompiler(final PrologBytecode<?> code, final Scope scope) {
 		super(code, scope);
 	}
 
@@ -38,13 +38,13 @@ public final class ProgramCompiler extends AbstractCompiler {
 	}
 
 	@Override
-	protected void parseSource(PrologParser parser)
+	protected void parseSource(final PrologParser parser)
 			throws IOException, RecognitionException {
 		parser.parseProgram();
 	}
 
 	@Override
-	protected void walkAst(Ast root, PrologVisitor<Ast> visitor) {
+	protected void walkAst(final Ast root, final PrologVisitor<Ast> visitor) {
 		AstWalker.INSTANCE.walkProgram(root, visitor);
 	}
 }

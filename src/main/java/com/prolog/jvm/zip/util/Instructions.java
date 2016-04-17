@@ -100,7 +100,7 @@ public final class Instructions {
 	public static final Map<Integer,String> MNEMONICS;
 
 	static {
-		Map<Integer,String> map = new HashMap<>();
+		final Map<Integer,String> map = new HashMap<>();
 		map.put(MATCH, "MATCH");
 		map.put(ARG, "ARG");
 		map.put(COPY, "COPY");
@@ -108,8 +108,7 @@ public final class Instructions {
 	}
 
 	static {
-		Map<Integer,String> map = new HashMap<>();
-		map = new HashMap<>();
+		final Map<Integer,String> map = new HashMap<>();
 		map.put(Integer.valueOf(POP), "pop");
 		map.put(Integer.valueOf(FUNCTOR), "functor");
 		map.put(Integer.valueOf(CONSTANT), "constant");
@@ -126,8 +125,8 @@ public final class Instructions {
 	 * {@link #MNEMONICS} respectively if found, or that of their integer
 	 * values otherwise.
 	 */
-	public static final String toString(int operator) {
-		StringBuilder buffer = new StringBuilder("Mode: ");
+	public static final String toString(final int operator) {
+		final StringBuilder buffer = new StringBuilder("Mode: ");
 		buffer.append(toString(MODES, operator & MODE_MASK));
 		buffer.append(". Opcode: ");
 		buffer.append(toString(MNEMONICS, operator & OPCODE_MASK));
@@ -138,7 +137,7 @@ public final class Instructions {
 	 * Returns the String representation for the specified {@code mode} from
 	 * {@link #MODES} if found therein, or that of its integer value otherwise.
 	 */
-	public static final String modeToString(int mode) {
+	public static final String modeToString(final int mode) {
 		return "Mode: " + toString(MODES, mode);
 	}
 
@@ -151,9 +150,9 @@ public final class Instructions {
 		return "Opcode: " + toString(MNEMONICS, opcode);
 	}
 
-	private static final String toString(Map<Integer,String> map,
-			int operatorPart) {
-		Integer key = Integer.valueOf(operatorPart);
+	private static final String toString(final Map<Integer,String> map,
+			final int operatorPart) {
+		final Integer key = Integer.valueOf(operatorPart);
 		if (map.containsKey(key)) {
 			return map.get(key);
 		}

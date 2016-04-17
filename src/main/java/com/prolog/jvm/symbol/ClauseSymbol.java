@@ -31,7 +31,7 @@ public final class ClauseSymbol implements Symbol {
 	 * >= 0}
 	 * @throws IllegalArgumentException if {@code params < 0}
 	 */
-	public void setParams(int params) {
+	public void setParams(final int params) {
 		checkArgument(params >= 0);
 		this.params = params;
 	}
@@ -44,7 +44,7 @@ public final class ClauseSymbol implements Symbol {
 	 * {@code >= 0}
 	 * @throws IllegalArgumentException if {@code locals < 0}
 	 */
-	public void setLocals(int locals) {
+	public void setLocals(final int locals) {
 		checkArgument(locals >= 0);
 		this.locals = locals;
 	}
@@ -56,7 +56,7 @@ public final class ClauseSymbol implements Symbol {
 	 * @param heapptr an offset into the heap; must  be {@code >= 0}
 	 * @throws IllegalArgumentException if {@code code < 0}
 	 */
-	public void setHeapptr(int heapptr) {
+	public void setHeapptr(final int heapptr) {
 		checkArgument(heapptr >= 0);
 		this.heapptr = heapptr;
 	}
@@ -68,7 +68,7 @@ public final class ClauseSymbol implements Symbol {
 	 * null
 	 * @throws NullPointerException if {@code next == null}
 	 */
-	public void setNext(ClauseSymbol next) {
+	public void setNext(final ClauseSymbol next) {
 		this.next = checkNotNull(next);
 	}
 

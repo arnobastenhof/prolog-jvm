@@ -35,7 +35,8 @@ public final class QueryVariableTracker extends AbstractSymbolVisitor {
 	 * @throws NullPointerException if {@code symbols == null || queryVars ==
 	 * null}
 	 */
-	public QueryVariableTracker(Map<Ast,Symbol> symbols, Map<Integer,String> queryVars) {
+	public QueryVariableTracker(final Map<Ast,Symbol> symbols,
+			final Map<Integer,String> queryVars) {
 		super(symbols);
 		this.queryVars = checkNotNull(queryVars);
 	}
@@ -45,8 +46,8 @@ public final class QueryVariableTracker extends AbstractSymbolVisitor {
 		// queryVars can safely be treated as a bidirectional map since
 		// variables are scoped to the clause wherein they occur
 		if (!this.queryVars.values().contains(var.getText())) {
-			VariableSymbol symbol = getSymbol(var, VariableSymbol.class);
-			Integer address = Integer.valueOf(MIN_LOCAL_INDEX+symbol.getOffset());
+			final VariableSymbol symbol = getSymbol(var, VariableSymbol.class);
+			final Integer address = MIN_LOCAL_INDEX + symbol.getOffset();
 			this.queryVars.put(address, var.getText());
 		}
 	}

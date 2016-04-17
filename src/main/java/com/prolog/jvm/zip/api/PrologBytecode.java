@@ -1,6 +1,7 @@
 package com.prolog.jvm.zip.api;
 
 import com.prolog.jvm.zip.util.Instructions;
+import com.prolog.jvm.zip.util.MemoryConstants;
 
 /**
  * Representation of a compiled Prolog program and its query, containing their
@@ -44,11 +45,11 @@ public interface PrologBytecode<M extends PrologBytecode.Memento> {
 	void writeIns(int opcode);
 
 	/**
-	 * Reads an integer from the specified address in the heap.
+	 * Reads a word from the specified address in the heap.
 	 *
 	 * @param address the address in the heap to read from
 	 * @throws IndexOutOfBoundsException if {@code address < 0 ||
-	 * address >= ZipConstants.CODE_SIZE}
+	 * address >= {@link MemoryConstants#MAX_HEAP_INDEX}
 	 */
 	int read(int address);
 
@@ -72,7 +73,7 @@ public interface PrologBytecode<M extends PrologBytecode.Memento> {
 	 * Creates a memento, containing the state of the implementation class
 	 * at the moment this method was invoked.
 	 * <p>
-	 * Meant for invocation immediately after compilation of a program, and
+	 * Meant for invocation immediately after compilation of a program, just
 	 * prior to compiling the first query. The returned memento may then be
 	 * (re)used through {@link #setMemento(Memento)} each time after a query
 	 * has been executed to prevent the heap from overflowing.

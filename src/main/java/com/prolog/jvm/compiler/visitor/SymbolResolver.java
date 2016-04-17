@@ -50,7 +50,7 @@ public final class SymbolResolver extends BasicPrologVisitor<Ast> {
 	 * @param scope the 'global' root scope; not allowed to be null
 	 * @throws NullPointerException if {@code scope == null}
 	 */
-	public SymbolResolver(Scope scope) {
+	public SymbolResolver(final Scope scope) {
 		this.currentScope = checkNotNull(scope);
 	}
 
@@ -73,10 +73,10 @@ public final class SymbolResolver extends BasicPrologVisitor<Ast> {
 	@Override
 	public void preVisitClause(Ast clause) {
 		// Obtain the root node for the clause's head literal
-		Ast literal = getHeadLiteral(clause);
+		final Ast literal = getHeadLiteral(clause);
 
 		// Define a symbol for the clause
-		ClauseSymbol symbol = getClauseSymbol(literal);
+		final ClauseSymbol symbol = getClauseSymbol(literal);
 		this.currentClause = symbol;
 
 		// Set the number of parameters passed to this clause
@@ -93,7 +93,7 @@ public final class SymbolResolver extends BasicPrologVisitor<Ast> {
 	}
 
 	private Ast getHeadLiteral(Ast clause) {
-		Iterator<Ast> it = clause.iterator();
+		final Iterator<Ast> it = clause.iterator();
 		if (!it.hasNext()) {
 			throw new IllegalArgumentException();
 		}
@@ -124,7 +124,7 @@ public final class SymbolResolver extends BasicPrologVisitor<Ast> {
 	public void postVisitGoal(Ast goal) {
 		// TODO Pop the scope for the previous goal literal
 
-		PredicateSymbol symbol = getPredicateSymbol(goal);
+		final PredicateSymbol symbol = getPredicateSymbol(goal);
 		this.symbols.put(goal, symbol);
 
 		// TODO Push a scope for the next goal literal
@@ -204,35 +204,36 @@ public final class SymbolResolver extends BasicPrologVisitor<Ast> {
 		assert variable != null;
 
 		// Was this variable already encountered before in this clause?
-		SymbolKey<VariableSymbol> key = SymbolKeys.ofVariable(variable.getText());
+		final SymbolKey<VariableSymbol> key = SymbolKeys.ofVariable(variable.getText());
 		VariableSymbol symbol = this.currentScope.resolveLocal(key);
 		// If not, create a new one and store it in the clause scope.
 		if (symbol == null) {
-			int offset = this.currentClause.getParams() + this.currentScope.getSize();
+			final int offset = this.currentClause.getParams() +
+					this.currentScope.getSize();
 			symbol = new VariableSymbol(offset);
 			this.currentScope.defineLocal(key, symbol);
 		}
 		return symbol;
 	}
 
-	private ClauseSymbol getClauseSymbol(Ast literal) {
+	private ClauseSymbol getClauseSymbol(final Ast literal) {
 		assert literal != null;
 
 		// Define a new clause symbol.
-		ClauseSymbol symbol = new ClauseSymbol();
+		final ClauseSymbol symbol = new ClauseSymbol();
 
 		// See if a clause symbol for the same head literal was already defined
-		SymbolKey<ClauseSymbol> clauseKey = SymbolKeys.ofClause(
+		final SymbolKey<ClauseSymbol> clauseKey = SymbolKeys.ofClause(
 				literal.getText(),
 				literal.getArity());
-		ClauseSymbol prevSymbol = this.currentScope.resolveGlobal(clauseKey);
+		final ClauseSymbol prevSymbol = this.currentScope.resolveGlobal(clauseKey);
 		// If so, set its next clause alternative.
 		if (prevSymbol != null) {
 			prevSymbol.setNext(symbol);
 		}
 		else {
 			// Otherwise, retrieve the predicate symbol for this clause
-			PredicateSymbol predSymbol = getPredicateSymbol(literal);
+			final PredicateSymbol predSymbol = getPredicateSymbol(literal);
 			// and set the predicate's first clause alternative
 			predSymbol.setFirst(symbol);
 		}

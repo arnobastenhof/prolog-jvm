@@ -31,7 +31,7 @@ public final class ReplTest {
 
 	@Test
 	public void ancestry() throws IOException {
-		StringBuilder queries = new StringBuilder().
+		final StringBuilder queries = new StringBuilder().
 				append("grandparent(hera, harmonia).\n").
 				append("grandparent(dionisius, zeus).\n").
 				append("parent(zeus,X), parent(X,harmonia).\n\n").
@@ -44,7 +44,7 @@ public final class ReplTest {
 				append("fathers(zeus,Y).\n").
 				append(HALT).append('\n');
 
-		StringBuilder answers = new StringBuilder().
+		final StringBuilder answers = new StringBuilder().
 				append(SUCCESS).
 				append(FAILURE).
 				append("X = ares\n").
@@ -62,7 +62,7 @@ public final class ReplTest {
 
 	@Test
 	public void lists() throws IOException {
-		StringBuilder queries = new StringBuilder().
+		final StringBuilder queries = new StringBuilder().
 				append("append(cons(a,[]),cons(b,[]),cons(a,cons(b,[]))).\n").
 				append("reverse(cons(a,cons(b,[])),cons(b,cons(a,[]))).\n").
 				append("reverse(cons(a,[]),X).\n").
@@ -72,7 +72,7 @@ public final class ReplTest {
 				append("reverse(X,Y.\n").
 				append("halt\n");
 
-		StringBuilder answers = new StringBuilder().
+		final StringBuilder answers = new StringBuilder().
 				append(SUCCESS).
 				append(SUCCESS).
 				append("X = cons(a, [])\n").
@@ -85,12 +85,12 @@ public final class ReplTest {
 				answers.toString());
 	}
 
-	private String runQueries(String resource, String queries)
+	private String runQueries(final String resource, final String queries)
 			throws IOException {
 		String result = null;
-		try (InputStream is = this.getClass().getResourceAsStream(resource);
-				Reader file = new InputStreamReader(is);
-				Reader reader = new StringReader(queries);
+		try (final InputStream is = this.getClass().getResourceAsStream(resource);
+				final Reader file = new InputStreamReader(is);
+				final Reader reader = new StringReader(queries);
 				StringWriter writer = new StringWriter()) {
 			Factory.newProgramCompiler().compile(file);
 			Repl.INSTANCE.run(reader, writer);

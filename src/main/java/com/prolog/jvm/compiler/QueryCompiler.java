@@ -38,8 +38,8 @@ public final class QueryCompiler extends AbstractCompiler {
 	 * @throws NullPointerException if {@code code == null || scope == null ||
 	 * queryVars == null}
 	 */
-	public QueryCompiler(PrologBytecode<?> code, Scope scope,
-			Map<Integer,String> queryVars) {
+	public QueryCompiler(final PrologBytecode<?> code, final Scope scope,
+			final Map<Integer,String> queryVars) {
 		super(code, scope);
 		this.queryVars = checkNotNull(queryVars);
 	}
@@ -48,10 +48,10 @@ public final class QueryCompiler extends AbstractCompiler {
 	 * Compiles the specified {@code source} by building an {@link Ast},
 	 * resolving {@link Symbol}s and generating bytecode. In addition, to aid
 	 * the computation of answers, a reference is kept for each query variable
-	 * at which local stack address it is to be allocated.
+	 * indicating the local stack address at which it is to be allocated.
 	 */
 	@Override
-	public void compile(Reader source)
+	public void compile(final Reader source)
 			throws IOException, RecognitionException {
 		super.compile(source);
 		walkAst(this.root,

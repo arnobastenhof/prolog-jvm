@@ -39,12 +39,12 @@ public final class PrologLexer extends AbstractLexer {
 	 * @throws NullPointerException if {@code input == null}
 	 * @throws IOException
 	 */
-	public static PrologLexer newInstance(Reader input) {
+	public static PrologLexer newInstance(final Reader input) {
 		return new PrologLexer(checkNotNull(input));
 	}
 
 	// Package-private constructor used by static factory method
-	PrologLexer(Reader input) {
+	PrologLexer(final Reader input) {
 		super(input);
 	}
 
@@ -173,7 +173,7 @@ public final class PrologLexer extends AbstractLexer {
 	 */
 	private Token id() throws IOException {
 		boolean smallLetter = isSmallLetter();
-		StringBuilder buffer = new StringBuilder();
+		final StringBuilder buffer = new StringBuilder();
 		do {
 			buffer.append(getLookahead());
 			consumeNonLinefeed();
@@ -188,7 +188,7 @@ public final class PrologLexer extends AbstractLexer {
 
 	// Graphic tokens
 	private Token graphic() throws IOException {
-		StringBuilder buffer = new StringBuilder();
+		final StringBuilder buffer = new StringBuilder();
 		do {
 			buffer.append(getLookahead());
 			consumeNonLinefeed();

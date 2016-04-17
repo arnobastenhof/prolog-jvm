@@ -30,7 +30,8 @@ public final class FunctorSymbol implements Symbol {
 	 * @throws NullPointerException if {@code name == null}
 	 * @throws IllegalArgumentException if {@code arity < 0}
 	 */
-	public static final FunctorSymbol valueOf(String name, int arity) {
+	public static final FunctorSymbol valueOf(final String name,
+			final int arity) {
 		checkArgument(arity >= 0);
 		return new FunctorSymbol(checkNotNull(name), arity);
 	}
@@ -41,12 +42,12 @@ public final class FunctorSymbol implements Symbol {
 	 * @param name the functor's name; not allowed to be null
 	 * @throws NullPointerException if {@code name == null}
 	 */
-	public static final FunctorSymbol valueOf(String name) {
+	public static final FunctorSymbol valueOf(final String name) {
 		return valueOf(name, 0);
 	}
 
 	// Private to force instantiation through static factory methods
-	private FunctorSymbol(String name, int arity) {
+	private FunctorSymbol(final String name, final int arity) {
 		assert name != null;
 		assert arity >= 0;
 		this.name = name;
@@ -73,14 +74,14 @@ public final class FunctorSymbol implements Symbol {
 	}
 
 	@Override
-	public final boolean equals(Object obj) {
+	public final boolean equals(final Object obj) {
 		if (obj == this) {
 			return true;
 		}
 		if (!(obj instanceof FunctorSymbol)) {
 			return false;
 		}
-		FunctorSymbol other = (FunctorSymbol)obj;
+		final FunctorSymbol other = (FunctorSymbol)obj;
 		return this.arity == other.arity &&
 				this.name.equals(other.name); // name cannot be null
 	}

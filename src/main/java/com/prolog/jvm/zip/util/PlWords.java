@@ -85,7 +85,7 @@ public final class PlWords {
 	public static final Map<Integer,String> TAGS;
 
 	static {
-		Map<Integer,String> map = new HashMap<>();
+		final Map<Integer,String> map = new HashMap<>();
 		map.put(REF,"REF");
 		map.put(STR, "STR");
 		map.put(LIS, "LIS");
@@ -100,7 +100,7 @@ public final class PlWords {
 	 * Returns a word with the specified {@code tag} and {@code value}, said
 	 * values being truncated to their lower-order 8, respectively 24 bits.
 	 */
-	public static int getWord(int tag, int value) {
+	public static int getWord(final int tag, final int value) {
 		return (tag << 24) | ((value << 8) >>> 8);
 	}
 
@@ -110,7 +110,7 @@ public final class PlWords {
 	 * Returns the value of the supplied {@code word}, consisting of its
 	 * 28 lower-order bits.
 	 */
-	public static int getValue(int word) {
+	public static int getValue(final int word) {
 		return word & VAL_MASK;
 	}
 
@@ -118,14 +118,14 @@ public final class PlWords {
 	 * Returns the tag of the supplied {@code word}, consisting of its most
 	 * significant byte.
 	 */
-	public static int getTag(int word) {
+	public static int getTag(final int word) {
 		return word >>> 24;
 	}
 
 	/**
 	 * Returns whether the supplied {@code word} has the given {@code tag}.
 	 */
-	public static boolean hasTag(int word, int tag) {
+	public static boolean hasTag(final int word, final int tag) {
 		return getTag(word) == tag;
 	}
 
@@ -136,10 +136,10 @@ public final class PlWords {
 	 * and value, looking up the former in {@link #TAGS} while if not found
 	 * therein resorting to its numeric value.
 	 */
-	public static final String toString(int word) {
-		StringBuilder buffer = new StringBuilder("<");
-		int tag = getTag(word);
-		Integer key = Integer.valueOf(tag);
+	public static final String toString(final int word) {
+		final StringBuilder buffer = new StringBuilder("<");
+		final int tag = getTag(word);
+		final Integer key = Integer.valueOf(tag);
 		if (TAGS.containsKey(key)) {
 			buffer.append(TAGS.get(key));
 		}

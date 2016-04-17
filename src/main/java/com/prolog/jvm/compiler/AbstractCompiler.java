@@ -37,17 +37,14 @@ public abstract class AbstractCompiler {
 	/**
 	 * The {@link Ast} that is built while executing {@link #compile(Reader)},
 	 * made available for subclasses for the purpose of adding extra compiler
-	 * passes (i.e., by overriding said method and first calling its super
-	 * implementation).
+	 * passes.
 	 */
 	protected Ast root;
 
 	/**
 	 * The correspondence between {@link Ast}'s and the symbols to which they
 	 * have been resolved while executing {@link #compile(Reader)}, made
-	 * available for subclasses for the purpose of adding extra compiler passes
-	 * (i.e., by overriding said method and first calling its super
-	 * implementation).
+	 * available for subclasses for the purpose of adding extra compiler passes.
 	 */
 	protected Map<Ast,Symbol> symbols;
 
@@ -59,7 +56,8 @@ public abstract class AbstractCompiler {
 	 * to be null
 	 * @throws NullPointerException if {@code code == null || scope == null}
 	 */
-	protected AbstractCompiler(PrologBytecode<?> code, Scope scope) {
+	protected AbstractCompiler(final PrologBytecode<?> code,
+			final Scope scope) {
 		this.code = checkNotNull(code);
 		this.scope = checkNotNull(scope);
 	}
@@ -76,7 +74,7 @@ public abstract class AbstractCompiler {
 	 * @throws NullPointerException if {@code source == null}
 	 * @throws RecognitionException if a lexer- or parsing error occurred
 	 */
-	public void compile(Reader source)
+	public void compile(final Reader source)
 			throws IOException, RecognitionException {
 		this.root = constructAst(checkNotNull(source));
 		this.symbols = resolveSymbols();
@@ -84,17 +82,17 @@ public abstract class AbstractCompiler {
 	}
 
 	// First compiler pass.
-	private Ast constructAst(Reader source)
+	private Ast constructAst(final Reader source)
 			throws IOException, RecognitionException {
-		SourcePass visitor = createSourcePassVisitor();
-		PrologParser parser = PrologParser.newInstance(source, visitor);
+		final SourcePass visitor = createSourcePassVisitor();
+		final PrologParser parser = PrologParser.newInstance(source, visitor);
 		parseSource(parser);
 		return visitor.getAst();
 	}
 
 	// Second compiler pass.
 	private Map<Ast, Symbol> resolveSymbols() {
-		SymbolResolver visitor = new SymbolResolver(this.scope);
+		final SymbolResolver visitor = new SymbolResolver(this.scope);
 		walkAst(this.root, visitor);
 		verifySymbols();
 		return visitor.getSymbols();
@@ -102,7 +100,7 @@ public abstract class AbstractCompiler {
 
 	// Third compiler pass.
 	private void generateBytecode() {
-		BytecodeGenerator visitor = new BytecodeGenerator(
+		final BytecodeGenerator visitor = new BytecodeGenerator(
 				this.symbols,this.code);
 		walkAst(this.root, visitor);
 	}
@@ -111,7 +109,7 @@ public abstract class AbstractCompiler {
 	private void verifySymbols() {
 		for (SymbolKey<?> key : this.scope.getKeys()) {
 			if (key.getSymbolClass().equals(PredicateSymbol.class)) {
-				PredicateSymbol symbol =
+				final PredicateSymbol symbol =
 						(PredicateSymbol) this.scope.resolveLocal(key);
 				if (symbol.getFirst() == null) {
 					throw new InternalCompilerException(

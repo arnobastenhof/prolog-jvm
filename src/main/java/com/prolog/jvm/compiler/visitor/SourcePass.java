@@ -17,7 +17,6 @@ import com.prolog.jvm.compiler.parser.Tokens;
  * it to an {@link Ast}.
  *
  * @author Arno Bastenhof
- *
  */
 public final class SourcePass extends BasicPrologVisitor<Token> {
 
@@ -31,7 +30,7 @@ public final class SourcePass extends BasicPrologVisitor<Token> {
 	 * @throws IllegalArgumentException if {@code token} does not have token
 	 * type {@link TokenType#PROGRAM} or {@link TokenType#IMPLIES}
 	 */
-	public SourcePass(Token token) {
+	public SourcePass(final Token token) {
 		checkArgument(token == Tokens.PROGRAM || token == Tokens.IMPLIES);
 		push(token); // Create the AST root node
 	}
@@ -85,7 +84,7 @@ public final class SourcePass extends BasicPrologVisitor<Token> {
 
 	private void pop() {
 		// Remove the builder on the top of the stack
-		ASTBuilder builder = this.builders.pop();
+		final ASTBuilder builder = this.builders.pop();
 		// Build, and add as a child to the new top
 		this.builders.getFirst().addChild(builder.build());
 	}

@@ -23,7 +23,7 @@ public abstract class AbstractSymbolVisitor extends BasicPrologVisitor<Ast> {
 	 * to which they have been resolved; not allowed to be null
 	 * @throws NullPointerException if {@code symbols == null}
 	 */
-	public AbstractSymbolVisitor(Map<Ast,Symbol> symbols) {
+	public AbstractSymbolVisitor(final Map<Ast,Symbol> symbols) {
 		this.symbols = checkNotNull(symbols);
 	}
 
@@ -38,8 +38,9 @@ public abstract class AbstractSymbolVisitor extends BasicPrologVisitor<Ast> {
 	 * @throws ClassCastException if the symbol found for {@code node} cannot
 	 * be cast to {@code clazz}
 	 */
-	protected <T extends Symbol> T getSymbol(Ast node, Class<T> clazz) {
-		Symbol symbol = this.symbols.get(node);
+	protected <T extends Symbol> T getSymbol(final Ast node,
+			final Class<T> clazz) {
+		final Symbol symbol = this.symbols.get(node);
 		return clazz.cast(checkNotNull(symbol));
 	}
 

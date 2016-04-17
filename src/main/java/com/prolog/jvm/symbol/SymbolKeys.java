@@ -28,7 +28,8 @@ public final class SymbolKeys {
 	 * @throws NullPointerException if {@code name == null}
 	 * @throws IllegalArgumentException if {@code arity < 0}
 	 */
-	public static SymbolKey<ClauseSymbol> ofClause(String name, int arity) {
+	public static SymbolKey<ClauseSymbol> ofClause(final String name,
+			final int arity) {
 		return ofRelationalSymbol(name, arity, ClauseSymbol.class);
 	}
 
@@ -41,7 +42,7 @@ public final class SymbolKeys {
 	 * @throws IllegalArgumentException if {@code arity < 0}
 	 */
 	public static SymbolKey<PredicateSymbol> ofPredicate(
-			String name, int arity) {
+			final String name, final int arity) {
 		return ofRelationalSymbol(name, arity, PredicateSymbol.class);
 	}
 
@@ -53,12 +54,13 @@ public final class SymbolKeys {
 	 * @throws NullPointerException if {@code name == null}
 	 * @throws IllegalArgumentException if {@code arity < 0}
 	 */
-	public static SymbolKey<FunctorSymbol> ofFunctor(String name, int arity) {
+	public static SymbolKey<FunctorSymbol> ofFunctor(final String name,
+			final int arity) {
 		return ofRelationalSymbol(name, arity, FunctorSymbol.class);
 	}
 
 	private static <T extends Symbol> SymbolKey<T> ofRelationalSymbol(
-			String name, int arity, Class<T> clazz) {
+			final String name, final int arity, final Class<T> clazz) {
 		checkArgument(arity >= 0);
 		return new RelationalKey<T>(checkNotNull(name), arity, clazz);
 	}
@@ -69,7 +71,7 @@ public final class SymbolKeys {
 	 * @param name the variable name; not allowed to be null
 	 * @throws NullPointerException if {@code name == null}
 	 */
-	public static SymbolKey<VariableSymbol> ofVariable(String name) {
+	public static SymbolKey<VariableSymbol> ofVariable(final String name) {
 		return new VariableKey(checkNotNull(name));
 	}
 
@@ -79,7 +81,7 @@ public final class SymbolKeys {
 		final String name;
 		final Class<T> clazz;
 
-		AbstractKey(String name, Class<T> clazz) {
+		AbstractKey(final String name, final Class<T> clazz) {
 			assert name != null;
 			assert clazz != null;
 			this.name = name;
@@ -95,7 +97,7 @@ public final class SymbolKeys {
 	// Key for variable symbols
 	private static final class VariableKey extends AbstractKey<VariableSymbol> {
 
-		private VariableKey(String name) {
+		private VariableKey(final String name) {
 			super(name, VariableSymbol.class);
 		}
 
@@ -105,14 +107,14 @@ public final class SymbolKeys {
 		}
 
 		@Override
-		public final boolean equals(Object obj) {
+		public boolean equals(final Object obj) {
 			if (obj == this) {
 				return true;
 			}
 			if (!(obj instanceof VariableKey)) {
 				return false;
 			}
-			VariableKey other = (VariableKey)obj;
+			final VariableKey other = (VariableKey)obj;
 			return this.name.equals(other.name); // name cannot be null
 		}
 
@@ -138,7 +140,7 @@ public final class SymbolKeys {
 		}
 
 		@Override
-		public final boolean equals(Object obj) {
+		public boolean equals(Object obj) {
 			if (obj == this) {
 				return true;
 			}
@@ -152,7 +154,7 @@ public final class SymbolKeys {
 		}
 
 		@Override
-		public final String toString() {
+		public String toString() {
 			return this.name + "/" + this.arity;
 		}
 	}

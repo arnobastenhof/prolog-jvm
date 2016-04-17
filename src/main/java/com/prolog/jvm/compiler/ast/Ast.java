@@ -40,7 +40,7 @@ public final class Ast implements Iterable<Ast> {
 	 * null
 	 * @throws NullPointerException if {@code token == null}
 	 */
-	public static Ast getLeaf(Token token) {
+	public static Ast getLeaf(final Token token) {
 		return new Ast(checkNotNull(token), Collections.<Ast>emptyList());
 	}
 
@@ -52,12 +52,12 @@ public final class Ast implements Iterable<Ast> {
 	 * null
 	 * @throws NullPointerException if {@code token == null}
 	 */
-	public static ASTBuilder getInternal(Token token) {
+	public static ASTBuilder getInternal(final Token token) {
 		return new ASTBuilder(checkNotNull(token));
 	}
 
 	// Instantiation through static factory methods.
-	private Ast(Token token, List<Ast> children) {
+	private Ast(final Token token, final List<Ast> children) {
 		assert token != null;
 		assert children != null;
 		this.token = token;
@@ -101,14 +101,12 @@ public final class Ast implements Iterable<Ast> {
 		if (this.children.isEmpty()) {
 			return this.token.getText();
 		}
-		StringBuilder buffer = new StringBuilder("(");
-		buffer.append(this.token.getText());
+		final StringBuilder buffer = new StringBuilder("(")
+			.append(this.token.getText());
 		for (Ast child : this.children) {
-			buffer.append(' ');
-			buffer.append(child.toString());
+			buffer.append(' ').append(child.toString());
 		}
-		buffer.append(')');
-		return buffer.toString();
+		return buffer.append(')').toString();
 	}
 
 	/**
@@ -116,7 +114,6 @@ public final class Ast implements Iterable<Ast> {
 	 * child list).
 	 *
 	 * @author Arno Bastenhof
-	 *
 	 */
 	public static final class ASTBuilder {
 
@@ -124,7 +121,7 @@ public final class Ast implements Iterable<Ast> {
 		private final List<Ast> children = new ArrayList<>();
 
 		// Instantiation through static factory methods.
-		ASTBuilder(Token token) {
+		ASTBuilder(final Token token) {
 			assert token != null;
 			this.token = token;
 		}
@@ -135,7 +132,7 @@ public final class Ast implements Iterable<Ast> {
 		 * @param child the child node to add; not allowed to be null
 		 * @throws NullPointerException if {@code child == null}
 		 */
-		public void addChild(Ast child) {
+		public void addChild(final Ast child) {
 			this.children.add(checkNotNull(child));
 		}
 
