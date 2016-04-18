@@ -66,8 +66,8 @@ public final class ZipInterpreterImpl implements ZipInterpreter {
 	}
 
 	@Override
-	public void execute(int queryAddress, BufferedReader in, Writer out)
-			throws IOException {
+	public void execute(final int queryAddress, final BufferedReader in,
+				final Writer out) throws IOException {
 		// Initialize the ZIP machine
 		this.facade.reset(queryAddress);
 
@@ -79,7 +79,7 @@ public final class ZipInterpreterImpl implements ZipInterpreter {
 		// Fetch/decode/execute cycle
 		try {
 			while (true) {
-				int operator = this.facade.readOperator();
+				final int operator = this.facade.readOperator();
 				switch (operator) {
 				case MATCH | FUNCTOR: {
 					address = matchFunctor(address);
@@ -168,8 +168,8 @@ public final class ZipInterpreterImpl implements ZipInterpreter {
 	}
 
 	private int matchFunctor(int addr) throws BacktrackException {
-		FunctorSymbol symbol = readSymbolOperand(FunctorSymbol.class);
-		int word = this.facade.getWordAt(addr);
+		final FunctorSymbol symbol = readSymbolOperand(FunctorSymbol.class);
+		final int word = this.facade.getWordAt(addr);
 		switch (PlWords.getTag(word)) {
 		case REF: {
 			int address = PlWords.getValue(word);
@@ -190,18 +190,18 @@ public final class ZipInterpreterImpl implements ZipInterpreter {
 		}
 	}
 
-	private int matchConstant(int addr) throws BacktrackException {
+	private int matchConstant(final int addr) throws BacktrackException {
 		FunctorSymbol symbol = readSymbolOperand(FunctorSymbol.class);
-		int word = this.facade.getWordAt(addr);
+		final int word = this.facade.getWordAt(addr);
 		switch (PlWords.getTag(word)) {
 		case REF: {
-			int address = PlWords.getValue(word);
+			final int address = PlWords.getValue(word);
 			this.facade.setWord(address, symbol);
 			this.facade.trail(address);
 			break;
 		}
 		case CONS: {
-			int index = PlWords.getValue(word);
+			final int index = PlWords.getValue(word);
 			if (symbol != this.facade.getConstant(index,FunctorSymbol.class)) {
 				return this.facade.backtrack();
 			}
@@ -213,9 +213,9 @@ public final class ZipInterpreterImpl implements ZipInterpreter {
 		return addr + 1;
 	}
 
-	private int matchVariable(boolean firstOccurrence, int addr)
+	private int matchVariable(final boolean firstOccurrence, final int addr)
 			throws BacktrackException {
-		int localAddr = this.facade.readOperand(true);
+		final int localAddr = this.facade.readOperand(true);
 		if (firstOccurrence) {
 			this.facade.setWord(localAddr, this.facade.getWordAt(addr));
 		}
@@ -225,19 +225,19 @@ public final class ZipInterpreterImpl implements ZipInterpreter {
 		return addr + 1;
 	}
 
-	private int copyFunctor(int addr) {
-		FunctorSymbol symbol = readSymbolOperand(FunctorSymbol.class);
+	private int copyFunctor(final int addr) {
+		final FunctorSymbol symbol = readSymbolOperand(FunctorSymbol.class);
 		return writeFunctor(symbol, addr);
 	}
 
-	private int copyConstant(int addr) {
-		FunctorSymbol symbol = readSymbolOperand(FunctorSymbol.class);
+	private int copyConstant(final int addr) {
+		final FunctorSymbol symbol = readSymbolOperand(FunctorSymbol.class);
 		this.facade.setWord(addr, symbol);
 		return addr + 1;
 	}
 
-	private int argVariable(boolean firstOccurrence, int addr) {
-		int localAddr = this.facade.readOperand(true);
+	private int argVariable(final boolean firstOccurrence, final int addr) {
+		final int localAddr = this.facade.readOperand(true);
 		int word = 0;
 		if (firstOccurrence) {
 			word = getWord(REF, localAddr);
@@ -250,8 +250,8 @@ public final class ZipInterpreterImpl implements ZipInterpreter {
 		return addr + 1;
 	}
 
-	private int copyVariable(boolean firstOccurrence, int globalAddr) {
-		int localAddr = this.facade.readOperand(true);
+	private int copyVariable(final boolean firstOccurrence, final int globalAddr) {
+		final int localAddr = this.facade.readOperand(true);
 		if (firstOccurrence) {
 			this.facade.setWord(localAddr, this.facade.getWordAt(globalAddr));
 		}
@@ -261,8 +261,8 @@ public final class ZipInterpreterImpl implements ZipInterpreter {
 		return globalAddr + 1;
 	}
 
-	private int writeFunctor(FunctorSymbol symbol, int addr) {
-		int word = this.facade.pushFunctor(symbol);
+	private int writeFunctor(final FunctorSymbol symbol, int addr) {
+		final int word = this.facade.pushFunctor(symbol);
 		this.facade.setWord(addr, word);
 		this.facade.pushOnScratchpad(++addr);
 		this.facade.setMode(COPY);
@@ -273,7 +273,7 @@ public final class ZipInterpreterImpl implements ZipInterpreter {
 	// variable cell in the source frame to be pushed
 	private int enterClause() {
 		// The old target frame becomes the new source frame
-		int size = this.facade.readOperand(false);
+		final int size = this.facade.readOperand(false);
 		this.facade.pushSourceFrame(size);
 
 		// Set machine mode to ARG
@@ -284,11 +284,11 @@ public final class ZipInterpreterImpl implements ZipInterpreter {
 	}
 
 	private int callPredicate() {
-		ClauseSymbol symbol = readSymbolOperand(PredicateSymbol.class)
+		final ClauseSymbol symbol = readSymbolOperand(PredicateSymbol.class)
 				.getFirst();
 
 		// Push a choice point if necessary
-		ClauseSymbol next = symbol.getNext();
+		final ClauseSymbol next = symbol.getNext();
 		if (next != null) {
 			this.facade.pushChoicePoint(next);
 		}
@@ -299,23 +299,23 @@ public final class ZipInterpreterImpl implements ZipInterpreter {
 		return this.facade.jump(symbol.getHeapptr());
 	}
 
-	private <T extends Symbol> T readSymbolOperand(Class<T> clazz) {
-		int index = this.facade.readOperand(false);
+	private <T extends Symbol> T readSymbolOperand(final Class<T> clazz) {
+		final int index = this.facade.readOperand(false);
 		return this.facade.getConstant(index, clazz);
 	}
 
 	// == Answers ===
 
 	// Returns whether to backtrack and look for more answers
-	private boolean writeAnswer(BufferedReader in, Writer out)
+	private boolean writeAnswer(final BufferedReader in, final Writer out)
 			throws IOException {
-		Set<Integer> addresses = new HashSet<>();
+		final Set<Integer> addresses = new HashSet<>();
 		addresses.addAll(Factory.getQueryVars().keySet());
 		if (addresses.isEmpty()) {
 			out.write(SUCCESS);
 			return false;
 		}
-		for (Integer address : addresses) {
+		for (final Integer address : addresses) {
 			out.append(Factory.getQueryVars().get(address)).write(" = ");
 			walkCode(address.intValue(), out);
 			out.write('\n');
@@ -324,9 +324,9 @@ public final class ZipInterpreterImpl implements ZipInterpreter {
 		return in.readLine().equals(NEXT_ANSWER);
 	}
 
-	private String getVarName(int addr) {
-		Map<Integer,String> queryVars = Factory.getQueryVars();
-		Integer address = Integer.valueOf(addr);
+	private String getVarName(final int addr) {
+		final Map<Integer,String> queryVars = Factory.getQueryVars();
+		final Integer address = Integer.valueOf(addr);
 		String result = queryVars.get(address);
 		if (result == null) {
 			result = "?" + queryVars.keySet().size();
@@ -335,9 +335,9 @@ public final class ZipInterpreterImpl implements ZipInterpreter {
 		return result;
 	}
 
-	private final void walkCode(int addr, Writer out)
+	private final void walkCode(final int addr, final Writer out)
 			throws IOException {
-		int word = this.facade.getWordAt(addr);
+		final int word = this.facade.getWordAt(addr);
 		switch (PlWords.getTag(word)) {
 		case REF: {
 			// Since we already dereferenced, value must be equal to addr
@@ -350,7 +350,7 @@ public final class ZipInterpreterImpl implements ZipInterpreter {
 		}
 		case FUNC: {
 			int index = PlWords.getValue(word);
-			FunctorSymbol symbol =
+			final FunctorSymbol symbol =
 					this.facade.getConstant(index, FunctorSymbol.class);
 			assert symbol.getArity() > 0;
 			out.append(symbol.getName()).write('(');
@@ -364,8 +364,8 @@ public final class ZipInterpreterImpl implements ZipInterpreter {
 			return;
 		}
 		case CONS: {
-			int index = PlWords.getValue(word);
-			FunctorSymbol symbol =
+			final int index = PlWords.getValue(word);
+			final FunctorSymbol symbol =
 					this.facade.getConstant(index, FunctorSymbol.class);
 			assert symbol.getArity() == 0;
 			out.write(symbol.getName());

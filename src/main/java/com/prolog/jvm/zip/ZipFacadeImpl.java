@@ -88,10 +88,10 @@ public class ZipFacadeImpl implements ZipFacade {
 	 * @param scratchpad the memory area used for the scratchpad
 	 */
 	protected ZipFacadeImpl(
-			List<Object> constants, MemoryArea heap,
-			MemoryArea globalStack, MemoryArea localStack,
-			MemoryArea wordStore, MemoryArea trailStack,
-			MemoryArea pdl, MemoryArea scratchpad) {
+			final List<Object> constants, final MemoryArea heap,
+			final MemoryArea globalStack, final MemoryArea localStack,
+			final MemoryArea wordStore, final MemoryArea trailStack,
+			final MemoryArea pdl, final MemoryArea scratchpad) {
 		this.constants = constants;
 		this.heap = heap;
 		this.globalStack = globalStack;
@@ -113,7 +113,7 @@ public class ZipFacadeImpl implements ZipFacade {
 	 *
 	 * @param address the address to be tested
 	 */
-	protected boolean isLocal(int address) {
+	protected boolean isLocal(final int address) {
 		return address >= MIN_LOCAL_INDEX && address <= MAX_LOCAL_INDEX;
 	}
 
@@ -150,7 +150,7 @@ public class ZipFacadeImpl implements ZipFacade {
 	 * MemoryConstants#MAX_CODE_INDEX}
 	 */
 	@Override
-	public final void reset(int queryAddr) {
+	public final void reset(final int queryAddr) {
 		if (queryAddr < MIN_HEAP_INDEX || queryAddr > MAX_HEAP_INDEX) {
 			throw new IndexOutOfBoundsException();
 		}
@@ -170,7 +170,7 @@ public class ZipFacadeImpl implements ZipFacade {
 	// === Machine mode ===
 
 	@Override
-	public final void setMode(int mode) {
+	public final void setMode(final int mode) {
 		// API sacrifices preconditions for performance, so use asserts instead
 		assert Instructions.MODES.keySet().contains(mode);
 
@@ -180,21 +180,21 @@ public class ZipFacadeImpl implements ZipFacade {
 	// === Constant pool ===
 
 	@Override
-	public final <T> T getConstant(int index, Class<T> clazz) {
+	public final <T> T getConstant(final int index, final Class<T> clazz) {
 		requireNonNull(clazz);
 		if (index < 0 || index >= this.constants.size()) {
 			throw new IndexOutOfBoundsException();
 		}
-		Object obj = this.constants.get(index);
+		final Object obj = this.constants.get(index);
 		// Next line throws ClassCastException if !(clazz.isInstance(obj))
 		return clazz.cast(obj);
 	}
 
 	// Returns the index for the specified constant pool entry, throwing
 	// and exception if not found.
-	private int getConstantPoolIndex(Object obj) {
+	private int getConstantPoolIndex(final Object obj) {
 		assert obj != null;
-		int index = this.constants.indexOf(obj);
+		final int index = this.constants.indexOf(obj);
 		if (index == -1) {
 			throw new IllegalArgumentException();
 		}
@@ -209,7 +209,7 @@ public class ZipFacadeImpl implements ZipFacade {
 	}
 
 	@Override
-	public final int readOperand(boolean isVariable) {
+	public final int readOperand(final boolean isVariable) {
 		int result = this.heap.readFrom(this.programctr++);
 		if (!isVariable) {
 			return result;
@@ -238,7 +238,7 @@ public class ZipFacadeImpl implements ZipFacade {
 	}
 
 	@Override
-	public final int jump(int address) {
+	public final int jump(final int address) {
 		// API sacrifices preconditions for performance, so use asserts instead
 		assert this.targetfrm != null;
 		assert address >= MIN_HEAP_INDEX && address <= MAX_HEAP_INDEX;
@@ -251,33 +251,33 @@ public class ZipFacadeImpl implements ZipFacade {
 	// === Global stack ===
 
 	@Override
-	public final int pushFunctor(FunctorSymbol symbol) {
+	public final int pushFunctor(final FunctorSymbol symbol) {
 		// API sacrifices preconditions for performance, so use asserts instead
 		assert symbol != null;
 		assert symbol.getArity() > 0;
 
-		int result = getWord(STR,this.globalptr);
+		final int result = getWord(STR,this.globalptr);
 		this.wordStore.writeTo(
 				this.globalptr++,
 				getWord(FUNC, getConstantPoolIndex(symbol)));
 		// Push arguments as unbound variables
 		// (needed when executing FIRSTVAR in COPY mode)
 		for (int i = 0; i < symbol.getArity(); i++) {
-			int word = getWord(REF, this.globalptr);
+			final int word = getWord(REF, this.globalptr);
 			this.wordStore.writeTo(this.globalptr++, word);
 		}
 		return result;
 	}
 
 	@Override
-	public final void setWord(int address, FunctorSymbol symbol) {
+	public final void setWord(final int address, final FunctorSymbol symbol) {
 		// API sacrifices preconditions for performance, so use asserts instead
 		assert symbol != null;
 		assert symbol.getArity() == 0;
 		assert address >= MIN_GLOBAL_INDEX;
 		assert address <= MAX_LOCAL_INDEX;
 
-		int word = getWord(CONS,getConstantPoolIndex(symbol));
+		final int word = getWord(CONS,getConstantPoolIndex(symbol));
 		this.wordStore.writeTo(address, word);
 	}
 
@@ -301,7 +301,7 @@ public class ZipFacadeImpl implements ZipFacade {
 	}
 
 	@Override
-	public final void pushChoicePoint(ClauseSymbol clause) {
+	public final void pushChoicePoint(final ClauseSymbol clause) {
 		// API sacrifices preconditions for performance, so use asserts instead
 		assert clause != null;
 
@@ -313,7 +313,7 @@ public class ZipFacadeImpl implements ZipFacade {
 	}
 
 	@Override
-	public final void pushSourceFrame(int size) {
+	public final void pushSourceFrame(final int size) {
 		// API sacrifices preconditions for performance, so use asserts instead
 		assert size >= 0;
 
@@ -336,7 +336,7 @@ public class ZipFacadeImpl implements ZipFacade {
 	// === Scratchpad methods ===
 
 	@Override
-	public final void pushOnScratchpad(int address) {
+	public final void pushOnScratchpad(final int address) {
 		// API sacrifices preconditions for performance, so use asserts instead
 		assert address >= MIN_GLOBAL_INDEX;
 		assert address <= MAX_LOCAL_INDEX;
@@ -354,7 +354,7 @@ public class ZipFacadeImpl implements ZipFacade {
 	// === Trail methods ===
 
 	@Override
-	public void trail(int address) {
+	public void trail(final int address) {
 		assert address >= MIN_GLOBAL_INDEX && address <= MAX_LOCAL_INDEX;
 		if (address < getBacktrackGlobalPointer() || isLocal(address)) {
 			this.trailStack.writeTo(this.trailptr++, address);
@@ -367,11 +367,11 @@ public class ZipFacadeImpl implements ZipFacade {
 	 * resetting the bindings found therebetween on the global- and local
 	 * local stacks. Made package-private for testing purposes.
 	 */
-	final void unwindTrail(int fromAddress, int toAddress) {
+	final void unwindTrail(final int fromAddress, final int toAddress) {
 		assert fromAddress > 0;
 		assert fromAddress <= toAddress;
 		for (int i = fromAddress; i < toAddress; i++) {
-			int address = this.trailStack.readFrom(i);
+			final int address = this.trailStack.readFrom(i);
 			this.wordStore.writeTo(address, getWord(REF, address));
 		}
 		this.trailptr = fromAddress;
@@ -379,16 +379,16 @@ public class ZipFacadeImpl implements ZipFacade {
 
 	// === Dereferencing, binding and unification ===
 
-	private int deref(int address) {
+	private int deref(final int address) {
 		assert address >= MIN_GLOBAL_INDEX && address <= MAX_LOCAL_INDEX;
-		int word = this.wordStore.readFrom(address);
-		int tag = PlWords.getTag(word);
-		int value = PlWords.getValue(word);
+		final int word = this.wordStore.readFrom(address);
+		final int tag = PlWords.getTag(word);
+		final int value = PlWords.getValue(word);
 		return (tag == REF && value != address) ? deref(value) : address;
 	}
 
 	@Override
-	public final int getWordAt(int address) {
+	public final int getWordAt(final int address) {
 		// API sacrifices preconditions for performance, so use asserts instead
 		assert address >= MIN_GLOBAL_INDEX && address <= MAX_LOCAL_INDEX;
 
@@ -396,7 +396,7 @@ public class ZipFacadeImpl implements ZipFacade {
 	}
 
 	@Override
-	public final void setWord(int address, int word) {
+	public final void setWord(final int address, final int word) {
 		// API sacrifices preconditions for performance, so use asserts instead
 		assert address >= MIN_GLOBAL_INDEX && address <= MAX_LOCAL_INDEX;
 		assert PlWords.TAGS.keySet().contains(PlWords.getTag(word));
@@ -405,20 +405,20 @@ public class ZipFacadeImpl implements ZipFacade {
 	}
 
 	@Override
-	public final void bind(int address1, int address2) {
+	public final void bind(final int address1, final int address2) {
 		// API sacrifices preconditions for performance, so use asserts instead
 		assert address1 >= MIN_GLOBAL_INDEX && address1 <= MAX_LOCAL_INDEX;
 		assert address2 >= MIN_GLOBAL_INDEX && address2 <= MAX_LOCAL_INDEX;
 
-		int t1 = PlWords.getTag(this.wordStore.readFrom(address1));
-		int t2 = PlWords.getTag(this.wordStore.readFrom(address2));
+		final int t1 = PlWords.getTag(this.wordStore.readFrom(address1));
+		final int t2 = PlWords.getTag(this.wordStore.readFrom(address2));
 		if (t1 == REF && (t2 != REF || address2 < address1)) {
-			int word = this.wordStore.readFrom(address2);
+			final int word = this.wordStore.readFrom(address2);
 			this.wordStore.writeTo(address1, word);
 			trail(address1);
 		}
 		else if (t2 == REF) {
-			int word = this.wordStore.readFrom(address1);
+			final int word = this.wordStore.readFrom(address1);
 			this.wordStore.writeTo(address2, word);
 			trail(address2);
 		}
@@ -428,7 +428,7 @@ public class ZipFacadeImpl implements ZipFacade {
 	}
 
 	@Override
-	public final boolean unifiable(int a1, int a2) {
+	public final boolean unifiable(final int a1, final int a2) {
 		// API sacrifices preconditions for performance, so use asserts instead
 		assert a1 >= MIN_GLOBAL_INDEX && a1 <= MAX_LOCAL_INDEX;
 		assert a2 >= MIN_GLOBAL_INDEX && a2 <= MAX_LOCAL_INDEX;
@@ -436,18 +436,18 @@ public class ZipFacadeImpl implements ZipFacade {
 		this.pdl.writeTo(this.pdlptr++, a1); // push
 		this.pdl.writeTo(this.pdlptr++, a2); // push
 		while (this.pdlptr != getMinPdlIndex()) {
-			int d1 = deref(this.pdl.readFrom(--this.pdlptr)); // pop
-			int d2 = deref(this.pdl.readFrom(--this.pdlptr)); // pop
-			int w1 = this.wordStore.readFrom(d1);
-			int t1 = PlWords.getTag(w1);
+			final int d1 = deref(this.pdl.readFrom(--this.pdlptr)); // pop
+			final int d2 = deref(this.pdl.readFrom(--this.pdlptr)); // pop
+			final int w1 = this.wordStore.readFrom(d1);
+			final int t1 = PlWords.getTag(w1);
 			if (t1 == REF) {
 				bind(d1, d2);
 				continue;
 			}
-			int w2 = this.wordStore.readFrom(d2);
-			int t2 = PlWords.getTag(w2);
-			int v1 = PlWords.getValue(w1);
-			int v2 = PlWords.getValue(w2);
+			final int w2 = this.wordStore.readFrom(d2);
+			final int t2 = PlWords.getTag(w2);
+			final int v1 = PlWords.getValue(w1);
+			final int v2 = PlWords.getValue(w2);
 			switch (t2) {
 			case REF: {
 				bind(d1, d2);
@@ -473,12 +473,12 @@ public class ZipFacadeImpl implements ZipFacade {
 				if (t1 != STR) {
 					return false;
 				}
-				int f1 = PlWords.getValue(this.wordStore.readFrom(v1));
-				int f2 = PlWords.getValue(this.wordStore.readFrom(v2));
+				final int f1 = PlWords.getValue(this.wordStore.readFrom(v1));
+				final int f2 = PlWords.getValue(this.wordStore.readFrom(v2));
 				if (f1 != f2) {
 					return false;
 				}
-				int arity = getConstant(f1, FunctorSymbol.class).getArity();
+				final int arity = getConstant(f1, FunctorSymbol.class).getArity();
 				for (int i = 1; i <= arity; i++) {
 					this.pdl.writeTo(this.pdlptr++, v1+i); // push
 					this.pdl.writeTo(this.pdlptr++, v2+i); // push
@@ -513,7 +513,7 @@ public class ZipFacadeImpl implements ZipFacade {
 		this.trailptr = this.choicepnt.trailptr;
 
 		// See if there's a next clause alternative
-		ClauseSymbol next = this.choicepnt.clause.getNext();
+		final ClauseSymbol next = this.choicepnt.clause.getNext();
 		// If so, record it in the current choice point
 		if (next != null) {
 			this.choicepnt.clause = next;
