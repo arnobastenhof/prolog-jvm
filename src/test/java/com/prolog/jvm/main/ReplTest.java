@@ -32,89 +32,127 @@ public final class ReplTest {
 
 	@Test
 	public void ancestry() throws IOException {
-		final StringBuilder queries = new StringBuilder()
-				.append("grandparent(hera, harmonia).\n")
-				.append("grandparent(dionisius, zeus).\n")
-				.append("parent(zeus,X), parent(X,harmonia).\n\n")
-				.append("mother(X,dionisius).\n")
-				.append(NEXT_ANSWER).append('\n')
-				.append("father(zeus,Y).\n")
-				.append(NEXT_ANSWER).append('\n')
-				.append(NEXT_ANSWER).append('\n')
-				.append("ancestor(zeus,harmonia).\n")
-				.append("fathers(zeus,Y).\n")
-				.append(HALT).append('\n');
-
-		final StringBuilder answers = new StringBuilder()
-				.append(PROMPT)
-				.append(SUCCESS)
-				.append(PROMPT)
-				.append(FAILURE)
-				.append(PROMPT)
-				.append("X = ares ")
-				.append(SUCCESS)
-				.append(PROMPT)
-				.append("X = semele ")
-				.append(FAILURE)
-				.append(PROMPT)
-				.append("Y = ares ")
-				.append("Y = dionisius ")
-				.append(FAILURE)
-				.append(PROMPT)
-				.append(SUCCESS)
-				.append(PROMPT)
-				.append("No clauses defined for predicate fathers/2\n")
-				.append(PROMPT);
-
-		assertEquals(runQueries(EXAMPLE_1, queries.toString()),
-				answers.toString());
+		ZipAssert.forFile(EXAMPLE_1)
+			.prompt("grandparent(hera, harmonia).")
+			.yes()
+			.prompt("grandparent(dionisius, zeus).")
+			.no()
+			.prompt("parent(zeus,X), parent(X,harmonia).")
+			.binding("X", "ares")
+			.done()
+			.yes()
+			.prompt("mother(X,dionisius).")
+			.binding("X", "semele")
+			.or()
+			.no()
+			.prompt("father(zeus,Y).")
+			.binding("Y", "ares")
+			.or()
+			.binding("Y", "dionisius")
+			.or()
+			.no()
+			.prompt("ancestor(zeus,harmonia).")
+			.yes()
+			.prompt("fathers(zeus,Y).")
+			.error("No clauses defined for predicate fathers/2")
+			.halt();
 	}
 
 	@Test
 	public void lists() throws IOException {
-		final StringBuilder queries = new StringBuilder()
-				.append("append(cons(a,[]),cons(b,[]),cons(a,cons(b,[]))).\n")
-				.append("reverse(cons(a,cons(b,[])),cons(b,cons(a,[]))).\n")
-				.append("reverse(cons(a,[]),X).\n")
-				.append(NEXT_ANSWER).append('\n')
-				.append("reverse(cons(a,cons(b,[])),X).\n")
-				.append(NEXT_ANSWER).append('\n')
-				.append("reverse(X,Y.\n")
-				.append(HALT).append('\n');
-
-		final StringBuilder answers = new StringBuilder()
-				.append(PROMPT)
-				.append(SUCCESS)
-				.append(PROMPT)
-				.append(SUCCESS)
-				.append(PROMPT)
-				.append("X = cons(a, []) ")
-				.append(FAILURE)
-				.append(PROMPT)
-				.append("X = cons(b, cons(a, [])) ")
-				.append(FAILURE)
-				.append(PROMPT)
-				.append("<.;PERIOD> unexpected at line 1. Expected RBRACK.\n")
-				.append(PROMPT);
-
-		assertEquals(runQueries(EXAMPLE_2, queries.toString()),
-				answers.toString());
+		ZipAssert.forFile(EXAMPLE_2)
+			.prompt("append(cons(a,[]),cons(b,[]),cons(a,cons(b,[]))).")
+			.yes()
+			.prompt("reverse(cons(a,cons(b,[])),cons(b,cons(a,[]))).")
+			.yes()
+			.prompt("reverse(cons(a,[]),X).")
+			.binding("X", "cons(a, [])")
+			.or()
+			.no()
+			.prompt("reverse(cons(a,cons(b,[])),X).")
+			.binding("X", "cons(b, cons(a, []))")
+			.or()
+			.no()
+			.prompt("reverse(X,Y.")
+			.error("<.;PERIOD> unexpected at line 1. Expected RBRACK.")
+			.halt();
 	}
 
-	private String runQueries(final String resource, final String queries)
-			throws IOException {
-		String result;
-		try (final InputStream is = this.getClass().getResourceAsStream(resource);
-				final Reader file = new InputStreamReader(is);
-				final Reader reader = new StringReader(queries);
-				final StringWriter writer = new StringWriter()) {
-			Factory.newProgramCompiler().compile(file);
-			Repl.INSTANCE.run(reader, writer);
-			result = writer.toString();
+	private static class ZipAssert {
+
+		private final StringBuilder in = new StringBuilder();
+		private final StringBuilder out = new StringBuilder();
+		private final String fileName;
+
+		private ZipAssert(final String fileName) {
+			assert fileName != null;
+			this.fileName = fileName;
 		}
-		catch (RecognitionException e) {
-			throw new AssertionError();
+
+		private static ZipAssert forFile(final String fileName) {
+			return new ZipAssert(fileName);
 		}
-		return result;
+
+		private ZipAssert prompt(final String query) {
+			this.out.append(PROMPT);
+			this.in.append(query).append('\n');
+			return this;
+		}
+
+		private ZipAssert binding(final String var, final String val) {
+			this.out.append(var).append(" = ").append(val).append(' ');
+			return this;
+		}
+
+		private ZipAssert yes() {
+			this.out.append(SUCCESS);
+			return this;
+		}
+
+		private ZipAssert no() {
+			this.out.append(FAILURE);
+			return this;
+		}
+
+		private ZipAssert or() {
+			this.in.append(NEXT_ANSWER).append('\n');
+			return this;
+		}
+
+		private ZipAssert done() {
+			this.in.append('\n');
+			return this;
+		}
+
+		private ZipAssert error(final String msg) {
+			this.out.append(msg).append('\n');
+			return this;
+		}
+
+		private void halt() throws IOException {
+			this.out.append(PROMPT);
+			this.in.append(HALT).append('\n');
+			assertEquals(this.out.toString(),
+					runQueries(this.fileName, this.in.toString()));
+		}
+
+		private String runQueries(final String resource, final String queries)
+				throws IOException {
+			String result;
+			try (final InputStream is = this.getClass().getResourceAsStream(resource);
+					final Reader file = new InputStreamReader(is);
+					final Reader reader = new StringReader(queries);
+					final StringWriter writer = new StringWriter()) {
+				Factory.newProgramCompiler().compile(file);
+				Repl.INSTANCE.run(reader, writer);
+				result = writer.toString();
+			}
+			catch (RecognitionException e) {
+				throw new AssertionError();
+			}
+			return result;
+		}
+
 	}
+
 }
