@@ -18,6 +18,7 @@ import com.prolog.jvm.exceptions.RecognitionException;
  */
 public final class PrologJvm {
 
+	private static final String WELCOME = "Welcome to prolog-jvm.\n";
 	private static final String HELP = "Usage: java PrologJvm <file name>.";
 
 	/**
@@ -40,6 +41,7 @@ public final class PrologJvm {
 		catch (Exception e) {
 			throw new InternalCompilerException(e);
 		}
+		System.out.println(WELCOME);
 		try (final Reader reader = new InputStreamReader(System.in);
 				Writer writer = new PrintWriter(System.out)) {
 			Repl.INSTANCE.run(reader, writer);
