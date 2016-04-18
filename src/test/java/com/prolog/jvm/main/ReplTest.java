@@ -80,7 +80,7 @@ public final class ReplTest {
 				append("reverse(cons(a,cons(b,[])),X).\n").
 				append(NEXT_ANSWER).append('\n').
 				append("reverse(X,Y.\n").
-				append("halt\n");
+				append(HALT).append('\n');
 
 		final StringBuilder answers = new StringBuilder().
 				append(PROMPT).
@@ -107,7 +107,7 @@ public final class ReplTest {
 		try (final InputStream is = this.getClass().getResourceAsStream(resource);
 				final Reader file = new InputStreamReader(is);
 				final Reader reader = new StringReader(queries);
-				StringWriter writer = new StringWriter()) {
+				final StringWriter writer = new StringWriter()) {
 			Factory.newProgramCompiler().compile(file);
 			Repl.INSTANCE.run(reader, writer);
 			result = writer.toString();

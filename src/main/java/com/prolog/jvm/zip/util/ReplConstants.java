@@ -34,6 +34,6 @@ public final class ReplConstants {
 	/**
 	 * User command for exiting the REPL.
 	 */
-	public static final String HALT = "halt";
+	public static final String HALT = "halt.";
 
 }
