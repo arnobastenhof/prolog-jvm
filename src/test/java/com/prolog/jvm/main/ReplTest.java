@@ -48,6 +48,7 @@ public final class ReplTest {
 				append(SUCCESS).
 				append(FAILURE).
 				append("X = ares\n").
+				append(SUCCESS).
 				append("X = semele\n").
 				append(FAILURE).
 				append("Y = ares\n").

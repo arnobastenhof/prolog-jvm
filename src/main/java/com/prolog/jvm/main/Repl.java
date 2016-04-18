@@ -45,23 +45,18 @@ public enum Repl {
 		final MementoImpl m = Factory.getBytecode().createMemento();
 
 		try (final BufferedReader reader = new BufferedReader(in)) {
-			String userInput = null;
-			while (true) {
-				out.flush();
-				userInput = reader.readLine();
-				if (userInput != null && !userInput.equals(HALT)) {
-					try (final StringReader sr = new StringReader(userInput)) {
-						Factory.newQueryCompiler().compile(sr);
-					}
-					catch (Exception e) {
-						out.append(e.getMessage()).write('\n');
-						continue;
-					}
-					Factory.getInterpreter().execute(queryAddr, reader, out);
-					Factory.getBytecode().setMemento(m);
+			String userInput;
+			while (!HALT.equals(userInput = reader.readLine())) {
+				try (final StringReader sr = new StringReader(userInput)) {
+					Factory.newQueryCompiler().compile(sr);
+				}
+				catch (Exception e) {
+					out.append(e.getMessage()).append('\n').flush();
 					continue;
 				}
-				return;
+				Factory.getInterpreter().execute(queryAddr, reader, out);
+				Factory.getBytecode().setMemento(m);
+				out.flush();
 			}
 		}
 	}

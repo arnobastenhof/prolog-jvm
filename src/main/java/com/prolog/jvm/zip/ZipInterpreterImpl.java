@@ -148,6 +148,7 @@ public final class ZipInterpreterImpl implements ZipInterpreter {
 							continue;
 						}
 						// else, we're done
+						out.write(SUCCESS);
 						return;
 					}
 					// If we're not done yet, push a new target frame
@@ -172,13 +173,13 @@ public final class ZipInterpreterImpl implements ZipInterpreter {
 		final int word = this.facade.getWordAt(addr);
 		switch (PlWords.getTag(word)) {
 		case REF: {
-			int address = PlWords.getValue(word);
+			final int address = PlWords.getValue(word);
 			this.facade.trail(address);
 			return writeFunctor(symbol, address);
 		}
 		case STR: {
-			int globalAddr = PlWords.getValue(word);
-			int index = PlWords.getValue(this.facade.getWordAt(globalAddr));
+			final int globalAddr = PlWords.getValue(word);
+			final int index = PlWords.getValue(this.facade.getWordAt(globalAddr));
 			if (symbol != this.facade.getConstant(index,FunctorSymbol.class)) {
 				return this.facade.backtrack();
 			}
@@ -312,7 +313,6 @@ public final class ZipInterpreterImpl implements ZipInterpreter {
 		final Set<Integer> addresses = new HashSet<>();
 		addresses.addAll(Factory.getQueryVars().keySet());
 		if (addresses.isEmpty()) {
-			out.write(SUCCESS);
 			return false;
 		}
 		for (final Integer address : addresses) {
@@ -321,7 +321,7 @@ public final class ZipInterpreterImpl implements ZipInterpreter {
 			out.write('\n');
 		}
 		out.flush();
-		return in.readLine().equals(NEXT_ANSWER);
+		return NEXT_ANSWER.equals(in.readLine());
 	}
 
 	private String getVarName(final int addr) {
