@@ -318,7 +318,7 @@ public final class ZipInterpreterImpl implements ZipInterpreter {
 		for (final Integer address : addresses) {
 			out.append(Factory.getQueryVars().get(address)).write(" = ");
 			walkCode(address.intValue(), out);
-			out.write('\n');
+			out.write(' ');
 		}
 		out.flush();
 		return NEXT_ANSWER.equals(in.readLine());

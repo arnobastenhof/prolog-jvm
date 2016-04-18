@@ -51,14 +51,14 @@ public final class ReplTest {
 				append(PROMPT).
 				append(FAILURE).
 				append(PROMPT).
-				append("X = ares\n").
+				append("X = ares ").
 				append(SUCCESS).
 				append(PROMPT).
-				append("X = semele\n").
+				append("X = semele ").
 				append(FAILURE).
 				append(PROMPT).
-				append("Y = ares\n").
-				append("Y = dionisius\n").
+				append("Y = ares ").
+				append("Y = dionisius ").
 				append(FAILURE).
 				append(PROMPT).
 				append(SUCCESS).
@@ -88,10 +88,10 @@ public final class ReplTest {
 				append(PROMPT).
 				append(SUCCESS).
 				append(PROMPT).
-				append("X = cons(a, [])\n").
+				append("X = cons(a, []) ").
 				append(FAILURE).
 				append(PROMPT).
-				append("X = cons(b, cons(a, []))\n").
+				append("X = cons(b, cons(a, [])) ").
 				append(FAILURE).
 				append(PROMPT).
 				append("<.;PERIOD> unexpected at line 1. Expected RBRACK.\n").
