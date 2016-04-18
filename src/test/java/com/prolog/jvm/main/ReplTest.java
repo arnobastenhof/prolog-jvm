@@ -3,6 +3,7 @@ package com.prolog.jvm.main;
 import static com.prolog.jvm.zip.util.ReplConstants.FAILURE;
 import static com.prolog.jvm.zip.util.ReplConstants.HALT;
 import static com.prolog.jvm.zip.util.ReplConstants.NEXT_ANSWER;
+import static com.prolog.jvm.zip.util.ReplConstants.PROMPT;
 import static com.prolog.jvm.zip.util.ReplConstants.SUCCESS;
 import static org.junit.Assert.assertEquals;
 
@@ -45,17 +46,25 @@ public final class ReplTest {
 				append(HALT).append('\n');
 
 		final StringBuilder answers = new StringBuilder().
+				append(PROMPT).
 				append(SUCCESS).
+				append(PROMPT).
 				append(FAILURE).
+				append(PROMPT).
 				append("X = ares\n").
 				append(SUCCESS).
+				append(PROMPT).
 				append("X = semele\n").
 				append(FAILURE).
+				append(PROMPT).
 				append("Y = ares\n").
 				append("Y = dionisius\n").
 				append(FAILURE).
+				append(PROMPT).
 				append(SUCCESS).
-				append("No clauses defined for predicate fathers/2\n");
+				append(PROMPT).
+				append("No clauses defined for predicate fathers/2\n").
+				append(PROMPT);
 
 		assertEquals(runQueries(EXAMPLE_1, queries.toString()),
 				answers.toString());
@@ -74,13 +83,19 @@ public final class ReplTest {
 				append("halt\n");
 
 		final StringBuilder answers = new StringBuilder().
+				append(PROMPT).
 				append(SUCCESS).
+				append(PROMPT).
 				append(SUCCESS).
+				append(PROMPT).
 				append("X = cons(a, [])\n").
 				append(FAILURE).
+				append(PROMPT).
 				append("X = cons(b, cons(a, []))\n").
 				append(FAILURE).
-				append("<.;PERIOD> unexpected at line 1. Expected RBRACK.\n");
+				append(PROMPT).
+				append("<.;PERIOD> unexpected at line 1. Expected RBRACK.\n").
+				append(PROMPT);
 
 		assertEquals(runQueries(EXAMPLE_2, queries.toString()),
 				answers.toString());
@@ -88,7 +103,7 @@ public final class ReplTest {
 
 	private String runQueries(final String resource, final String queries)
 			throws IOException {
-		String result = null;
+		String result;
 		try (final InputStream is = this.getClass().getResourceAsStream(resource);
 				final Reader file = new InputStreamReader(is);
 				final Reader reader = new StringReader(queries);

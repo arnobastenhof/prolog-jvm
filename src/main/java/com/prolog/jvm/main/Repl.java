@@ -1,6 +1,7 @@
 package com.prolog.jvm.main;
 
 import static com.prolog.jvm.zip.util.ReplConstants.HALT;
+import static com.prolog.jvm.zip.util.ReplConstants.PROMPT;
 import static java.util.Objects.requireNonNull;
 
 import java.io.BufferedReader;
@@ -46,17 +47,19 @@ public enum Repl {
 
 		try (final BufferedReader reader = new BufferedReader(in)) {
 			String userInput;
+			out.append(PROMPT).flush();
 			while (!HALT.equals(userInput = reader.readLine())) {
 				try (final StringReader sr = new StringReader(userInput)) {
 					Factory.newQueryCompiler().compile(sr);
 				}
 				catch (Exception e) {
-					out.append(e.getMessage()).append('\n').flush();
+					out.append(e.getMessage())
+						.append('\n').append(PROMPT).flush();
 					continue;
 				}
 				Factory.getInterpreter().execute(queryAddr, reader, out);
 				Factory.getBytecode().setMemento(m);
-				out.flush();
+				out.append(PROMPT).flush();
 			}
 		}
 	}

@@ -12,6 +12,11 @@ import com.prolog.jvm.zip.api.ZipInterpreter;
 public final class ReplConstants {
 
 	/**
+	 * The REPL's prompt.
+	 */
+	public static final String PROMPT = "?- ";
+
+	/**
 	 * Indicates the query was found to be true.
 	 */
 	public static final String SUCCESS = "yes\n";
