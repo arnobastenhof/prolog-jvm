@@ -61,6 +61,11 @@ public final class ReplTest {
 	@Test
 	public void lists() throws IOException {
 		ZipAssert.forFile(EXAMPLE_2)
+			.prompt("append([],X,Y).")
+			.binding("X", "X")
+			.binding("Y", "X")
+			.or()
+			.no()
 			.prompt("append(cons(a,[]),cons(b,[]),cons(a,cons(b,[]))).")
 			.yes()
 			.prompt("reverse(cons(a,cons(b,[])),cons(b,cons(a,[]))).")
@@ -93,42 +98,50 @@ public final class ReplTest {
 			return new ZipAssert(fileName);
 		}
 
+		// records a query
 		private ZipAssert prompt(final String query) {
 			this.out.append(PROMPT);
 			this.in.append(query).append('\n');
 			return this;
 		}
 
+		// records an alternative (i.e., a binding)
 		private ZipAssert binding(final String var, final String val) {
 			this.out.append(var).append(" = ").append(val).append(' ');
 			return this;
 		}
 
+		// records an affirmative answer to a query
 		private ZipAssert yes() {
 			this.out.append(SUCCESS);
 			return this;
 		}
 
+		// records a negative answer to a query
 		private ZipAssert no() {
 			this.out.append(FAILURE);
 			return this;
 		}
 
+		// records a request for another alternative (;)
 		private ZipAssert or() {
 			this.in.append(NEXT_ANSWER).append('\n');
 			return this;
 		}
 
+		// records no further alternatives need be sought for
 		private ZipAssert done() {
 			this.in.append('\n');
 			return this;
 		}
 
+		// records an error message
 		private ZipAssert error(final String msg) {
 			this.out.append(msg).append('\n');
 			return this;
 		}
 
+		// records the end of the session and validates it
 		private void halt() throws IOException {
 			this.out.append(PROMPT);
 			this.in.append(HALT).append('\n');

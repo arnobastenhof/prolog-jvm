@@ -340,8 +340,7 @@ public final class ZipInterpreterImpl implements ZipInterpreter {
 		final int word = this.facade.getWordAt(addr);
 		switch (PlWords.getTag(word)) {
 		case REF: {
-			// Since we already dereferenced, value must be equal to addr
-			out.write(getVarName(addr));
+			out.write(getVarName(PlWords.getValue(word)));
 			return;
 		}
 		case STR: {
