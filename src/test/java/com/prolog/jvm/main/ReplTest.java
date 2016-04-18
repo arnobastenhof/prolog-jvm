@@ -32,39 +32,39 @@ public final class ReplTest {
 
 	@Test
 	public void ancestry() throws IOException {
-		final StringBuilder queries = new StringBuilder().
-				append("grandparent(hera, harmonia).\n").
-				append("grandparent(dionisius, zeus).\n").
-				append("parent(zeus,X), parent(X,harmonia).\n\n").
-				append("mother(X,dionisius).\n").
-				append(NEXT_ANSWER).append('\n').
-				append("father(zeus,Y).\n").
-				append(NEXT_ANSWER).append('\n').
-				append(NEXT_ANSWER).append('\n').
-				append("ancestor(zeus,harmonia).\n").
-				append("fathers(zeus,Y).\n").
-				append(HALT).append('\n');
+		final StringBuilder queries = new StringBuilder()
+				.append("grandparent(hera, harmonia).\n")
+				.append("grandparent(dionisius, zeus).\n")
+				.append("parent(zeus,X), parent(X,harmonia).\n\n")
+				.append("mother(X,dionisius).\n")
+				.append(NEXT_ANSWER).append('\n')
+				.append("father(zeus,Y).\n")
+				.append(NEXT_ANSWER).append('\n')
+				.append(NEXT_ANSWER).append('\n')
+				.append("ancestor(zeus,harmonia).\n")
+				.append("fathers(zeus,Y).\n")
+				.append(HALT).append('\n');
 
-		final StringBuilder answers = new StringBuilder().
-				append(PROMPT).
-				append(SUCCESS).
-				append(PROMPT).
-				append(FAILURE).
-				append(PROMPT).
-				append("X = ares ").
-				append(SUCCESS).
-				append(PROMPT).
-				append("X = semele ").
-				append(FAILURE).
-				append(PROMPT).
-				append("Y = ares ").
-				append("Y = dionisius ").
-				append(FAILURE).
-				append(PROMPT).
-				append(SUCCESS).
-				append(PROMPT).
-				append("No clauses defined for predicate fathers/2\n").
-				append(PROMPT);
+		final StringBuilder answers = new StringBuilder()
+				.append(PROMPT)
+				.append(SUCCESS)
+				.append(PROMPT)
+				.append(FAILURE)
+				.append(PROMPT)
+				.append("X = ares ")
+				.append(SUCCESS)
+				.append(PROMPT)
+				.append("X = semele ")
+				.append(FAILURE)
+				.append(PROMPT)
+				.append("Y = ares ")
+				.append("Y = dionisius ")
+				.append(FAILURE)
+				.append(PROMPT)
+				.append(SUCCESS)
+				.append(PROMPT)
+				.append("No clauses defined for predicate fathers/2\n")
+				.append(PROMPT);
 
 		assertEquals(runQueries(EXAMPLE_1, queries.toString()),
 				answers.toString());
@@ -72,30 +72,30 @@ public final class ReplTest {
 
 	@Test
 	public void lists() throws IOException {
-		final StringBuilder queries = new StringBuilder().
-				append("append(cons(a,[]),cons(b,[]),cons(a,cons(b,[]))).\n").
-				append("reverse(cons(a,cons(b,[])),cons(b,cons(a,[]))).\n").
-				append("reverse(cons(a,[]),X).\n").
-				append(NEXT_ANSWER).append('\n').
-				append("reverse(cons(a,cons(b,[])),X).\n").
-				append(NEXT_ANSWER).append('\n').
-				append("reverse(X,Y.\n").
-				append(HALT).append('\n');
+		final StringBuilder queries = new StringBuilder()
+				.append("append(cons(a,[]),cons(b,[]),cons(a,cons(b,[]))).\n")
+				.append("reverse(cons(a,cons(b,[])),cons(b,cons(a,[]))).\n")
+				.append("reverse(cons(a,[]),X).\n")
+				.append(NEXT_ANSWER).append('\n')
+				.append("reverse(cons(a,cons(b,[])),X).\n")
+				.append(NEXT_ANSWER).append('\n')
+				.append("reverse(X,Y.\n")
+				.append(HALT).append('\n');
 
-		final StringBuilder answers = new StringBuilder().
-				append(PROMPT).
-				append(SUCCESS).
-				append(PROMPT).
-				append(SUCCESS).
-				append(PROMPT).
-				append("X = cons(a, []) ").
-				append(FAILURE).
-				append(PROMPT).
-				append("X = cons(b, cons(a, [])) ").
-				append(FAILURE).
-				append(PROMPT).
-				append("<.;PERIOD> unexpected at line 1. Expected RBRACK.\n").
-				append(PROMPT);
+		final StringBuilder answers = new StringBuilder()
+				.append(PROMPT)
+				.append(SUCCESS)
+				.append(PROMPT)
+				.append(SUCCESS)
+				.append(PROMPT)
+				.append("X = cons(a, []) ")
+				.append(FAILURE)
+				.append(PROMPT)
+				.append("X = cons(b, cons(a, [])) ")
+				.append(FAILURE)
+				.append(PROMPT)
+				.append("<.;PERIOD> unexpected at line 1. Expected RBRACK.\n")
+				.append(PROMPT);
 
 		assertEquals(runQueries(EXAMPLE_2, queries.toString()),
 				answers.toString());
