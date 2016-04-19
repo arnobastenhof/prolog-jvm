@@ -57,6 +57,9 @@ public final class ZipInterpreterImpl implements ZipInterpreter {
 
 	private final ZipFacade facade;
 
+	private BufferedReader in;
+	private Writer out;
+
 	/**
 	 *
 	 * @param facade a facade for the ZIP's internals; not allowed to be null
@@ -68,104 +71,84 @@ public final class ZipInterpreterImpl implements ZipInterpreter {
 	@Override
 	public void execute(final int queryAddress, final BufferedReader in,
 				final Writer out) throws IOException {
-		// Initialize the ZIP machine
-		this.facade.reset(queryAddress);
+		int address = init(queryAddress, in, out);
+		while ((address = step(address)) >= 0) {
+			// empty body
+		}
+	}
 
-		// In MATCH mode, some address in the global -or local stack must be
-		// matched against. Similarly, in ARG and COPY modes, some such address
-		// must be copied from.
-		int address = MIN_LOCAL_INDEX;
+	private int init(final int queryAddress, final BufferedReader in,
+			final Writer out) throws IOException {
+		this.facade.reset(queryAddress);	// initialize the ZIP machine
+		this.in = requireNonNull(in);	 // TODO move to constructor?
+		this.out = requireNonNull(out);	 // TODO move to constructor?
+		return MIN_LOCAL_INDEX;
+	}
 
-		// Fetch/decode/execute cycle
+	/* In MATCH mode, some address in the global -or local stack must be matched
+	 * against. Similarly, in ARG and COPY modes, some such address must be
+	 * copied from. */
+	private int step(final int address) throws IOException {
 		try {
-			while (true) {
-				final int operator = this.facade.readOperator();
-				switch (operator) {
-				case MATCH | FUNCTOR: {
-					address = matchFunctor(address);
-					continue;
-				}
-				case MATCH | CONSTANT: {
-					address = matchConstant(address);
-					continue;
-				}
-				case MATCH | FIRSTVAR: {
-					address = matchVariable(true, address);
-					continue;
-				}
-				case MATCH | VAR: {
-					address = matchVariable(false, address);
-					continue;
-				}
-				case MATCH | ENTER: {
-					address = enterClause();
-					continue;
-				}
-				case MATCH | POP:
-					// Fall-through
-				case COPY | POP: {
-					address = this.facade.popFromScratchpad();
-					continue;
-				}
-				case COPY | FUNCTOR:
-					// Fall-through
-				case ARG | FUNCTOR: {
-					address = copyFunctor(address);
-					continue;
-				}
-				case COPY | CONSTANT:
-					// Fall-through
-				case ARG | CONSTANT: {
-					address = copyConstant(address);
-					continue;
-				}
-				case COPY | FIRSTVAR: {
-					address = copyVariable(true, address);
-					continue;
-				}
-				case COPY | VAR: {
-					address = copyVariable(false, address);
-					continue;
-				}
-				case ARG | FIRSTVAR: {
-					address = argVariable(true, address);
-					continue;
-				}
-				case ARG | VAR: {
-					address = argVariable(false, address);
-					continue;
-				}
-				case ARG | CALL: {
-					address = callPredicate();
-					continue;
-				}
-				case ARG | EXIT: {
-					// If popSourceFrame returns true, we have an answer
-					if (this.facade.popSourceFrame()) {
-						// If writeAnswer returns true, look for more
-						if (writeAnswer(in, out)) {
-							this.facade.backtrack();
-							continue;
-						}
-						// else, we're done
-						out.write(SUCCESS);
-						return;
+			final int operator = this.facade.readOperator();
+			switch (operator) {
+			case MATCH | FUNCTOR:
+				return matchFunctor(address);
+			case MATCH | CONSTANT:
+				return matchConstant(address);
+			case MATCH | FIRSTVAR:
+				return matchVariable(true, address);
+			case MATCH | VAR:
+				return matchVariable(false, address);
+			case MATCH | ENTER:
+				return enterClause();
+			case MATCH | POP:
+				// Fall-through
+			case COPY | POP:
+				return this.facade.popFromScratchpad();
+			case COPY | FUNCTOR:
+				// Fall-through
+			case ARG | FUNCTOR:
+				return copyFunctor(address);
+			case COPY | CONSTANT:
+				// Fall-through
+			case ARG | CONSTANT:
+				return copyConstant(address);
+			case COPY | FIRSTVAR:
+				return copyVariable(true, address);
+			case COPY | VAR:
+				return copyVariable(false, address);
+			case ARG | FIRSTVAR:
+				return argVariable(true, address);
+			case ARG | VAR:
+				return argVariable(false, address);
+			case ARG | CALL:
+				return callPredicate();
+			case ARG | EXIT: {
+				// If popSourceFrame returns true, we have an answer
+				if (this.facade.popSourceFrame()) {
+					// If writeAnswer returns true, look for more
+					if (writeAnswer(this.in, this.out)) {
+						this.facade.backtrack();
+						return address;
 					}
-					// If we're not done yet, push a new target frame
-					// TODO Does double work if preceded by ENTER or jumps to
-					// another EXIT (i.e., last call)
-					address = this.facade.pushTargetFrame();
-					continue;
+					// else, we're done
+					this.out.write(SUCCESS);
+					return -1;
 				}
-				default:
-					throw new IllegalArgumentException(
-							Instructions.toString(operator));
-				}
+				// If we're not done yet, push a new target frame
+				// TODO Does double work if preceded by ENTER or jumps to
+				// another EXIT (i.e., last call)
+				return this.facade.pushTargetFrame();
 			}
+			default:
+				throw new IllegalArgumentException(
+						Instructions.toString(operator));
+			}
+		} catch (final BacktrackException e) {
+			this.out.write(FAILURE);
 		}
-		catch (BacktrackException e) {
-			out.write(FAILURE);
-		}
+		return -1;
 	}
 
 	private int matchFunctor(int addr) throws BacktrackException {
