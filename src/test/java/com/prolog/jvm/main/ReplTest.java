@@ -39,17 +39,17 @@ public final class ReplTest {
 			.no()
 			.prompt("parent(zeus,X), parent(X,harmonia).")
 			.binding("X", "ares")
-			.done()
+			.enough()
 			.yes()
 			.prompt("mother(X,dionisius).")
 			.binding("X", "semele")
-			.or()
+			.more()
 			.no()
 			.prompt("father(zeus,Y).")
 			.binding("Y", "ares")
-			.or()
+			.more()
 			.binding("Y", "dionisius")
-			.or()
+			.more()
 			.no()
 			.prompt("ancestor(zeus,harmonia).")
 			.yes()
@@ -64,7 +64,7 @@ public final class ReplTest {
 			.prompt("append([],X,Y).")
 			.binding("X", "X")
 			.binding("Y", "X")
-			.or()
+			.more()
 			.no()
 			.prompt("append(cons(a,[]),cons(b,[]),cons(a,cons(b,[]))).")
 			.yes()
@@ -72,11 +72,11 @@ public final class ReplTest {
 			.yes()
 			.prompt("reverse(cons(a,[]),X).")
 			.binding("X", "cons(a, [])")
-			.or()
+			.more()
 			.no()
 			.prompt("reverse(cons(a,cons(b,[])),X).")
 			.binding("X", "cons(b, cons(a, []))")
-			.or()
+			.more()
 			.no()
 			.prompt("reverse(X,Y.")
 			.error("<.;PERIOD> unexpected at line 1. Expected RBRACK.")
@@ -124,13 +124,13 @@ public final class ReplTest {
 		}
 
 		// records a request for another alternative (;)
-		private ZipAssert or() {
+		private ZipAssert more() {
 			this.in.append(NEXT_ANSWER).append('\n');
 			return this;
 		}
 
 		// records no further alternatives need be sought for
-		private ZipAssert done() {
+		private ZipAssert enough() {
 			this.in.append('\n');
 			return this;
 		}
