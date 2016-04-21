@@ -101,10 +101,12 @@ public final class Ast implements Iterable<Ast> {
 		if (this.children.isEmpty()) {
 			return this.token.getText();
 		}
-		final StringBuilder buffer = new StringBuilder("(")
-			.append(this.token.getText());
-		for (Ast child : this.children) {
-			buffer.append(' ').append(child.toString());
+		final StringBuilder buffer =
+				new StringBuilder(this.token.getText()).append('(');
+		final Iterator<Ast> it = this.children.iterator();
+		buffer.append(it.next().toString());
+		while (it.hasNext()) {
+			buffer.append(", ").append(it.next().toString());
 		}
 		return buffer.append(')').toString();
 	}
