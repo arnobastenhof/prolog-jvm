@@ -18,7 +18,13 @@ import com.prolog.jvm.zip.util.Validate;
  */
 public final class PredicateSymbol implements Symbol {
 
+	private final String name;  // kept for debugging purposes
+
 	private ClauseSymbol first; // first clause alternative
+
+	public PredicateSymbol(final String text, final int arity) {
+		this.name = requireNonNull(text) + "/" + Integer.toString(arity);
+	}
 
 	/**
 	 * Sets the first clause alternative for the predicate represented by this
@@ -40,5 +46,10 @@ public final class PredicateSymbol implements Symbol {
 	 */
 	public ClauseSymbol getFirst() {
 		return this.first;
+	}
+
+	@Override
+	public String toString() {
+		return this.name;
 	}
 }

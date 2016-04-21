@@ -175,12 +175,14 @@ public final class SymbolResolver extends BasicPrologVisitor<Ast> {
 	private PredicateSymbol getPredicateSymbol(Ast clause) {
 		assert clause != null;
 
+		final String text = clause.getText();
+		final int arity = clause.getArity();
 		return getGlobalSymbol(
-				SymbolKeys.ofPredicate(clause.getText(), clause.getArity()),
+				SymbolKeys.ofPredicate(text, arity),
 				new SymbolBuilder<PredicateSymbol>(){
 					@Override
 					PredicateSymbol build() {
-						return new PredicateSymbol();
+						return new PredicateSymbol(text, arity);
 					}
 				});
 	}
