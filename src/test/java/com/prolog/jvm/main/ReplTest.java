@@ -7,16 +7,19 @@ import static com.prolog.jvm.zip.util.ReplConstants.PROMPT;
 import static com.prolog.jvm.zip.util.ReplConstants.SUCCESS;
 import static org.junit.Assert.assertEquals;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.io.Writer;
 
 import org.junit.Test;
 
 import com.prolog.jvm.exceptions.RecognitionException;
+import com.prolog.jvm.zip.StepLogger;
+import com.prolog.jvm.zip.api.StepListener;
 
 /**
  * Integration tests.
@@ -31,7 +34,7 @@ public final class ReplTest {
 	private static final String EXAMPLE_2 = "lists.pl";
 
 	@Test
-	public void ancestry() throws IOException {
+	public void ancestry() throws Exception {
 		ZipAssert.forFile(EXAMPLE_1)
 			.prompt("grandparent(hera, harmonia).")
 			.yes()
@@ -59,7 +62,7 @@ public final class ReplTest {
 	}
 
 	@Test
-	public void lists() throws IOException {
+	public void lists() throws Exception {
 		ZipAssert.forFile(EXAMPLE_2)
 			.prompt("append([],X,Y).")
 			.binding("X", "X")
@@ -142,7 +145,7 @@ public final class ReplTest {
 		}
 
 		// records the end of the session and validates it
-		private void halt() throws IOException {
+		private void halt() throws Exception {
 			this.out.append(PROMPT);
 			this.in.append(HALT).append('\n');
 			assertEquals(this.out.toString(),
@@ -150,7 +153,7 @@ public final class ReplTest {
 		}
 
 		private String runQueries(final String resource, final String queries)
-				throws IOException {
+				throws Exception {
 			String result;
 			try (final InputStream is = this.getClass().getResourceAsStream(resource);
 					final Reader file = new InputStreamReader(is);

@@ -19,6 +19,7 @@ import static com.prolog.jvm.zip.util.PlWords.STR;
 import static com.prolog.jvm.zip.util.PlWords.getWord;
 import static java.util.Objects.requireNonNull;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.prolog.jvm.exceptions.BacktrackException;
@@ -204,12 +205,12 @@ public class ZipFacadeImpl implements ZipFacade {
 	// === Code memory ===
 
 	@Override
-	public final int readOperator() {
+	public final int fetchOperator() {
 		return this.mode | this.heap.readFrom(this.programctr++);
 	}
 
 	@Override
-	public final int readOperand(final boolean isVariable) {
+	public final int fetchOperand(final boolean isVariable) {
 		int result = this.heap.readFrom(this.programctr++);
 		if (!isVariable) {
 			return result;
@@ -277,7 +278,7 @@ public class ZipFacadeImpl implements ZipFacade {
 		assert address >= MIN_GLOBAL_INDEX;
 		assert address <= MAX_LOCAL_INDEX;
 
-		final int word = getWord(CONS,getConstantPoolIndex(symbol));
+		final int word = getWord(CONS, getConstantPoolIndex(symbol));
 		this.wordStore.writeTo(address, word);
 	}
 
@@ -363,18 +364,22 @@ public class ZipFacadeImpl implements ZipFacade {
 
 	/*
 	 * Performs garbage collection on the trail stack between the specified
-	 * addresses fromAddress (inclusive) and toAddress (exclusive), resetting
-	 * resetting the bindings found therebetween on the global- and local
-	 * local stacks. Made package-private for testing purposes.
+	 * addresses from (inclusive) and to (exclusive), resetting the bindings
+	 * found therebetween on the global- and local local stacks. Made package-
+	 * private for testing purposes.
 	 */
-	final void unwindTrail(final int fromAddress, final int toAddress) {
-		assert fromAddress > 0;
-		assert fromAddress <= toAddress;
-		for (int i = fromAddress; i < toAddress; i++) {
+	final void unwindTrail(final int from, final int to,
+			final List<Integer> vars) {
+		assert from > 0;
+		assert from <= to;
+		assert vars != null;
+		assert vars.isEmpty();
+		for (int i = from; i < to; i++) {
 			final int address = this.trailStack.readFrom(i);
 			this.wordStore.writeTo(address, getWord(REF, address));
+			vars.add(address);
 		}
-		this.trailptr = fromAddress;
+		this.trailptr = from;
 	}
 
 	// === Dereferencing, binding and unification ===
@@ -405,7 +410,7 @@ public class ZipFacadeImpl implements ZipFacade {
 	}
 
 	@Override
-	public final void bind(final int address1, final int address2) {
+	public final int bind(final int address1, final int address2) {
 		// API sacrifices preconditions for performance, so use asserts instead
 		assert address1 >= MIN_GLOBAL_INDEX && address1 <= MAX_LOCAL_INDEX;
 		assert address2 >= MIN_GLOBAL_INDEX && address2 <= MAX_LOCAL_INDEX;
@@ -416,23 +421,24 @@ public class ZipFacadeImpl implements ZipFacade {
 			final int word = this.wordStore.readFrom(address2);
 			this.wordStore.writeTo(address1, word);
 			trail(address1);
+			return address1;
 		}
-		else if (t2 == REF) {
+		if (t2 == REF) {
 			final int word = this.wordStore.readFrom(address1);
 			this.wordStore.writeTo(address2, word);
 			trail(address2);
+			return address2;
 		}
-		else {
-			throw new IllegalArgumentException();
-		}
+		throw new IllegalArgumentException();
 	}
 
 	@Override
-	public final boolean unifiable(final int a1, final int a2) {
+	public final List<Integer> unifiable(final int a1, final int a2) {
 		// API sacrifices preconditions for performance, so use asserts instead
 		assert a1 >= MIN_GLOBAL_INDEX && a1 <= MAX_LOCAL_INDEX;
 		assert a2 >= MIN_GLOBAL_INDEX && a2 <= MAX_LOCAL_INDEX;
 
+		final List<Integer> bindings = new ArrayList<>();
 		this.pdl.writeTo(this.pdlptr++, a1); // push
 		this.pdl.writeTo(this.pdlptr++, a2); // push
 		while (this.pdlptr != getMinPdlIndex()) {
@@ -441,7 +447,7 @@ public class ZipFacadeImpl implements ZipFacade {
 			final int w1 = this.wordStore.readFrom(d1);
 			final int t1 = PlWords.getTag(w1);
 			if (t1 == REF) {
-				bind(d1, d2);
+				bindings.add(bind(d1, d2));
 				continue;
 			}
 			final int w2 = this.wordStore.readFrom(d2);
@@ -450,18 +456,18 @@ public class ZipFacadeImpl implements ZipFacade {
 			final int v2 = PlWords.getValue(w2);
 			switch (t2) {
 			case REF: {
-				bind(d1, d2);
+				bindings.add(bind(d1, d2));
 				continue;
 			}
 			case CONS: {
 				if (t1 != CONS || v1 != v2) {
-					return false;
+					return null;
 				}
 				continue;
 			}
 			case LIS: {
 				if (t1 != LIS) {
-					return false;
+					return null;
 				}
 				this.pdl.writeTo(this.pdlptr++, v1);   // push
 				this.pdl.writeTo(this.pdlptr++, v2);   // push
@@ -471,12 +477,12 @@ public class ZipFacadeImpl implements ZipFacade {
 			}
 			case STR: {
 				if (t1 != STR) {
-					return false;
+					return null;
 				}
 				final int f1 = PlWords.getValue(this.wordStore.readFrom(v1));
 				final int f2 = PlWords.getValue(this.wordStore.readFrom(v2));
 				if (f1 != f2) {
-					return false;
+					return null;
 				}
 				final int arity = getConstant(f1, FunctorSymbol.class).getArity();
 				for (int i = 1; i <= arity; i++) {
@@ -489,13 +495,18 @@ public class ZipFacadeImpl implements ZipFacade {
 				throw new AssertionError();
 			}
 		}
-		return true;
+		return bindings;
 	}
 
 	// === Backtracking ===
 
 	@Override
-	public final int backtrack() throws BacktrackException {
+	public final int backtrack(final List<Integer> vars)
+			throws BacktrackException {
+		// Validate preconditions
+		requireNonNull(vars);
+		Validate.argument(vars.isEmpty());
+
 		// No choice point means nowhere to backtrack to
 		if (this.choicepnt == null) {
 			throw new BacktrackException();
@@ -508,7 +519,7 @@ public class ZipFacadeImpl implements ZipFacade {
 			this.sourcefrm = this.choicepnt.sourcefrm;
 			this.targetfrm = this.choicepnt;
 		}
-		unwindTrail(this.choicepnt.trailptr, this.trailptr);
+		unwindTrail(this.choicepnt.trailptr, this.trailptr, vars);
 		this.globalptr = this.choicepnt.globalptr;
 		this.trailptr = this.choicepnt.trailptr;
 
@@ -525,6 +536,13 @@ public class ZipFacadeImpl implements ZipFacade {
 
 		// Return the local stack frame address for the target frame
 		return this.targetfrm.localptr;
+	}
+
+	// === Debugging ===
+
+	@Override
+	public int getProgramCounter() {
+		return this.programctr;
 	}
 
 	private static final class ActivationRecordImpl implements ActivationRecord {

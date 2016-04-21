@@ -45,7 +45,7 @@ public final class PrologJvm {
 		try (final Reader reader = new InputStreamReader(System.in);
 				Writer writer = new PrintWriter(System.out)) {
 			Repl.INSTANCE.run(reader, writer);
-		} catch (IOException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}

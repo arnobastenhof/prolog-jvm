@@ -7,7 +7,8 @@ import static com.prolog.jvm.zip.util.PlWords.REF;
 import static com.prolog.jvm.zip.util.PlWords.STR;
 import static com.prolog.jvm.zip.util.PlWords.getWord;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
@@ -47,10 +48,10 @@ public final class ZipFacadeTest {
 				.build();
 
 		// Assert
-		assertEquals(facade.pushFunctor(symbol), getWord(STR, 0));
-		assertEquals(wordStore[0], getWord(FUNC, 0));
-		assertEquals(wordStore[1], getWord(REF, 1));
-		assertEquals(wordStore[2], getWord(REF, 2));
+		assertEquals(getWord(STR, 0), facade.pushFunctor(symbol));
+		assertEquals(getWord(FUNC, 0), wordStore[0]);
+		assertEquals(getWord(REF, 1), wordStore[1]);
+		assertEquals(getWord(REF, 2), wordStore[2]);
 	}
 
 	@Test
@@ -74,8 +75,12 @@ public final class ZipFacadeTest {
 				.build();
 
 		// Assert
-		facade.unwindTrail(1, 3);
+		final List<Integer> vars = new ArrayList<>();
+		facade.unwindTrail(1, 3, vars);
 		assertTrue(Arrays.equals(wordStore, expected));
+		assertEquals(2, vars.size());
+		assertTrue(vars.contains(1));
+		assertTrue(vars.contains(2));
 	}
 
 	@Test
@@ -96,11 +101,11 @@ public final class ZipFacadeTest {
 				.build();
 
 		// Asserts
-		assertEquals(facade.getWordAt(3), getWord(STR, 4));
-		assertEquals(facade.getWordAt(4), getWord(FUNC, 1));
-		assertEquals(facade.getWordAt(5), getWord(REF, 5));
-		assertEquals(facade.getWordAt(2), getWord(REF, 5));
-		assertEquals(facade.getWordAt(1), getWord(STR, 4));
+		assertEquals(getWord(STR, 4), facade.getWordAt(3));
+		assertEquals(getWord(FUNC, 1), facade.getWordAt(4));
+		assertEquals(getWord(REF, 5), facade.getWordAt(5));
+		assertEquals(getWord(REF, 5), facade.getWordAt(2));
+		assertEquals(getWord(STR, 4), facade.getWordAt(1));
 	}
 
 	@Test
@@ -132,20 +137,20 @@ public final class ZipFacadeTest {
 		// variable (no trailing)
 		facade.local = false;
 		facade.bind(5, 1);
-		assertEquals(wordStore[5], getWord(REF, 1));
-		assertEquals(wordStore[1], getWord(REF, 1));
-		assertEquals(trailStack[0], 0);
+		assertEquals(getWord(REF, 1), wordStore[5]);
+		assertEquals(getWord(REF, 1), wordStore[1]);
+		assertEquals(0, trailStack[0]);
 
 		// #2: Bind a global variable to an atom (with trailing)
 		facade.bind(1, 0);
-		assertEquals(wordStore[1], getWord(CONS, 0));
-		assertEquals(trailStack[0], 1);
+		assertEquals(getWord(CONS, 0), wordStore[1]);
+		assertEquals(1, trailStack[0]);
 
 		// #3: Bind a local variable to a global bound variable (with trailing)
 		facade.local = true;
 		facade.bind(6, 2);
-		assertEquals(wordStore[6], getWord(REF, 3));
-		assertEquals(trailStack[1], 6);
+		assertEquals(getWord(REF, 3), wordStore[6]);
+		assertEquals(6, trailStack[1]);
 	}
 
 	@Test
@@ -184,14 +189,14 @@ public final class ZipFacadeTest {
 				.build();
 
 		// #1: Unification succeeds
-		assertTrue(facade.unifiable(0, 9));
-		assertEquals(wordStore[10], getWord(CONS, 1));
-		assertEquals(wordStore[5], getWord(CONS, 3));
-		assertEquals(wordStore[13], getWord(STR, 7));
+		assertNotNull(facade.unifiable(0, 9));
+		assertEquals(getWord(CONS, 1), wordStore[10]);
+		assertEquals(getWord(CONS, 3), wordStore[5]);
+		assertEquals(getWord(STR, 7), wordStore[13]);
 
 		// #2: Unification fails
-		assertFalse(facade.unifiable(0, 15));
-		assertEquals(wordStore[17], getWord(STR, 3));
+		assertNull(facade.unifiable(0, 15));
+		assertEquals(getWord(STR, 3), wordStore[17]);
 	}
 
 	// Memory area mock implementation backed by an array supplied by the

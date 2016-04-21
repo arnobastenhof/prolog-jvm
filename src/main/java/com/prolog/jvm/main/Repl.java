@@ -34,7 +34,7 @@ public enum Repl {
 	 * null}
 	 * @throws IOException
 	 */
-	public void run(final Reader in, final Writer out) throws IOException {
+	public void run(final Reader in, final Writer out) throws Exception {
 		// check preconditions
 		requireNonNull(in);
 		requireNonNull(out);

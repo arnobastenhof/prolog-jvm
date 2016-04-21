@@ -1,5 +1,7 @@
 package com.prolog.jvm.zip.api;
 
+import java.util.List;
+
 import com.prolog.jvm.exceptions.BacktrackException;
 import com.prolog.jvm.main.Factory;
 import com.prolog.jvm.symbol.ClauseSymbol;
@@ -65,7 +67,7 @@ public interface ZipFacade {
 	 * disjunction with the machine mode, advancing the instruction pointer
 	 * as a side effect.
 	 */
-	int readOperator();
+	int fetchOperator();
 
 	/**
 	 * Reads an operand from code memory, advancing the instruction pointer as
@@ -73,7 +75,7 @@ public interface ZipFacade {
 	 * indicates the operand designates a variable, in which case its local
 	 * stack address is returned. Otherwise, the operand is returned as is.
 	 */
-	int readOperand(boolean isVariable);
+	int fetchOperand(boolean isVariable);
 
 	/**
 	 * Sets the instruction pointer to the specified {@code address} and saves
@@ -83,6 +85,12 @@ public interface ZipFacade {
 	 * allocated, or {@link ProcessorModes#MIN_LOCAL_INDEX} if it doesn't exist
 	 */
 	int jump(int address);
+
+	/**
+	 * Returns the current address in code memory. (Added for debugging
+	 * purposes).
+	 */
+	int getProgramCounter();
 
 	// === Global stack ===
 
@@ -171,8 +179,10 @@ public interface ZipFacade {
 	 *
 	 * @param address1 a local- or global stack address
 	 * @param address2 a local- or global stack address
+	 * @return {@code address1} if bound to {@code address2}, or
+	 * {@code address2} otherwise
 	 */
-	void bind(int address1, int address2);
+	int bind(int address1, int address2);
 
 	/**
 	 * Trails the specified {@code address} if needed. I.e., if a choice point
@@ -190,18 +200,25 @@ public interface ZipFacade {
 	 *
 	 * @param address1 a local- or global stack address
 	 * @param address2 a local- or global stack address
-	 * @return whether unification was successful
+	 * @return a list of addresses that were bound during unification, or
+	 * {@code null} if unification failed
 	 */
-	boolean unifiable(int address1, int address2);
+	List<Integer> unifiable(int address1, int address2);
 
 	// === Backtracking ===
 
 	/**
-	 * Performs backtracking.
+	 * Performs backtracking, recording which variables were unbound in
+	 * {@code vars}.
 	 *
+	 * @param vars a list for storing the addresses of variables that have
+	 * become unbound during backtracking; must be empty and not allowed to be
+	 * null
 	 * @throws BacktrackException if there was no choice point to backtrack to
+	 * @throws IllegalArgumentException if {@code !vars.isEmpty()}
+	 * @throws NullPointerException if {@code vars == null}
 	 */
-	int backtrack() throws BacktrackException;
+	int backtrack(List<Integer> vars) throws BacktrackException;
 
 	/**
 	 * Interface describing a builder for a {@link ZipFacade}.

@@ -1,7 +1,6 @@
 package com.prolog.jvm.zip.api;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.Writer;
 
 /**
@@ -21,9 +20,26 @@ public interface ZipInterpreter {
 	 * @param queryAddress the code memory address for a compiled query
 	 * @param in the source for reading in user commands
 	 * @param out the target for writing the answer to
-	 * @throws IOException
+	 * @throws Exception
 	 */
-	public void execute(int queryAddress, BufferedReader in, Writer out)
-			throws IOException;
+	void execute(int queryAddress, BufferedReader in, Writer out)
+			throws Exception;
+
+	/**
+	 * Registers the specified {@code listener} to receive notifications
+	 * for each instruction executed. The order in which listeners are notified
+	 * is unspecified, and need in particular not be dependent on the order in
+	 * which they were added.
+	 *
+	 * @throws NullPointerException if {@code listener == null}
+	 */
+	void register(StepListener listener);
+
+	/**
+	 * Unregisters the specified {@code listener}.
+	 *
+	 * @throws NullPointerException if {@code listener == null}
+	 */
+	void unregister(StepListener listener);
 
 }
