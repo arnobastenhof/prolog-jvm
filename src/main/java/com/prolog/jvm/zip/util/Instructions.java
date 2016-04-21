@@ -23,8 +23,8 @@ public final class Instructions {
 		throw new AssertionError();
 	}
 
-	private static final int OPCODE_MASK = 0x3f;
-	private static final int MODE_MASK = 0x70;
+	private static final int OPCODE_MASK = 0x3F;
+	private static final int MODE_MASK = 0xC0;
 
 	// === Processor modes === //
 
@@ -101,53 +101,82 @@ public final class Instructions {
 
 	static {
 		final Map<Integer,String> map = new HashMap<>();
-		map.put(MATCH, "MATCH");
-		map.put(ARG, "ARG");
-		map.put(COPY, "COPY");
+		map.put(Integer.valueOf(MATCH), "MATCH");
+		map.put(Integer.valueOf(ARG), "ARG");
+		map.put(Integer.valueOf(COPY), "COPY");
 		MODES = Collections.unmodifiableMap(map);
 	}
 
 	static {
 		final Map<Integer,String> map = new HashMap<>();
-		map.put(Integer.valueOf(POP), "pop");
-		map.put(Integer.valueOf(FUNCTOR), "functor");
-		map.put(Integer.valueOf(CONSTANT), "constant");
-		map.put(Integer.valueOf(VAR), "var");
-		map.put(Integer.valueOf(CALL), "call");
-		map.put(Integer.valueOf(ENTER), "enter");
-		map.put(Integer.valueOf(EXIT), "exit");
+		map.put(Integer.valueOf(POP), "POP");
+		map.put(Integer.valueOf(FUNCTOR), "FUNCTOR");
+		map.put(Integer.valueOf(CONSTANT), "CONSTANT");
+		map.put(Integer.valueOf(FIRSTVAR), "FIRSTVAR");
+		map.put(Integer.valueOf(VAR), "VAR");
+		map.put(Integer.valueOf(CALL), "CALL");
+		map.put(Integer.valueOf(ENTER), "ENTER");
+		map.put(Integer.valueOf(EXIT), "EXIT");
 		MNEMONICS = Collections.unmodifiableMap(map);
 	}
 
 	/**
-	 * Returns the String representations for the mode information and opcode
-	 * in the specified {@code operator} from {@link #MODES} and
-	 * {@link #MNEMONICS} respectively if found, or that of their integer
-	 * values otherwise.
+	 * Extracts the mode and opcode from {@code operator} and returns the
+	 * concatenation of their String representations, in accordance with
+	 * {@link #modeToString(int)} and {@link #opcodeToString(int)}.
 	 */
 	public static final String toString(final int operator) {
-		final StringBuilder buffer = new StringBuilder("Mode: ");
-		buffer.append(toString(MODES, operator & MODE_MASK));
-		buffer.append(". Opcode: ");
-		buffer.append(toString(MNEMONICS, operator & OPCODE_MASK));
-		return buffer.toString();
+		return toModeString(operator) + " | " + toOpcodeString(operator);
+	}
+
+	/**
+	 * Extracts the opcode information from {@code operator} and returns
+	 * its String representation, in accordance with
+	 * {@link #opcodeToString(int)}.
+	 */
+	public static String toOpcodeString(final int operator) {
+		return opcodeToString(getOpcode(operator));
+	}
+
+	/**
+	 * Extracts the mode information from {@code operator} and returns its
+	 * String representation, in accordance with {@link #modeToString(int)}.
+	 */
+	public static String toModeString(final int operator) {
+		return modeToString(getMode(operator));
+	}
+
+	/**
+	 * Returns the lower 6 bits of {@code operator}, comprising the opcode.
+	 */
+	public static int getOpcode(final int operator) {
+		return operator & OPCODE_MASK;
+	}
+
+	/**
+	 * Returns the higher 2 bits of {@code operator}, comprising the machine
+	 * mode.
+	 */
+	public static int getMode(final int operator) {
+		return operator & MODE_MASK;
 	}
 
 	/**
 	 * Returns the String representation for the specified {@code mode} from
-	 * {@link #MODES} if found therein, or that of its integer value otherwise.
+	 * {@link #MODES} if found therein, or that of its (hexadecimal) integer
+	 * value otherwise.
 	 */
 	public static final String modeToString(final int mode) {
-		return "Mode: " + toString(MODES, mode);
+		return toString(MODES, mode);
 	}
 
 	/**
 	 * Returns the String representation for the specified {@code opcode} from
-	 * {@link #MNEMONICS} if found therein, or that of its integer value
-	 * otherwise.
+	 * {@link #MNEMONICS} if found therein, or that of its (hexadecimal) integer
+	 * value otherwise.
 	 */
 	public static final String opcodeToString(int opcode) {
-		return "Opcode: " + toString(MNEMONICS, opcode);
+		return toString(MNEMONICS, opcode);
 	}
 
 	private static final String toString(final Map<Integer,String> map,
@@ -156,7 +185,7 @@ public final class Instructions {
 		if (map.containsKey(key)) {
 			return map.get(key);
 		}
-		return Integer.toString(operatorPart);
+		return Integer.toHexString(operatorPart);
 	}
 
 }
