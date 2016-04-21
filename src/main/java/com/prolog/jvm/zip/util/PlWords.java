@@ -144,10 +144,10 @@ public final class PlWords {
 			buffer.append(TAGS.get(key));
 		}
 		else {
-			buffer.append(Integer.toString(tag));
+			buffer.append(Integer.toHexString(tag));
 		}
 		buffer.append(',');
-		buffer.append(getValue(word));
+		buffer.append(Integer.toHexString(getValue(word)));
 		buffer.append('>');
 		return buffer.toString();
 	}
