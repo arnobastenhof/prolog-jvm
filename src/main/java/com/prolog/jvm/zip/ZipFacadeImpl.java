@@ -410,11 +410,13 @@ public class ZipFacadeImpl implements ZipFacade {
 	}
 
 	@Override
-	public final int bind(final int address1, final int address2) {
+	public final int bind(int address1, int address2) {
 		// API sacrifices preconditions for performance, so use asserts instead
 		assert address1 >= MIN_GLOBAL_INDEX && address1 <= MAX_LOCAL_INDEX;
 		assert address2 >= MIN_GLOBAL_INDEX && address2 <= MAX_LOCAL_INDEX;
 
+		address1 = deref(address1);
+		address2 = deref(address2);
 		final int t1 = PlWords.getTag(this.wordStore.readFrom(address1));
 		final int t2 = PlWords.getTag(this.wordStore.readFrom(address2));
 		if (t1 == REF && (t2 != REF || address2 < address1)) {

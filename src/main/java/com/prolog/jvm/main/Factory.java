@@ -154,15 +154,16 @@ public final class Factory {
 	}
 
 	/**
-	 * Returns the correspondence between the names of query variables and
-	 * their local stack addresses, used for writing out answers. Repeated
-	 * invocations of this method are guaranteed to return the same instance.
-	 * Moreover, the latter is cleared every time {@link #newQueryCompiler()}
-	 * is called, and filled after {@link AbstractCompiler#compile(Reader)} is
-	 * invoked on the instance returned thereby.
+	 * Returns an immutable view of the correspondence between the names of
+	 * query variables and their local stack addresses, used for writing out
+	 * answers. Repeated invocations of this method are guaranteed to return
+	 * the same instance. Moreover, the latter is cleared every time {@link
+	 * #newQueryCompiler()} * is called, and filled after {@link
+	 * AbstractCompiler#compile(Reader)} is invoked on the instance returned
+	 * thereby.
 	 */
 	public static final Map<Integer,String> getQueryVars() {
-		return queryVars;
+		return Collections.unmodifiableMap(queryVars);
 	}
 
 	private enum MemoryAreas implements MemoryArea {

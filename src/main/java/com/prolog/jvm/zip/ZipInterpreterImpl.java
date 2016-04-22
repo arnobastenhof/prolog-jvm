@@ -26,6 +26,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -207,14 +208,19 @@ public final class ZipInterpreterImpl implements ZipInterpreter {
 
 	// === Instruction implementations ===
 
-	private int matchFunctor(int stackAddr, final FunctorSymbol operand)
+	private int matchFunctor(final int stackAddr, final FunctorSymbol operand)
 			throws BacktrackException {
 		final int word = this.facade.getWordAt(stackAddr);
 		switch (PlWords.getTag(word)) {
 		case REF: {
 			final int address = PlWords.getValue(word);
 			this.facade.trail(address);
-			return writeFunctor(address, operand);
+		    final int func = this.facade.pushFunctor(operand);
+		    this.facade.setWord(address, func);
+		    this.event.bindings.add(address);
+		    this.facade.pushOnScratchpad(stackAddr + 1);
+		    this.facade.setMode(COPY);
+		    return PlWords.getValue(func) + 1;
 		}
 		case STR: {
 			final int globalAddr = PlWords.getValue(word);
@@ -222,7 +228,7 @@ public final class ZipInterpreterImpl implements ZipInterpreter {
 			if (operand != this.facade.getConstant(index,FunctorSymbol.class)) {
 				return this.facade.backtrack(this.event.bindings);
 			}
-			this.facade.pushOnScratchpad(++stackAddr);
+			this.facade.pushOnScratchpad(stackAddr + 1);
 			return globalAddr + 1;
 		}
 		default:
@@ -302,11 +308,11 @@ public final class ZipInterpreterImpl implements ZipInterpreter {
 		return globalAddr + 1;
 	}
 
-	private int writeFunctor(int stackAddr, final FunctorSymbol operand) {
+	private int writeFunctor(final int stackAddr, final FunctorSymbol operand) {
 		final int word = this.facade.pushFunctor(operand);
 		this.facade.setWord(stackAddr, word);
 		this.event.bindings.add(stackAddr);
-		this.facade.pushOnScratchpad(++stackAddr);
+		this.facade.pushOnScratchpad(stackAddr + 1);
 		this.facade.setMode(COPY);
 		return PlWords.getValue(word) + 1;
 	}
@@ -360,41 +366,50 @@ public final class ZipInterpreterImpl implements ZipInterpreter {
 	// Returns whether to backtrack and look for more answers
 	private boolean writeAnswer(final BufferedReader in, final Writer out)
 			throws IOException {
-		final Set<Integer> addresses = new HashSet<>();
-		addresses.addAll(Factory.getQueryVars().keySet());
+	    Map<Integer, String> qVars = Factory.getQueryVars();
+
+	    // No query variables means nothing to print and no backtracking to do
+		final Set<Integer> addresses = qVars.keySet();
 		if (addresses.isEmpty()) {
 			return false;
 		}
+
+		// qVars as returned by Factory is unmodifiable to guarantee that
+		// multiple invocations of this method for printing alternative answers
+		// to the same query are mutually independent. Thus, we should make a
+		// copy here.
+		qVars = new HashMap<>(qVars);
+
 		for (final Integer address : addresses) {
 			out.append(Factory.getQueryVars().get(address)).write(" = ");
-			walkWord(address.intValue(), out);
+			walkWord(qVars, address.intValue(), out);
 			out.write(' ');
 		}
 		out.flush();
 		return NEXT_ANSWER.equals(in.readLine());
 	}
 
-	private String getVarName(final int addr) {
-		final Map<Integer,String> queryVars = Factory.getQueryVars();
-		final Integer address = Integer.valueOf(addr);
-		String result = queryVars.get(address);
+	private String getVarName(final Map<Integer,String> qVars,
+	        final int var) {
+		final Integer address = Integer.valueOf(var);
+		String result = qVars.get(address);
 		if (result == null) {
-			result = "?" + queryVars.keySet().size();
-			queryVars.put(address, result);
+			result = "?" + qVars.keySet().size();
+			qVars.put(address, result);
 		}
 		return result;
 	}
 
-	private final void walkWord(final int addr, final Writer out)
-			throws IOException {
+	private final void walkWord(final Map<Integer, String> qVars,
+	        final int addr, final Writer out) throws IOException {
 		final int word = this.facade.getWordAt(addr);
 		switch (PlWords.getTag(word)) {
 		case REF: {
-			out.write(getVarName(PlWords.getValue(word)));
+			out.write(getVarName(qVars, PlWords.getValue(word)));
 			return;
 		}
 		case STR: {
-			walkWord(PlWords.getValue(word), out);
+			walkWord(qVars, PlWords.getValue(word), out);
 			return;
 		}
 		case FUNC: {
@@ -404,7 +419,7 @@ public final class ZipInterpreterImpl implements ZipInterpreter {
 			assert symbol.getArity() > 0;
 			out.append(symbol.getName()).write('(');
 			for (int i = 1; i <= symbol.getArity(); i++) {
-				walkWord(addr + i, out);
+				walkWord(qVars, addr + i, out);
 				if (i < symbol.getArity()) {
 					out.write(", ");
 				}

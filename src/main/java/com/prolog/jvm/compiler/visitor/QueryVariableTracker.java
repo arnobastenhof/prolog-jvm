@@ -47,7 +47,7 @@ public final class QueryVariableTracker extends AbstractSymbolVisitor {
 		// variables are scoped to the clause wherein they occur
 		if (!this.queryVars.values().contains(var.getText())) {
 			final VariableSymbol symbol = getSymbol(var, VariableSymbol.class);
-			final Integer address = MIN_LOCAL_INDEX + symbol.getOffset();
+			final int address = MIN_LOCAL_INDEX + symbol.getOffset();
 			this.queryVars.put(address, var.getText());
 		}
 	}

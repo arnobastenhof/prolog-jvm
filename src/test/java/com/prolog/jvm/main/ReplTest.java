@@ -9,17 +9,13 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.io.Writer;
 
 import org.junit.Test;
 
 import com.prolog.jvm.exceptions.RecognitionException;
-import com.prolog.jvm.zip.StepLogger;
-import com.prolog.jvm.zip.api.StepListener;
 
 /**
  * Integration tests.
@@ -69,6 +65,18 @@ public final class ReplTest {
 			.binding("Y", "X")
 			.more()
 			.no()
+			.prompt("append(cons(X,XS),YS,ZS).")
+			.binding("YS", "?4")
+			.binding("ZS", "cons(?5, ?4)")
+			.binding("X", "?5")
+			.binding("XS", "[]")
+			.more()
+			.binding("YS", "?4")
+			.binding("ZS", "cons(?5, cons(?6, ?4))")
+			.binding("X", "?5")
+			.binding("XS", "cons(?6, [])")
+			.enough()
+			.yes()
 			.prompt("append(cons(a,[]),cons(b,[]),cons(a,cons(b,[]))).")
 			.yes()
 			.prompt("reverse(cons(a,cons(b,[])),cons(b,cons(a,[]))).")

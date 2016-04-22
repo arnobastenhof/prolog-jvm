@@ -149,7 +149,7 @@ public final class ZipFacadeTest {
 		// #3: Bind a local variable to a global bound variable (with trailing)
 		facade.local = true;
 		facade.bind(6, 2);
-		assertEquals(getWord(REF, 3), wordStore[6]);
+		assertEquals(getWord(STR, 4), wordStore[6]);
 		assertEquals(6, trailStack[1]);
 	}
 
