@@ -18,35 +18,33 @@ import com.prolog.jvm.exceptions.RecognitionException;
  */
 public final class PrologJvm {
 
-	private static final String WELCOME = "Welcome to prolog-jvm.\n";
-	private static final String HELP = "Usage: java PrologJvm <file name>.";
+    private static final String WELCOME = "Welcome to prolog-jvm.\n";
+    private static final String HELP = "Usage: java PrologJvm <file name>.";
 
-	/**
-	 * Main method.
-	 *
-	 * @param args command-line parameter for the program to be loaded
-	 */
-	public static final void main(String[] args) {
-		if (args.length == 0) {
-			System.out.println(HELP); // print help message
-			return;
-		}
-		try (final Reader program = new FileReader(args[0])) {
-			Factory.newProgramCompiler().compile(program);
-		}
-		catch (IOException | RecognitionException e) {
-			e.printStackTrace();
-			return;
-		}
-		catch (Exception e) {
-			throw new InternalCompilerException(e);
-		}
-		System.out.println(WELCOME);
-		try (final Reader reader = new InputStreamReader(System.in);
-				Writer writer = new PrintWriter(System.out)) {
-			Repl.INSTANCE.run(reader, writer);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+    /**
+     * Main method.
+     *
+     * @param args command-line parameter for the program to be loaded
+     */
+    public static final void main(String[] args) {
+        if (args.length == 0) {
+            System.out.println(HELP); // print help message
+            return;
+        }
+        try (final Reader program = new FileReader(args[0])) {
+            Factory.newProgramCompiler().compile(program);
+        } catch (IOException | RecognitionException e) {
+            e.printStackTrace();
+            return;
+        } catch (Exception e) {
+            throw new InternalCompilerException(e);
+        }
+        System.out.println(WELCOME);
+        try (final Reader reader = new InputStreamReader(System.in);
+                Writer writer = new PrintWriter(System.out)) {
+            Repl.INSTANCE.run(reader, writer);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

@@ -22,47 +22,50 @@ import com.prolog.jvm.exceptions.RecognitionException;
  */
 public final class ParserTest {
 
-	private static final String PROGRAM = "program.pl"; // Class-path resource
-	private static final String QUERY = "ancestor(zeus, X).";
-	private static final String WRONG_QUERY =
-			"reverse(cons(a,cons(b,[])),cons(b,cons(a,[])).";
+    private static final String PROGRAM = "program.pl"; // Class-path resource
+    private static final String QUERY = "ancestor(zeus, X).";
+    private static final String WRONG_QUERY =
+            "reverse(cons(a,cons(b,[])),cons(b,cons(a,[])).";
 
-	private static final PrologVisitor<Token> VISITOR =
-			new BasicPrologVisitor<>();
+    private static final PrologVisitor<Token> VISITOR =
+            new BasicPrologVisitor<>();
 
-	@Test
-	public void program() throws IOException, RecognitionException {
-		parseProgram(PROGRAM);
-	}
+    @Test
+    public void program() throws IOException, RecognitionException {
+        parseProgram(PROGRAM);
+    }
 
-	@Test
-	public void query() throws IOException, RecognitionException {
-		parseQuery(QUERY);
-	}
+    @Test
+    public void query() throws IOException, RecognitionException {
+        parseQuery(QUERY);
+    }
 
-	@Test(expected = RecognitionException.class)
-	public void wrongQuery() throws IOException, RecognitionException {
-		parseQuery(WRONG_QUERY);
-	}
+    @Test(expected = RecognitionException.class)
+    public void wrongQuery() throws IOException, RecognitionException {
+        parseQuery(WRONG_QUERY);
+    }
 
-	// === Private implementation ===
+    // === Private implementation ===
 
-	private void parseProgram(final String program)
-			throws IOException, RecognitionException {
-		try (final InputStream is = this.getClass().getResourceAsStream(program);
-				final Reader reader = new InputStreamReader(is)) {
-			final PrologParser parser = PrologParser.newInstance(reader, VISITOR);
-			parser.parseProgram();
-			assertEquals(parser.isDone(), true);
-		}
-	}
+    private void parseProgram(final String program) throws IOException,
+            RecognitionException {
+        try (final InputStream is = this.getClass()
+                .getResourceAsStream(program);
+                final Reader reader = new InputStreamReader(is)) {
+            final PrologParser parser = PrologParser.newInstance(reader,
+                    VISITOR);
+            parser.parseProgram();
+            assertEquals(parser.isDone(), true);
+        }
+    }
 
-	private void parseQuery(final String query)
-			throws IOException, RecognitionException {
-		try (final Reader reader = new StringReader(query)) {
-			final PrologParser parser = PrologParser.newInstance(reader, VISITOR);
-			parser.parseQuery();
-			assertEquals(parser.isDone(), true);
-		}
-	}
+    private void parseQuery(final String query) throws IOException,
+            RecognitionException {
+        try (final Reader reader = new StringReader(query)) {
+            final PrologParser parser = PrologParser.newInstance(reader,
+                    VISITOR);
+            parser.parseQuery();
+            assertEquals(parser.isDone(), true);
+        }
+    }
 }

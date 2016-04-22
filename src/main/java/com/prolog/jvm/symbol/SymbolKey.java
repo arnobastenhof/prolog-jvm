@@ -10,12 +10,12 @@ package com.prolog.jvm.symbol;
  */
 public interface SymbolKey<T extends Symbol> {
 
-	/**
-	 * Returns the {@link Symbol} implementation class for this key.
-	 */
-	Class<T> getSymbolClass();
+    /**
+     * Returns the {@link Symbol} implementation class for this key.
+     */
+    Class<T> getSymbolClass();
 
-	@Override
-	String toString();
+    @Override
+    String toString();
 
 }

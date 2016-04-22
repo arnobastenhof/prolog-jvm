@@ -19,37 +19,37 @@ import com.prolog.jvm.symbol.VariableSymbol;
  */
 public final class QueryVariableTracker extends AbstractSymbolVisitor {
 
-	private final Map<Integer,String> queryVars;
+    private final Map<Integer,String> queryVars;
 
-	/**
-	 * Constructor. Note the mapping {@code queryVars} from local stack
-	 * addresses to (query) variable names is declared as an external
-	 * dependency. It is recommended for client code not to instantiate this
-	 * class directly, but rather invoke {@link Factory#newQueryCompiler()}
-	 * to have its dependencies injected.
-	 *
-	 * @param symbols a mapping of {@link Ast} nodes to the {@link Symbol}s
-	 * to which they have been resolved; not allowed to be null
-	 * @param queryVars a mapping of local stack addresses to the names of
-	 * the query variables allocated thereat
-	 * @throws NullPointerException if {@code symbols == null || queryVars ==
-	 * null}
-	 */
-	public QueryVariableTracker(final Map<Ast,Symbol> symbols,
-			final Map<Integer,String> queryVars) {
-		super(symbols);
-		this.queryVars = requireNonNull(queryVars);
-	}
+    /**
+     * Constructor. Note the mapping {@code queryVars} from local stack
+     * addresses to (query) variable names is declared as an external
+     * dependency. It is recommended for client code not to instantiate this
+     * class directly, but rather invoke {@link Factory#newQueryCompiler()} to
+     * have its dependencies injected.
+     *
+     * @param symbols a mapping of {@link Ast} nodes to the {@link Symbol}s to
+     * which they have been resolved; not allowed to be null
+     * @param queryVars a mapping of local stack addresses to the names of the
+     * query variables allocated thereat
+     * @throws NullPointerException if {@code symbols == null || queryVars ==
+     * null}
+     */
+    public QueryVariableTracker(final Map<Ast,Symbol> symbols,
+            final Map<Integer,String> queryVars) {
+        super(symbols);
+        this.queryVars = requireNonNull(queryVars);
+    }
 
-	@Override
-	public void visitVariable(Ast var) {
-		// queryVars can safely be treated as a bidirectional map since
-		// variables are scoped to the clause wherein they occur
-		if (!this.queryVars.values().contains(var.getText())) {
-			final VariableSymbol symbol = getSymbol(var, VariableSymbol.class);
-			final int address = MIN_LOCAL_INDEX + symbol.getOffset();
-			this.queryVars.put(address, var.getText());
-		}
-	}
+    @Override
+    public void visitVariable(Ast var) {
+        // queryVars can safely be treated as a bidirectional map since
+        // variables are scoped to the clause wherein they occur
+        if (!this.queryVars.values().contains(var.getText())) {
+            final VariableSymbol symbol = getSymbol(var, VariableSymbol.class);
+            final int address = MIN_LOCAL_INDEX + symbol.getOffset();
+            this.queryVars.put(address, var.getText());
+        }
+    }
 
 }

@@ -10,5 +10,5 @@ package com.prolog.jvm.zip.api;
  *
  */
 public interface ActivationRecord {
-	// Nothing to specify.
+    // Nothing to specify.
 }

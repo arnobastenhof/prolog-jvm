@@ -11,22 +11,22 @@ import com.prolog.jvm.compiler.ast.Ast;
  */
 public final class InternalCompilerException extends RuntimeException {
 
-	private static final long serialVersionUID = 4827614110430193020L;
+    private static final long serialVersionUID = 4827614110430193020L;
 
-	/**
-	 *
-	 * @param cause the lower-level exception to be wrapped
-	 */
-	public InternalCompilerException(final Throwable cause) {
-		super(cause);
-	}
+    /**
+     *
+     * @param cause the lower-level exception to be wrapped
+     */
+    public InternalCompilerException(final Throwable cause) {
+        super(cause);
+    }
 
-	/**
-	 *
-	 * @param msg the exception message
-	 */
-	public InternalCompilerException(final String msg) {
-		super(msg);
-	}
+    /**
+     *
+     * @param msg the exception message
+     */
+    public InternalCompilerException(final String msg) {
+        super(msg);
+    }
 
 }

@@ -10,9 +10,9 @@ package com.prolog.jvm.zip.api;
  */
 public interface StepListener {
 
-	/**
-	 * Called by the {@link ZipInterpreter} after execution of each instruction.
-	 */
-	void handleEvent(StepEvent event) throws Exception;
+    /**
+     * Called by the {@link ZipInterpreter} after execution of each instruction.
+     */
+    void handleEvent(StepEvent event) throws Exception;
 
 }

@@ -17,83 +17,83 @@ import com.prolog.jvm.zip.util.MemoryConstants;
  */
 public interface PrologBytecode<M extends PrologBytecode.Memento> {
 
-	/**
-	 * Writes an instruction taking a single operand.
-	 *
-	 * @param opcode the instruction's opcode; must be one of
-	 * {@link Instructions#FUNCTOR}, {@link Instructions#CONSTANT},
-	 * {@link Instructions#VAR}, {@link Instructions#FISTVAR},
-	 * {@link Instructions#CALL} or {@link Instructions#ENTER}
-	 * @param operand the instruction's operand
-	 * @throws IndexOutOfBoundsException if the heap has grown to its maximum
-	 * size
-	 * @throws IllegalArgumentException if {@code opcode} is not one of the
-	 * permitted opcodes
-	 */
-	void writeIns(int opcode, int operand);
+    /**
+     * Writes an instruction taking a single operand.
+     *
+     * @param opcode the instruction's opcode; must be one of
+     * {@link Instructions#FUNCTOR}, {@link Instructions#CONSTANT},
+     * {@link Instructions#VAR}, {@link Instructions#FISTVAR},
+     * {@link Instructions#CALL} or {@link Instructions#ENTER}
+     * @param operand the instruction's operand
+     * @throws IndexOutOfBoundsException if the heap has grown to its maximum
+     * size
+     * @throws IllegalArgumentException if {@code opcode} is not one of the
+     * permitted opcodes
+     */
+    void writeIns(int opcode, int operand);
 
-	/**
-	 * Writes an instruction taking no operands.
-	 *
-	 * @param opcode the instruction's opcode; must be one of
-	 * {@link Instructions#POP} or {@link Instructions#EXIT}
-	 * @throws IndexOutOfBoundsException if the heap has grown to its
-	 * maximum size
-	 * @throws IllegalArgumentException if {@code opcode} is not one of the
-	 * permitted opcodes
-	 */
-	void writeIns(int opcode);
+    /**
+     * Writes an instruction taking no operands.
+     *
+     * @param opcode the instruction's opcode; must be one of
+     * {@link Instructions#POP} or {@link Instructions#EXIT}
+     * @throws IndexOutOfBoundsException if the heap has grown to its maximum
+     * size
+     * @throws IllegalArgumentException if {@code opcode} is not one of the
+     * permitted opcodes
+     */
+    void writeIns(int opcode);
 
-	/**
-	 * Reads a word from the specified address in the heap.
-	 *
-	 * @param address the address in the heap to read from
-	 * @throws IndexOutOfBoundsException if {@code address < 0 ||
-	 * address >= {@link MemoryConstants#MAX_HEAP_INDEX}
-	 */
-	int read(int address);
+    /**
+     * Reads a word from the specified address in the heap.
+     *
+     * @param address the address in the heap to read from
+     * @throws IndexOutOfBoundsException if {@code address < 0 || address >=
+     * {@link MemoryConstants#MAX_HEAP_INDEX}
+     */
+    int read(int address);
 
-	/**
-	 * Returns the size (measured in 32-bit words) of the written bytecode.
-	 */
-	int getCodeSize();
+    /**
+     * Returns the size (measured in 32-bit words) of the written bytecode.
+     */
+    int getCodeSize();
 
-	/**
-	 * Returns the index for the specified constant pool entry. If not found,
-	 * the constant is added first.
-	 *
-	 * @param obj a constant pool entry; not allowed to be null
-	 * @throws NullPointerException if {@code obj == null}
-	 * @throws IllegalArgumentException if {@code obj} was not found and
-	 * {@code mustBePresent == true}
-	 */
-	int getConstantPoolIndex(Object obj);
+    /**
+     * Returns the index for the specified constant pool entry. If not found,
+     * the constant is added first.
+     *
+     * @param obj a constant pool entry; not allowed to be null
+     * @throws NullPointerException if {@code obj == null}
+     * @throws IllegalArgumentException if {@code obj} was not found and
+     * {@code mustBePresent == true}
+     */
+    int getConstantPoolIndex(Object obj);
 
-	/**
-	 * Creates a memento, containing the state of the implementation class
-	 * at the moment this method was invoked.
-	 * <p>
-	 * Meant for invocation immediately after compilation of a program, just
-	 * prior to compiling the first query. The returned memento may then be
-	 * (re)used through {@link #setMemento(Memento)} each time after a query
-	 * has been executed to prevent the heap from overflowing.
-	 */
-	M createMemento();
+    /**
+     * Creates a memento, containing the state of the implementation class at
+     * the moment this method was invoked.
+     * <p>
+     * Meant for invocation immediately after compilation of a program, just
+     * prior to compiling the first query. The returned memento may then be
+     * (re)used through {@link #setMemento(Memento)} each time after a query has
+     * been executed to prevent the heap from overflowing.
+     */
+    M createMemento();
 
-	/**
-	 * Restores the state to that found in the specified {@code memento}.
-	 */
-	void setMemento(M memento);
+    /**
+     * Restores the state to that found in the specified {@code memento}.
+     */
+    void setMemento(M memento);
 
-	/**
-	 * Marker interface for a memento, capturing a snapshot of the state of a
-	 * {@link PrologBytecode} implementation.
-	 *
-	 * @author Arno Bastenhof
-	 *
-	 */
-	interface Memento {
-		// Nothing.
-	}
+    /**
+     * Marker interface for a memento, capturing a snapshot of the state of a
+     * {@link PrologBytecode} implementation.
+     *
+     * @author Arno Bastenhof
+     *
+     */
+    interface Memento {
+        // Nothing.
+    }
 
 }

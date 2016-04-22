@@ -36,75 +36,75 @@ import com.prolog.jvm.zip.api.PrologBytecode;
  */
 public final class BytecodeGenerator extends AbstractSymbolVisitor {
 
-	private final PrologBytecode<?> code;
+    private final PrologBytecode<?> code;
 
-	/**
-	 *
-	 * @param symbols a mapping of {@link Ast} nodes to the {@link Symbol}s
-	 * to which they have been resolved; not allowed to be null
-	 * @param code the target for writing the bytecode instructions
-	 * @throws NullPointerException if {@code symbols == null}
-	 */
-	public BytecodeGenerator(final Map<Ast,Symbol> symbols,
-			final PrologBytecode<?> code) {
-		super(symbols);
-		this.code = requireNonNull(code);
-	}
+    /**
+     *
+     * @param symbols a mapping of {@link Ast} nodes to the {@link Symbol}s to
+     * which they have been resolved; not allowed to be null
+     * @param code the target for writing the bytecode instructions
+     * @throws NullPointerException if {@code symbols == null}
+     */
+    public BytecodeGenerator(final Map<Ast,Symbol> symbols,
+            final PrologBytecode<?> code) {
+        super(symbols);
+        this.code = requireNonNull(code);
+    }
 
-	@Override
-	public void preVisitClause(Ast clause) {
-		final ClauseSymbol symbol = getSymbol(clause,ClauseSymbol.class);
-		symbol.setHeapptr(this.code.getCodeSize());
-	}
+    @Override
+    public void preVisitClause(Ast clause) {
+        final ClauseSymbol symbol = getSymbol(clause, ClauseSymbol.class);
+        symbol.setHeapptr(this.code.getCodeSize());
+    }
 
-	@Override
-	public void inVisitClause(Ast clause) {
-		final ClauseSymbol symbol = getSymbol(clause,ClauseSymbol.class);
-		this.code.writeIns(ENTER, symbol.getParams() + symbol.getLocals());
-	}
+    @Override
+    public void inVisitClause(Ast clause) {
+        final ClauseSymbol symbol = getSymbol(clause, ClauseSymbol.class);
+        this.code.writeIns(ENTER, symbol.getParams() + symbol.getLocals());
+    }
 
-	@Override
-	public void postVisitClause(Ast param) {
-		this.code.writeIns(EXIT);
-	}
+    @Override
+    public void postVisitClause(Ast param) {
+        this.code.writeIns(EXIT);
+    }
 
-	@Override
-	public void postVisitGoal(Ast goal) {
-		writeGroundIns(PredicateSymbol.class, goal, CALL);
-	}
+    @Override
+    public void postVisitGoal(Ast goal) {
+        writeGroundIns(PredicateSymbol.class, goal, CALL);
+    }
 
-	@Override
-	public void preVisitCompound(Ast term) {
-		writeGroundIns(FunctorSymbol.class, term, FUNCTOR);
-	}
+    @Override
+    public void preVisitCompound(Ast term) {
+        writeGroundIns(FunctorSymbol.class, term, FUNCTOR);
+    }
 
-	@Override
-	public void postVisitCompound(Ast param) {
-		this.code.writeIns(POP);
-	}
+    @Override
+    public void postVisitCompound(Ast param) {
+        this.code.writeIns(POP);
+    }
 
-	@Override
-	public void visitConstant(Ast constant) {
-		writeGroundIns(FunctorSymbol.class, constant, CONSTANT);
-	}
+    @Override
+    public void visitConstant(Ast constant) {
+        writeGroundIns(FunctorSymbol.class, constant, CONSTANT);
+    }
 
-	@Override
-	public void visitVariable(Ast var) {
-		final VariableSymbol symbol = getSymbol(var, VariableSymbol.class);
-		int opcode = VAR;
-		if (!symbol.hasBeenSeenBefore()) {
-			opcode = FIRSTVAR;
-			symbol.setAsSeenBefore();
-		}
-		this.code.writeIns(opcode, symbol.getOffset());
-	}
+    @Override
+    public void visitVariable(Ast var) {
+        final VariableSymbol symbol = getSymbol(var, VariableSymbol.class);
+        int opcode = VAR;
+        if (!symbol.hasBeenSeenBefore()) {
+            opcode = FIRSTVAR;
+            symbol.setAsSeenBefore();
+        }
+        this.code.writeIns(opcode, symbol.getOffset());
+    }
 
-	// Writes an instruction taking a constant pool entry as its parameter
-	private <T extends Symbol> void writeGroundIns(Class<T> clazz, Ast node,
-			int opcode) {
-		final T symbol = getSymbol(node, clazz);
-		int index = this.code.getConstantPoolIndex(symbol);
-		this.code.writeIns(opcode, index);
-	}
+    // Writes an instruction taking a constant pool entry as its parameter
+    private <T extends Symbol> void writeGroundIns(Class<T> clazz, Ast node,
+            int opcode) {
+        final T symbol = getSymbol(node, clazz);
+        int index = this.code.getConstantPoolIndex(symbol);
+        this.code.writeIns(opcode, index);
+    }
 
 }

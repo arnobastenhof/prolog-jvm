@@ -9,6 +9,6 @@ package com.prolog.jvm.exceptions;
  */
 public final class BacktrackException extends Exception {
 
-	private static final long serialVersionUID = 8791880327296548364L;
+    private static final long serialVersionUID = 8791880327296548364L;
 
 }

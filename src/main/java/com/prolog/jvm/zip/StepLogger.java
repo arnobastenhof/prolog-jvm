@@ -20,34 +20,32 @@ import com.prolog.jvm.zip.util.PlWords;
  */
 public final class StepLogger implements StepListener {
 
-	private final ZipFacade facade;
-	private final Writer out;
+    private final ZipFacade facade;
+    private final Writer out;
 
-	/**
-	 *
-	 * @throws NullPointerException if {@code facade == null || out == null}
-	 */
-	public StepLogger(final ZipFacade facade, final Writer out) {
-		this.facade = requireNonNull(facade);
-		this.out = requireNonNull(out);
-	}
+    /**
+     *
+     * @throws NullPointerException if {@code facade == null || out == null}
+     */
+    public StepLogger(final ZipFacade facade, final Writer out) {
+        this.facade = requireNonNull(facade);
+        this.out = requireNonNull(out);
+    }
 
-	@Override
-	public void handleEvent(StepEvent event) throws IOException {
-		this.out.write(String.format("%07x  %07x %9s %14s  %5s  ",
-				event.getStackAddress(),
-				event.getCodeAddress(),
-				Instructions.opcodeToString(event.getOpcode()),
-				event.getOperand() == null ? "" : event.getOperand().toString(),
-				Instructions.modeToString(event.getMode())));
-		for (final int addr : event.getBindings()) {
-			this.out.append('[')
-					.append(Integer.toHexString(addr))
-					.append('/')
-					.append(PlWords.toString(this.facade.getWordAt(addr)))
-					.append(']');
-		}
-		this.out.write('\n');
-	}
+    @Override
+    public void handleEvent(StepEvent event) throws IOException {
+        this.out.write(String.format("%07x  %07x %9s %14s  %5s  ",
+                event.getStackAddress(),
+                event.getCodeAddress(),
+                Instructions.opcodeToString(event.getOpcode()),
+                event.getOperand() == null ? "" : event.getOperand().toString(),
+                Instructions.modeToString(event.getMode())));
+        for (final int addr : event.getBindings()) {
+            this.out.append('[').append(Integer.toHexString(addr)).append('/')
+                    .append(PlWords.toString(this.facade.getWordAt(addr)))
+                    .append(']');
+        }
+        this.out.write('\n');
+    }
 
 }

@@ -7,5 +7,5 @@ package com.prolog.jvm.symbol;
  *
  */
 public interface Symbol {
-	// Empty.
+    // Empty.
 }
