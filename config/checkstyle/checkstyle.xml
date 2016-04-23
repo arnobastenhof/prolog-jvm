@@ -20,5 +20,6 @@
         </module>
         <module name="ArrayTypeStyle"/>
         <module name="FallThrough"/>
+        <module name="MissingSwitchDefault"/>
     </module>
 </module>
