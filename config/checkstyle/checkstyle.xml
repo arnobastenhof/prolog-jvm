@@ -12,5 +12,6 @@
 
     <module name="TreeWalker">
         <module name="LineLength"/>
+        <module name="AvoidStarImport"/>
     </module>
 </module>
