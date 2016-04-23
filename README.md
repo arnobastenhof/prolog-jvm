@@ -12,7 +12,7 @@ Prolog machine" (1985). I wrote Prolog-JVM mainly for self-educational purposes.
 Requirements
 ------------
 * Java SE7
-* Gradle 2.7 or higher
+* Gradle 2.7+
 
 Installation
 ------------
@@ -36,10 +36,10 @@ cd prolog-jvm
 gradle build
 ```
 
-Usage instructions
-------------------
+Usage
+-----
 After building, a JAR file `prolog-jvm-${version}.jar` will have been placed in
-`build/libs`, where `${version}` parameterizes over the version number (e.g.,
+`build/libs`, where `${version}` refers to the version number (e.g.,
 `0.1.0-SNAPSHOT`). Running the following command from the project root prints
 a help message:
 ```
@@ -49,6 +49,24 @@ To load a program, add the name of a Prolog file as a command line argument.
 Several sample files have been included in
 `src/test/resources/com/prolog/jvm/main/`. Thus, for example, one may run:
 ```
-java -jar build/libs/prolog-jvm-${version}.jar
-src/test/resources/com/prolog/jvm/main/lists.pl
+java -jar build/libs/prolog-jvm-${version}.jar src/test/resources/com/prolog/jvm/main/lists.pl
 ```
+
+Language support
+----------------
+Only the minimal core language is currently covered. More specifically, compared
+to Covington's "ISO Prolog: A Summary of the Draft Proposed Standard" (1993),
+the following restrictions apply:
+* No support for dynamic operators.
+* No support for Definite Clause Grammars.
+* No first-class support for lists.
+* Graphic tokens are not allowed to begin with '.', '/' or ':'. This ensures
+  we can make do with a single lookahead character. To compare, the proposed ISO
+  standard only prohibited graphic tokens from beginning with '/*'.
+* No support for '{}' as an atom.
+* No support for arbitrary characters inside single quotes as an atom.
+* No support for numbers or character strings.
+* No reserved identifiers.
+* Whitespace is always ignored. In particular, we do not prohibit it from
+  occurring between a functor and its opening bracket, nor do we demand a
+  period be followed by it.
