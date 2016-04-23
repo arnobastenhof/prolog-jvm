@@ -14,5 +14,9 @@
         <module name="LineLength"/>
         <module name="AvoidStarImport"/>
         <module name="NeedBraces"/>
+        <module name="Indentation">
+            <property name="caseIndent" value="0"/>
+            <property name="throwsIndent" value="8"/>
+        </module>
     </module>
 </module>
