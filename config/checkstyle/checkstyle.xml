@@ -21,6 +21,7 @@
         <module name="ArrayTypeStyle"/>
         <module name="FallThrough"/>
         <module name="MissingSwitchDefault"/>
+        <module name="ModifierOrder"/>
         <module name="UpperEll"/>
     </module>
 </module>

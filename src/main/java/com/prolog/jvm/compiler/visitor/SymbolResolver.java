@@ -151,7 +151,7 @@ public final class SymbolResolver extends BasicPrologVisitor<Ast> {
     // === Symbol table management (TODO this would benefit from lambda's) ===
 
     // Strategy class for Symbol creation
-    private static abstract class SymbolBuilder<T extends Symbol> {
+    private abstract static class SymbolBuilder<T extends Symbol> {
         abstract T build();
     }
 

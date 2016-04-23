@@ -76,7 +76,7 @@ public final class SymbolKeys {
     }
 
     // Skeletal implementation for SymbolKey
-    private static abstract class AbstractKey<T extends Symbol> implements
+    private abstract static class AbstractKey<T extends Symbol> implements
             SymbolKey<T> {
         final String name;
         final Class<T> clazz;
