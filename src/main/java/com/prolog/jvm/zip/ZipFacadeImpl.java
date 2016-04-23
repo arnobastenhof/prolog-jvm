@@ -25,7 +25,6 @@ import java.util.List;
 import com.prolog.jvm.exceptions.BacktrackException;
 import com.prolog.jvm.symbol.ClauseSymbol;
 import com.prolog.jvm.symbol.FunctorSymbol;
-import com.prolog.jvm.zip.api.ActivationRecord;
 import com.prolog.jvm.zip.api.MemoryArea;
 import com.prolog.jvm.zip.api.ZipFacade;
 import com.prolog.jvm.zip.util.Instructions;
@@ -63,11 +62,11 @@ public class ZipFacadeImpl implements ZipFacade {
     // Machine registers
     private int mode;                       // Processor mode (PM)
     private int programctr;                 // Program counter (PC)
-    private ActivationRecordImpl targetfrm; // Target (local) frame (L)
-    private ActivationRecordImpl sourcefrm; // Source (local) frame (CL)
+    private ActivationRecord targetfrm;     // Target (local) frame (L)
+    private ActivationRecord sourcefrm;     // Source (local) frame (CL)
     private int globalptr;                  // Global stack top (G0)
     private int trailptr;                   // Trail top (TR0)
-    private ActivationRecordImpl choicepnt; // Backtrack (local) frame (BL)
+    private ActivationRecord choicepnt;     // Backtrack (local) frame (BL)
     private int pdlptr;                     // Push-Down List top
     private int scratchpadptr;              // Scratchpad top
 
@@ -292,7 +291,7 @@ public class ZipFacadeImpl implements ZipFacade {
                 address = this.sourcefrm.localptr + this.sourcefrm.size;
             }
         }
-        this.targetfrm = new ActivationRecordImpl(address);
+        this.targetfrm = new ActivationRecord(address);
         return address;
     }
 
@@ -543,19 +542,23 @@ public class ZipFacadeImpl implements ZipFacade {
         return this.programctr;
     }
 
-    private static final class ActivationRecordImpl implements ActivationRecord {
+    // Activation records are like stack frames, additionally holding machine
+    // state that is to be restored upon backtracking. As such, they do double
+    // duty as a memento for a ZipFacade, which in turn also acts as the
+    // caretaker.
+    private static final class ActivationRecord {
 
         private int size;                     // No. of arguments and local vars
         private int programctr;             // Continuation program counter (CP)
-        private ActivationRecordImpl sourcefrm; // Continuation local frame (CL)
+        private ActivationRecord sourcefrm;     // Continuation local frame (CL)
         private ClauseSymbol clause;            // Backtrack clause pointer (BP)
         private int globalptr;                // Backtrack global stack top (BG)
-        private ActivationRecordImpl backtrackfrm; // Backtrack local frame (BL)
+        private ActivationRecord backtrackfrm;     // Backtrack local frame (BL)
         private int trailptr;                        // Backtrack trail top (BT)
         private final int localptr;               // Memory offset for var slots
 
         // Creates and initializes a target frame
-        private ActivationRecordImpl(int localptr) {
+        private ActivationRecord(int localptr) {
             assert localptr >= MIN_LOCAL_INDEX;
             assert localptr <= MAX_LOCAL_INDEX;
             this.localptr = localptr;
@@ -567,7 +570,7 @@ public class ZipFacadeImpl implements ZipFacade {
      *
      * @author Arno Bastenhof
      */
-    public static final class Builder extends AbstractZipFacadeBuilder<Builder> {
+    public static final class Builder extends AbstractZipBuilder<Builder> {
 
         public Builder() {
             this.instance = this;
@@ -577,7 +580,7 @@ public class ZipFacadeImpl implements ZipFacade {
          * Builds a {@link ZipFacadeImpl} instance.
          *
          * @throws IllegalStateException if any of the protected members in
-         * {@link AbstractZipFacadeBuilder} are null.
+         * {@link AbstractZipBuilder} are null.
          */
         @Override
         public ZipFacadeImpl build() {

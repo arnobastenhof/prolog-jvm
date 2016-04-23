@@ -59,7 +59,7 @@ public final class QueryCompiler extends AbstractCompiler {
 
     @Override
     protected SourcePass createSourcePassVisitor() {
-        return new SourcePass(Tokens.IMPLIES);
+        return new SourcePass(Tokens.IMPL);
     }
 
     @Override

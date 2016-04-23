@@ -9,4 +9,8 @@
     <module name="FileTabCharacter">
         <property name="eachLine" value="true"/>
     </module>
+
+    <module name="TreeWalker">
+        <module name="LineLength"/>
+    </module>
 </module>

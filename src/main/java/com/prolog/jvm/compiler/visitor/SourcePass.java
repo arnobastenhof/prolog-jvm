@@ -23,12 +23,12 @@ public final class SourcePass extends BasicPrologVisitor<Token> {
 
     /**
      * @param token expected to be {@link Tokens#PROGRAM} for compiling programs
-     * or {@link Tokens#IMPLIES} for queries.
+     * or {@link Tokens#IMPL} for queries.
      * @throws IllegalArgumentException if {@code token} does not have token
-     * type {@link TokenType#PROGRAM} or {@link TokenType#IMPLIES}
+     * type {@link TokenType#PROGRAM} or {@link TokenType#IMPL}
      */
     public SourcePass(final Token token) {
-        Validate.argument(token == Tokens.PROGRAM || token == Tokens.IMPLIES);
+        Validate.argument(token == Tokens.PROGRAM || token == Tokens.IMPL);
         push(token); // Create the AST root node
     }
 

@@ -5,14 +5,28 @@ import java.util.List;
 import com.prolog.jvm.zip.api.MemoryArea;
 import com.prolog.jvm.zip.api.ZipFacade;
 
-/**
- * Skeletal implementation for a {@link ZipFacade.Builder}.
- *
- * @author Arno Bastenhof
- *
- */
-public abstract class AbstractZipFacadeBuilder<T extends AbstractZipFacadeBuilder<T>>
-        implements ZipFacade.Builder {
+ /**
+  * Abstract class describing a builder for a {@link ZipFacade}.
+  * <p>
+  * While neglecting to set all properties before calling build may result in an
+  * object residing in an inconsistent state for the purpose of executing the
+  * {@link ZipFacade}'s main use case (i.e., running a query against a compiled
+  * program), depending on the implementation class, the resulting instance may
+  * still be useful for e.g. unit testing. As such, this API does not prescribe
+  * the validation of any invariants on the constructed object.
+  * <p>
+  * For production, it is recommended that a reference to a {@link ZipFacade} be
+  * obtained through the corresponding static factory method on {@link Factory},
+  * which uses a {@code Builder} under water and ensures all properties are
+  * initialized before invoking build. Test classes, in contrast, can use a
+  * {@code Builder} to create a new {@link ZipFacade} for each unit test,
+  * tweaked to the particular conditions assessed thereby (e.g., through mocking
+  * the various {@link MemoryArea}s).
+  *
+  * @author Arno Bastenhof
+  *
+  */
+public abstract class AbstractZipBuilder<T extends AbstractZipBuilder<T>> {
 
     /**
      * An instance of an implementing class.
@@ -60,6 +74,11 @@ public abstract class AbstractZipFacadeBuilder<T extends AbstractZipFacadeBuilde
      * The memory area used for the scratchpad. Defaults to null.
      */
     protected MemoryArea scratchpad;
+
+    /**
+     * Builds a {@link ZipFacade} instance.
+     */
+    public abstract ZipFacade build();
 
     /**
      * Sets the constant pool.

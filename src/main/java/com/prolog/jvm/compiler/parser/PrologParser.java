@@ -93,16 +93,16 @@ public final class PrologParser extends AbstractParser {
 
     // clause = structure, [":-", goals ], "." ;
     private void clause() throws IOException, RecognitionException {
-        this.visitor.preVisitClause(Tokens.IMPLIES); // TODO Use imaginary token
+        this.visitor.preVisitClause(Tokens.IMPL); // TODO Use imaginary token
                                                      // type?
         structure(); // match clause head
-        this.visitor.inVisitClause(Tokens.IMPLIES);
-        if (getLookaheadType() == TokenType.IMPLIES) {
+        this.visitor.inVisitClause(Tokens.IMPL);
+        if (getLookaheadType() == TokenType.IMPL) {
             consume();
             goals();
         }
         match(TokenType.PERIOD);
-        this.visitor.postVisitClause(Tokens.IMPLIES);
+        this.visitor.postVisitClause(Tokens.IMPL);
     }
 
     // goals = structure, {",", structure} ;

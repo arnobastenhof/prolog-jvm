@@ -206,14 +206,14 @@ public final class ZipInterpreterImpl implements ZipInterpreter {
 
     // === Instruction implementations ===
 
-    private int matchFunctor(final int stackAddr, final FunctorSymbol operand)
+    private int matchFunctor(final int stackAddr, final FunctorSymbol symbol)
             throws BacktrackException {
         final int word = this.facade.getWordAt(stackAddr);
         switch (PlWords.getTag(word)) {
         case REF: {
             final int address = PlWords.getValue(word);
             this.facade.trail(address);
-            final int func = this.facade.pushFunctor(operand);
+            final int func = this.facade.pushFunctor(symbol);
             this.facade.setWord(address, func);
             this.event.bindings.add(address);
             this.facade.pushOnScratchpad(stackAddr + 1);
@@ -224,7 +224,7 @@ public final class ZipInterpreterImpl implements ZipInterpreter {
             final int globalAddr = PlWords.getValue(word);
             final int index = PlWords.getValue(this.facade
                     .getWordAt(globalAddr));
-            if (operand != this.facade.getConstant(index, FunctorSymbol.class)) {
+            if (symbol != this.facade.getConstant(index, FunctorSymbol.class)) {
                 return this.facade.backtrack(this.event.bindings);
             }
             this.facade.pushOnScratchpad(stackAddr + 1);
@@ -235,20 +235,20 @@ public final class ZipInterpreterImpl implements ZipInterpreter {
         }
     }
 
-    private int matchConstant(final int stackAddr, final FunctorSymbol operand)
+    private int matchConstant(final int stackAddr, final FunctorSymbol symbol)
             throws BacktrackException {
         final int word = this.facade.getWordAt(stackAddr);
         switch (PlWords.getTag(word)) {
         case REF: {
             final int address = PlWords.getValue(word);
-            this.facade.setWord(address, operand);
+            this.facade.setWord(address, symbol);
             this.facade.trail(address);
             this.event.bindings.add(address);
             break;
         }
         case CONS: {
             final int index = PlWords.getValue(word);
-            if (operand != this.facade.getConstant(index, FunctorSymbol.class)) {
+            if (symbol != this.facade.getConstant(index, FunctorSymbol.class)) {
                 return this.facade.backtrack(this.event.bindings);
             }
             break;

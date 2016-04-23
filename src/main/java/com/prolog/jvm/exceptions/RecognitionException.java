@@ -74,7 +74,8 @@ public final class RecognitionException extends Exception {
         super(msg);
     }
 
-    private static String getErrorMsg(String actual, int line, String[] expected) {
+    private static String getErrorMsg(final String actual, final int line,
+            final String[] expected) {
         assert actual != null;
         assert line > 0;
         final StringBuilder buffer = new StringBuilder(actual)
@@ -89,7 +90,7 @@ public final class RecognitionException extends Exception {
         return buffer.toString();
     }
 
-    private static String getErrorChar(char actual) {
+    private static String getErrorChar(final char actual) {
         switch (actual) {
         case (char) -1: // EOF
             return "<EOF>";

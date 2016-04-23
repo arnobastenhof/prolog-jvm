@@ -56,7 +56,8 @@ public abstract class AbstractCompiler {
      * to be null
      * @throws NullPointerException if {@code code == null || scope == null}
      */
-    protected AbstractCompiler(final PrologBytecode<?> code, final Scope scope) {
+    protected AbstractCompiler(final PrologBytecode<?> code,
+            final Scope scope) {
         this.code = requireNonNull(code);
         this.scope = requireNonNull(scope);
     }

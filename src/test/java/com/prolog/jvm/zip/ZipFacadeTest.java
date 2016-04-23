@@ -28,7 +28,7 @@ import com.prolog.jvm.zip.api.MemoryArea;
  */
 public final class ZipFacadeTest {
 
-    private final AbstractZipFacadeBuilder<ZipFacadeMockImpl.Builder> builder =
+    private final AbstractZipBuilder<ZipFacadeMockImpl.Builder> builder =
             new ZipFacadeMockImpl.Builder();
 
     @Test
@@ -57,7 +57,7 @@ public final class ZipFacadeTest {
     public void unwindTrail() {
         // Keep a reference to the word store for post-asserts
         final int[] wordStore = new int[] {
-                getWord(REF, 3), // Unbound variable
+                getWord(REF, 3),   // Unbound variable
                 getWord(REF, 2),   // Bound variable
                 getWord(REF, 0),   // Bound variable
                 getWord(REF, 3) }; // Unbound variable
@@ -246,7 +246,7 @@ public final class ZipFacadeTest {
         }
 
         private static final class Builder extends
-                AbstractZipFacadeBuilder<Builder> {
+                AbstractZipBuilder<Builder> {
 
             private Builder() {
                 this.instance = this;

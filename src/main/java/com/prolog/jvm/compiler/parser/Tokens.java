@@ -28,7 +28,7 @@ public final class Tokens {
     /**
      * The {@link Token} corresponding to occurrences of the implication sign.
      */
-    public static final Token IMPLIES = new PrologToken(TokenType.IMPLIES, ":-");
+    public static final Token IMPL = new PrologToken(TokenType.IMPL, ":-");
 
     /**
      * The {@link Token} corresponding to occurrences of a comma in the source

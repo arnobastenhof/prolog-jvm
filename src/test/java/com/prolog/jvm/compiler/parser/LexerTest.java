@@ -40,7 +40,7 @@ public final class LexerTest {
         expectMatch(")", Tokens.RBRACK);
         expectMatch(",", Tokens.COMMA);
         expectMatch(".", Tokens.PERIOD);
-        expectMatch(":-", Tokens.IMPLIES);
+        expectMatch(":-", Tokens.IMPL);
         expectMatch("[]", Tokens.NIL);
         expectMatch(VAR_UNDERSCORE, varUnderscoreToken);
         expectMatch(VAR_CAPITAL, varCapitalToken);

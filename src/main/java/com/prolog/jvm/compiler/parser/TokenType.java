@@ -37,7 +37,7 @@ public enum TokenType {
     /**
      * The token type for the implication sign <code>:-</code> used in rules.
      */
-    IMPLIES,
+    IMPL,
 
     /**
      * The token type for the comma, used for combining goal literals into a

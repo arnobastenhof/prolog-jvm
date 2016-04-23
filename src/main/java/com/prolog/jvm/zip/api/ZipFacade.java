@@ -3,7 +3,6 @@ package com.prolog.jvm.zip.api;
 import java.util.List;
 
 import com.prolog.jvm.exceptions.BacktrackException;
-import com.prolog.jvm.main.Factory;
 import com.prolog.jvm.symbol.ClauseSymbol;
 import com.prolog.jvm.symbol.FunctorSymbol;
 
@@ -218,36 +217,5 @@ public interface ZipFacade {
      * @throws NullPointerException if {@code vars == null}
      */
     int backtrack(List<Integer> vars) throws BacktrackException;
-
-    /**
-     * Interface describing a builder for a {@link ZipFacade}.
-     * <p>
-     * While neglecting to set all properties before calling build may result in
-     * an object residing in an inconsistent state for the purpose of executing
-     * the {@link ZipFacade}'s main use case (i.e., running a query against a
-     * compiled program), depending on the implementation class, the resulting
-     * instance may still be useful for e.g. unit testing. As such, this API
-     * does not prescribe the validation of any invariants on the constructed
-     * object.
-     * <p>
-     * For production, it is recommended that a reference to a {@link ZipFacade}
-     * be obtained through the corresponding static factory method on
-     * {@link Factory}, which uses a {@code Builder} under water and ensures all
-     * properties are initialized before invoking build. Test classes, in
-     * contrast, can use a {@code Builder} to create a new {@link ZipFacade} for
-     * each unit test, tweaked to the particular conditions assessed thereby
-     * (e.g., through mocking the various {@link MemoryArea}s).
-     *
-     * @author Arno Bastenhof
-     *
-     */
-    public interface Builder {
-
-        /**
-         * Builds a {@link ZipFacade} instance.
-         */
-        ZipFacade build();
-
-    }
 
 }

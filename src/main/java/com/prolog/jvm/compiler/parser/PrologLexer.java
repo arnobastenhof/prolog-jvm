@@ -158,7 +158,7 @@ public final class PrologLexer extends AbstractLexer {
     private Token implies() throws IOException, RecognitionException {
         consumeNonLinefeed(); // Consume ':'
         match('-');
-        return Tokens.IMPLIES;
+        return Tokens.IMPL;
     }
 
     /*
