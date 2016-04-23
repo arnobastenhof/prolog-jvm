@@ -18,5 +18,6 @@
             <property name="caseIndent" value="0"/>
             <property name="throwsIndent" value="8"/>
         </module>
+        <module name="ArrayTypeStyle"/>
     </module>
 </module>
