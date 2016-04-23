@@ -84,6 +84,8 @@ public final class ZipInterpreterImpl implements ZipInterpreter {
         this.listeners = new HashSet<>();
     }
 
+    // === Listener registration API ===
+
     @Override
     public void register(final StepListener listener) {
         this.listeners.add(requireNonNull(listener));
@@ -94,10 +96,13 @@ public final class ZipInterpreterImpl implements ZipInterpreter {
         this.listeners.remove(requireNonNull(listener));
     }
 
+    // === Fetch/Decode/Execute ===
+
     @Override
     public void execute(final int queryAddr, final BufferedReader in,
             final Writer out) throws Exception {
-        int stackAddr = init(queryAddr, in, out);
+        this.facade.reset(queryAddr); // initialize the ZIP machine
+        int stackAddr = MIN_LOCAL_INDEX;
         try {
             while ((stackAddr = step(stackAddr, in, out)) >= 0) {
                 // Notify listeners
@@ -112,30 +117,24 @@ public final class ZipInterpreterImpl implements ZipInterpreter {
         }
     }
 
-    private int init(final int queryAddress, final BufferedReader in,
-            final Writer out) throws IOException {
-        this.facade.reset(queryAddress); // initialize the ZIP machine
-        return MIN_LOCAL_INDEX;
-    }
-
-    private int step(final int stackAddress, final BufferedReader in,
+    private int step(final int stackAddr, final BufferedReader in,
             final Writer out) throws IOException, BacktrackException {
         final int operator = this.facade.fetchOperator();
 
-        this.event.stackAddress = stackAddress;
+        this.event.stackAddress = stackAddr;
         this.event.codeAddress = this.facade.getProgramCounter();
         this.event.opcode = Instructions.getOpcode(operator);
         this.event.mode = Instructions.getMode(operator);
 
         switch (operator) {
         case MATCH | FUNCTOR:
-            return matchFunctor(stackAddress, fetchFunctorOperand());
+            return matchFunctor(stackAddr, fetchFunctorOperand());
         case MATCH | CONSTANT:
-            return matchConstant(stackAddress, fetchFunctorOperand());
+            return matchConstant(stackAddr, fetchFunctorOperand());
         case MATCH | FIRSTVAR:
-            return matchVariable(true, stackAddress, fetchVarOperand());
+            return matchVariable(true, stackAddr, fetchVarOperand());
         case MATCH | VAR:
-            return matchVariable(false, stackAddress, fetchVarOperand());
+            return matchVariable(false, stackAddr, fetchVarOperand());
         case MATCH | ENTER:
             return enterClause(fetchSizeOperand());
         case MATCH | POP:
@@ -145,19 +144,19 @@ public final class ZipInterpreterImpl implements ZipInterpreter {
         case COPY | FUNCTOR:
             // Fall-through
         case ARG | FUNCTOR:
-            return writeFunctor(stackAddress, fetchFunctorOperand());
+            return argFunctor(stackAddr, fetchFunctorOperand());
         case COPY | CONSTANT:
             // Fall-through
         case ARG | CONSTANT:
-            return copyConstant(stackAddress, fetchFunctorOperand());
+            return copyConstant(stackAddr, fetchFunctorOperand());
         case COPY | FIRSTVAR:
-            return copyVariable(true, stackAddress, fetchVarOperand());
+            return copyVariable(true, stackAddr, fetchVarOperand());
         case COPY | VAR:
-            return copyVariable(false, stackAddress, fetchVarOperand());
+            return copyVariable(false, stackAddr, fetchVarOperand());
         case ARG | FIRSTVAR:
-            return argVariable(true, stackAddress, fetchVarOperand());
+            return argVariable(true, stackAddr, fetchVarOperand());
         case ARG | VAR:
-            return argVariable(false, stackAddress, fetchVarOperand());
+            return argVariable(false, stackAddr, fetchVarOperand());
         case ARG | CALL:
             return callPredicate(fetchPredicateOperand());
         case ARG | EXIT: {
@@ -213,12 +212,12 @@ public final class ZipInterpreterImpl implements ZipInterpreter {
         case REF: {
             final int address = PlWords.getValue(word);
             this.facade.trail(address);
-            final int func = this.facade.pushFunctor(symbol);
-            this.facade.setWord(address, func);
+            final int functor = this.facade.pushFunctor(symbol);
+            this.facade.setWord(address, functor);
             this.event.bindings.add(address);
             this.facade.pushOnScratchpad(stackAddr + 1);
             this.facade.setMode(COPY);
-            return PlWords.getValue(func) + 1;
+            return PlWords.getValue(functor) + 1;
         }
         case STR: {
             final int globalAddr = PlWords.getValue(word);
@@ -273,8 +272,8 @@ public final class ZipInterpreterImpl implements ZipInterpreter {
         return addr + 1;
     }
 
-    private int copyConstant(final int addr, final FunctorSymbol operand) {
-        this.facade.setWord(addr, operand);
+    private int copyConstant(final int addr, final FunctorSymbol symbol) {
+        this.facade.setWord(addr, symbol);
         this.event.bindings.add(addr);
         return addr + 1;
     }
@@ -304,8 +303,8 @@ public final class ZipInterpreterImpl implements ZipInterpreter {
         return globalAddr + 1;
     }
 
-    private int writeFunctor(final int stackAddr, final FunctorSymbol operand) {
-        final int word = this.facade.pushFunctor(operand);
+    private int argFunctor(final int stackAddr, final FunctorSymbol symbol) {
+        final int word = this.facade.pushFunctor(symbol);
         this.facade.setWord(stackAddr, word);
         this.event.bindings.add(stackAddr);
         this.facade.pushOnScratchpad(stackAddr + 1);
@@ -326,9 +325,9 @@ public final class ZipInterpreterImpl implements ZipInterpreter {
         return this.facade.pushTargetFrame();
     }
 
-    private int callPredicate(final ClauseSymbol operand) {
+    private int callPredicate(final ClauseSymbol symbol) {
         // Push a choice point if necessary
-        final ClauseSymbol next = operand.getNext();
+        final ClauseSymbol next = symbol.getNext();
         if (next != null) {
             this.facade.pushChoicePoint(next);
         }
@@ -336,7 +335,7 @@ public final class ZipInterpreterImpl implements ZipInterpreter {
         // Set the machine mode and jump to the first clause alternative for
         // the called predicate
         this.facade.setMode(MATCH);
-        return this.facade.jump(operand.getHeapptr());
+        return this.facade.jump(symbol.getHeapptr());
     }
 
     private int exitClause(final BufferedReader in, final Writer out)
