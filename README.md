@@ -54,12 +54,14 @@ java -jar build/libs/prolog-jvm-${version}.jar src/test/resources/com/prolog/jvm
 
 Language support
 ----------------
-Only the minimal core language is currently covered. More specifically, compared
-to Covington's "ISO Prolog: A Summary of the Draft Proposed Standard" (1993),
-the following restrictions apply:
-* No support for dynamic operators.
-* No support for Definite Clause Grammars.
-* No first-class support for lists.
+Prolog-JVM is not intended as a full implementation of the Prolog standard.
+Rather, my motivations for writing it were self-educational, and I have
+so far settled for a coverage of only the minimal core language in order to
+concentrate more on the virtual machine. In particular, there is no support for
+dynamic operators, Definite Clause Grammars or even for the usual syntactic
+conveniences regarding lists. In addition, several restrictions apply to the
+syntax of tokens as compared to Covington's "ISO Prolog: A Summary of the Draft
+Proposed Standard" (1993):
 * Graphic tokens are not allowed to begin with '.', '/' or ':'. This ensures
   we can make do with a single lookahead character. To compare, the proposed ISO
   standard only prohibited graphic tokens from beginning with '/*'.
