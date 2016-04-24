@@ -11,7 +11,7 @@ Prolog machine" (1985). I wrote Prolog-JVM mainly for self-educational purposes.
 
 Requirements
 ------------
-* Java SE7
+* Java SE7 Development Kit
 * Gradle 2.7+
 
 Installation
