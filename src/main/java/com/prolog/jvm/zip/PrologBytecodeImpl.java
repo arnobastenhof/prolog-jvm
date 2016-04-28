@@ -7,6 +7,7 @@ import static com.prolog.jvm.zip.util.Instructions.EXIT;
 import static com.prolog.jvm.zip.util.Instructions.FIRSTVAR;
 import static com.prolog.jvm.zip.util.Instructions.FUNCTOR;
 import static com.prolog.jvm.zip.util.Instructions.POP;
+import static com.prolog.jvm.zip.util.Instructions.RETURN;
 import static com.prolog.jvm.zip.util.Instructions.VAR;
 import static java.util.Objects.requireNonNull;
 
@@ -31,24 +32,26 @@ public final class PrologBytecodeImpl implements PrologBytecode<MementoImpl> {
 
     private int codeptr = MemoryConstants.MIN_HEAP_INDEX;
 
-    public PrologBytecodeImpl(List<Object> constants, MemoryArea code) {
+    public PrologBytecodeImpl(final List<Object> constants,
+            final MemoryArea code) {
         this.constants = requireNonNull(constants);
         this.code = requireNonNull(code);
     }
 
     @Override
-    public int read(int address) {
+    public int read(final int address) {
         return this.code.readFrom(address);
     }
 
     @Override
-    public void writeIns(int opcode, int operand) {
-        writeOpcode(opcode, FUNCTOR, CONSTANT, FIRSTVAR, VAR, CALL, ENTER);
+    public void writeIns(final int opcode, final int operand) {
+        writeOpcode(opcode, FUNCTOR, CONSTANT, FIRSTVAR, VAR, CALL,
+                ENTER, RETURN);
         this.code.writeTo(this.codeptr++, operand);
     }
 
     @Override
-    public void writeIns(int opcode) {
+    public void writeIns(final int opcode) {
         writeOpcode(opcode, POP, EXIT);
     }
 
@@ -56,7 +59,7 @@ public final class PrologBytecodeImpl implements PrologBytecode<MementoImpl> {
      * Writes the given opcode if it occurs in expected, while otherwise
      * throwing an exception.
      */
-    private void writeOpcode(int opcode, int... expected) {
+    private void writeOpcode(final int opcode, final int... expected) {
         for (int i : expected) {
             if (opcode == i) {
                 this.code.writeTo(this.codeptr++, opcode);
@@ -72,7 +75,7 @@ public final class PrologBytecodeImpl implements PrologBytecode<MementoImpl> {
     }
 
     @Override
-    public int getConstantPoolIndex(Object obj) {
+    public int getConstantPoolIndex(final Object obj) {
         requireNonNull(obj);
         int index = this.constants.indexOf(obj);
         if (index != -1) {
@@ -88,7 +91,7 @@ public final class PrologBytecodeImpl implements PrologBytecode<MementoImpl> {
     }
 
     @Override
-    public void setMemento(MementoImpl memento) {
+    public void setMemento(final MementoImpl memento) {
         this.codeptr = memento.codeptr;
         this.constants.subList(memento.poolSize, this.constants.size()).clear();
     }
@@ -105,7 +108,7 @@ public final class PrologBytecodeImpl implements PrologBytecode<MementoImpl> {
         private final int poolSize; // constant pool size
 
         // Private constructor so only the surrounding class can invoke it
-        private MementoImpl(int codeptr, int poolSize) {
+        private MementoImpl(final int codeptr, final int poolSize) {
             this.codeptr = codeptr;
             this.poolSize = poolSize;
         }

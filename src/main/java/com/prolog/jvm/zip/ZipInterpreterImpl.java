@@ -10,6 +10,7 @@ import static com.prolog.jvm.zip.util.Instructions.FIRSTVAR;
 import static com.prolog.jvm.zip.util.Instructions.FUNCTOR;
 import static com.prolog.jvm.zip.util.Instructions.MATCH;
 import static com.prolog.jvm.zip.util.Instructions.POP;
+import static com.prolog.jvm.zip.util.Instructions.RETURN;
 import static com.prolog.jvm.zip.util.Instructions.VAR;
 import static com.prolog.jvm.zip.util.MemoryConstants.MIN_LOCAL_INDEX;
 import static com.prolog.jvm.zip.util.PlWords.CONS;
@@ -137,6 +138,8 @@ public final class ZipInterpreterImpl implements ZipInterpreter {
             return matchVariable(false, stackAddr, fetchVarOperand());
         case MATCH | ENTER:
             return enterClause(fetchSizeOperand());
+        case MATCH | RETURN:
+            return exitUnitClause(fetchSizeOperand());
         case MATCH | POP:
             // Fall-through
         case COPY | POP:
@@ -351,8 +354,13 @@ public final class ZipInterpreterImpl implements ZipInterpreter {
             return -1;
         }
         // If we're not done yet, push a new target frame
-        // TODO Does double work if preceded by ENTER or jumps to
-        // another EXIT (i.e., last call)
+        // TODO Does double work if jumps to another EXIT (i.e., last call)
+        return this.facade.pushTargetFrame();
+    }
+
+    private int exitUnitClause(final int size) {
+        this.facade.setMode(ARG);
+        this.facade.popTargetFrame(size);
         return this.facade.pushTargetFrame();
     }
 

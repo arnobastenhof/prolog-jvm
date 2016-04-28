@@ -7,6 +7,7 @@ import static com.prolog.jvm.zip.util.Instructions.EXIT;
 import static com.prolog.jvm.zip.util.Instructions.FIRSTVAR;
 import static com.prolog.jvm.zip.util.Instructions.FUNCTOR;
 import static com.prolog.jvm.zip.util.Instructions.POP;
+import static com.prolog.jvm.zip.util.Instructions.RETURN;
 import static com.prolog.jvm.zip.util.Instructions.VAR;
 import static java.util.Objects.requireNonNull;
 
@@ -66,6 +67,12 @@ public final class BytecodeGenerator extends AbstractSymbolVisitor {
     @Override
     public void postVisitClause(Ast param) {
         this.code.writeIns(EXIT);
+    }
+
+    @Override
+    public void postVisitUnitClause(Ast clause) {
+        final ClauseSymbol symbol = getSymbol(clause, ClauseSymbol.class);
+        this.code.writeIns(RETURN, symbol.getParams() + symbol.getLocals());
     }
 
     @Override

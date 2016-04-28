@@ -17,6 +17,7 @@ import com.prolog.jvm.symbol.Symbol;
 import com.prolog.jvm.symbol.SymbolKey;
 import com.prolog.jvm.symbol.SymbolKeys;
 import com.prolog.jvm.symbol.VariableSymbol;
+import com.prolog.jvm.zip.util.Validate;
 
 /**
  * Visitor for traversing an {@link Ast} to register {@link Symbol} definitions
@@ -94,9 +95,7 @@ public final class SymbolResolver extends BasicPrologVisitor<Ast> {
 
     private Ast getHeadLiteral(Ast clause) {
         final Iterator<Ast> it = clause.iterator();
-        if (!it.hasNext()) {
-            throw new IllegalArgumentException();
-        }
+        Validate.argument(it.hasNext());
         return clause.iterator().next();
     }
 
@@ -119,6 +118,11 @@ public final class SymbolResolver extends BasicPrologVisitor<Ast> {
 
         // Pop the clause scope
         popScope();
+    }
+
+    @Override
+    public void postVisitUnitClause(Ast clause) {
+        postVisitClause(clause);
     }
 
     @Override
@@ -149,11 +153,6 @@ public final class SymbolResolver extends BasicPrologVisitor<Ast> {
     }
 
     // === Symbol table management (TODO this would benefit from lambda's) ===
-
-    // Strategy class for Symbol creation
-    private abstract static class SymbolBuilder<T extends Symbol> {
-        abstract T build();
-    }
 
     /*
      * Looks up the symbol for the given key in the global scope and returns it
@@ -245,5 +244,10 @@ public final class SymbolResolver extends BasicPrologVisitor<Ast> {
         this.currentScope.defineGlobal(clauseKey, symbol);
 
         return symbol;
+    }
+
+    // Strategy class for Symbol creation
+    private abstract static class SymbolBuilder<T extends Symbol> {
+        abstract T build();
     }
 }

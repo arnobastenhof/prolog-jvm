@@ -180,6 +180,8 @@ public final class Factory {
 
         HEAP(MIN_HEAP_INDEX, MAX_HEAP_INDEX);
 
+        private static final String OUT_OF_BOUNDS = "%d out of bounds %d - %d";
+
         // Virtual memory
         private static final int[] memory = new int[MEMORY_SIZE];
 
@@ -204,7 +206,8 @@ public final class Factory {
 
         private void checkBounds(final int address) {
             if (address < this.lower || address > this.upper) {
-                throw new IndexOutOfBoundsException();
+                throw new IndexOutOfBoundsException(String.format(
+                        OUT_OF_BOUNDS, address, this.lower, this.upper));
             }
         }
     }

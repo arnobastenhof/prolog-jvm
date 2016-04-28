@@ -86,8 +86,7 @@ public interface ZipFacade {
     int jump(int address);
 
     /**
-     * Returns the current address in code memory. (Added for debugging
-     * purposes).
+     * Returns the PC register, containing the current address in code memory.
      */
     int getProgramCounter();
 
@@ -110,6 +109,17 @@ public interface ZipFacade {
     int pushTargetFrame();
 
     /**
+     * Pops the current target frame, bypassing the need for calling
+     * {@link #pushSourceFrame(int)} and {@link #popSourceFrame()} in sequence
+     * when there are no goals to execute. Note, however, that the target
+     * frame may do double duty as a choice point.
+     *
+     * @param size the frame size, specifying the combined number of parameters
+     * and local variables
+     */
+    void popTargetFrame(final int size);
+
+    /**
      * Sets the last choice point to the current target frame, storing therein
      * the current machine state.
      *
@@ -121,8 +131,8 @@ public interface ZipFacade {
      * Sets the last source frame to the current target frame, storing therein
      * the specified frame {@code size}.
      *
-     * @param Local stack addressfor the first local variable cell in the source
-     * frame to be pushed
+     * @param Local stack address for the first local variable cell in the
+     * source frame to be pushed
      * @param size the frame size, specifying the combined number of parameters
      * and local variables
      */

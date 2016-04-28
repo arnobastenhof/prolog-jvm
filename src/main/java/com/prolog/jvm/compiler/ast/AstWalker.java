@@ -93,11 +93,13 @@ public enum AstWalker {
         visitor.preVisitClause(clause);
         final Iterator<Ast> it = clause.iterator();
         literal(match(it, TokenType.ATOM), visitor); // Walk the head
-        visitor.inVisitClause(clause);
         if (it.hasNext()) {
+            visitor.inVisitClause(clause);
             walkGoals(it, visitor);
+            visitor.postVisitClause(clause);
+        } else {
+            visitor.postVisitUnitClause(clause);
         }
-        visitor.postVisitClause(clause);
     }
 
     private void walkGoals(final Iterator<Ast> it,

@@ -28,6 +28,11 @@ public class BasicPrologVisitor<P> implements PrologVisitor<P> {
     }
 
     @Override
+    public void postVisitUnitClause(P param) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public void postVisitGoal(P param) {
         // Does nothing.
     }

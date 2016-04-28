@@ -83,6 +83,11 @@ public final class Instructions {
     public static final int ENTER = 12;
 
     /**
+     * Opcode for executing the next of a unit clause.
+     */
+    public static final int RETURN = 13;
+
+    /**
      * Opcode for completion of a clause.
      */
     public static final int EXIT = 25;
@@ -116,6 +121,7 @@ public final class Instructions {
         map.put(Integer.valueOf(VAR), "VAR");
         map.put(Integer.valueOf(CALL), "CALL");
         map.put(Integer.valueOf(ENTER), "ENTER");
+        map.put(Integer.valueOf(RETURN), "RETURN");
         map.put(Integer.valueOf(EXIT), "EXIT");
         MNEMONICS = Collections.unmodifiableMap(map);
     }

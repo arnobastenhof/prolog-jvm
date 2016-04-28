@@ -36,10 +36,15 @@ public interface PrologVisitor<P> {
     void inVisitClause(P param);
 
     /**
-     * Called when finishing a clause, after its head and goal literals have
-     * been walked.
+     * Called when finishing a non-unit clause, after its head and goal literals
+     * have been walked.
      */
     void postVisitClause(P param);
+
+    /**
+     * Called when finishing a unit clause, after its head has been walked.
+     */
+    void postVisitUnitClause(P param);
 
     /**
      * Called when finishing a goal literal, after its arguments have been

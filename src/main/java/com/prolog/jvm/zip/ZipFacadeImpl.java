@@ -245,6 +245,11 @@ public class ZipFacadeImpl implements ZipFacade {
         return this.targetfrm.localptr;
     }
 
+    @Override
+    public int getProgramCounter() {
+        return this.programctr;
+    }
+
     // === Global stack ===
 
     @Override
@@ -293,6 +298,22 @@ public class ZipFacadeImpl implements ZipFacade {
         }
         this.targetfrm = new ActivationRecord(address);
         return address;
+    }
+
+    @Override
+    public final void popTargetFrame(final int size) {
+        // API sacrifices preconditions for performance, so use asserts instead
+        assert size >= 0;
+
+        // Note this target frame might be a choice point
+        this.targetfrm.size = size;
+        this.targetfrm.sourcefrm = this.sourcefrm;
+
+        // Set the program counter
+        this.programctr = this.targetfrm.programctr;
+
+        // Make sure this target frame is not reused as such
+        this.targetfrm = null;
     }
 
     @Override
@@ -533,13 +554,6 @@ public class ZipFacadeImpl implements ZipFacade {
 
         // Return the local stack frame address for the target frame
         return this.targetfrm.localptr;
-    }
-
-    // === Debugging ===
-
-    @Override
-    public int getProgramCounter() {
-        return this.programctr;
     }
 
     // Activation records are like stack frames, additionally holding machine
